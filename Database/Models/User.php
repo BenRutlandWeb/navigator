@@ -9,7 +9,6 @@ use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
 use Navigator\Database\Query\UserBuilder;
-use Navigator\Database\Relation;
 use Navigator\Mail\Concerns\Notifiable;
 use WP_User;
 
@@ -29,8 +28,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     {
         $query = new UserBuilder(static::class);
 
-        $query->where('fields', 'all')
-            ->where('role', Relation::getObjectType(static::class));
+        $query->where('fields', 'all');
 
         static::withGlobalScopes($query);
 

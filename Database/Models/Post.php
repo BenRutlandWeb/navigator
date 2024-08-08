@@ -42,7 +42,9 @@ class Post implements ModelInterface
     public static function find(int $id): ?static
     {
         if ($post = WP_Post::get_instance($id)) {
-            return new static($post);
+            if ($post->post_type == Relation::getObjectType(static::class)) {
+                return new static($post);
+            }
         }
 
         return null;
