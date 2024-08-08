@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Events\Listener;
+
+class {{ class }} extends Listener
+{
+    public function __invoke(): mixed
+    {
+        //
+    }
+}

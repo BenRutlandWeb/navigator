@@ -1,0 +1,18 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Queue\Job;
+
+class {{ class }} extends Job
+{
+    public function __construct()
+    {
+        //
+    }
+
+    public function handle(): void
+    {
+        // Do your queued job
+    }
+}

@@ -1,0 +1,32 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Contracts\ShouldQueue;
+use Navigator\Foundation\Concerns\Htmlable;
+use Navigator\Http\Response;
+use Navigator\Mail\Mailable;
+use Navigator\Mail\Mailer;
+
+class {{ class }} extends Mailable
+{
+    public function __construct()
+    {
+        //
+    }
+
+    public function envelope(Mailer $mailer): void
+    {
+        //
+    }
+
+    public function subject(): string
+    {
+        //
+    }
+
+    public function content(): Response|Htmlable|string
+    {
+        //
+    }
+}

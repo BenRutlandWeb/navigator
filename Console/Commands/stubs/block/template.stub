@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @var Navigator\Acf\BlockHelper $block
+ */
+
+?>
+<div class="is-layout-constrained has-global-padding wp-block-block">
+    <!-- {{ name }} content go here -->
+</div>

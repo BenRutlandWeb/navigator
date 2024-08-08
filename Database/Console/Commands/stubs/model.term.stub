@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Database\Models\Concerns\HasChildren;
+use Navigator\Database\Models\Term as Model;
+
+class {{ class }} extends Model
+{
+    use HasChildren;
+}

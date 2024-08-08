@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Contracts\SubscriberInterface;
+use Navigator\Events\Dispatcher;
+
+class {{ class }} implements SubscriberInterface
+{
+    public function subscribe(Dispatcher $dispatcher): void
+    {
+        //
+    }
+}
+

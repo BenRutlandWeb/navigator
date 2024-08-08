@@ -1,0 +1,18 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Foundation\ServiceProvider;
+
+class {{ class }} extends ServiceProvider
+{
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        //
+    }
+}
