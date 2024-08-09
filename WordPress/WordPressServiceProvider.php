@@ -3,7 +3,6 @@
 namespace Navigator\WordPress;
 
 use Navigator\Foundation\ServiceProvider;
-use Navigator\WordPress\WordPressFactory;
 
 class WordPressServiceProvider extends ServiceProvider
 {

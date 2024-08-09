@@ -1,0 +1,30 @@
+<?php
+
+namespace Navigator\Routing;
+
+use Navigator\Events\Dispatcher;
+use Navigator\Foundation\Application;
+use Navigator\Foundation\ServiceProvider;
+use Navigator\Http\Request;
+
+class RoutingServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->singleton(Router::class, fn (Application $app) => new Router(
+            $app->get(Dispatcher::class)
+        ));
+    }
+
+    public function boot(): void
+    {
+        $this->registerRoutes($router = $this->app->get(Router::class));
+
+        $router->dispatch($this->app->get(Request::class));
+    }
+
+    public function registerRoutes(Router $router): void
+    {
+        //
+    }
+}

@@ -10,6 +10,7 @@ use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Http\Concerns\HasCookies;
 use Navigator\Http\Concerns\HasHeaders;
 use Navigator\Http\Concerns\HasServer;
+use Navigator\Http\Concerns\Method;
 use Navigator\Str\Str;
 use WP_REST_Request;
 
@@ -69,6 +70,20 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
             $base->get_file_params(),
             $_SERVER
         );
+    }
+
+    public function method(): Method
+    {
+        return Method::tryFrom($this->get_method());
+    }
+
+    public function merge(array $attributes = []): static
+    {
+        foreach ($attributes as $key => $value) {
+            $this->set_param($key, $value);
+        }
+
+        return $this;
     }
 
     public function isSecure(): bool

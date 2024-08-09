@@ -17,10 +17,12 @@ use Navigator\Filesystem\FilesystemServiceProvider;
 use Navigator\Hashing\HashServiceProvider;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\HttpServiceProvider;
+use Navigator\Http\Request;
 use Navigator\Http\ResponseFactory;
 use Navigator\Mail\MailServiceProvider;
 use Navigator\Pagination\PaginationServiceProvider;
 use Navigator\Queue\QueueServiceProvider;
+use Navigator\Str\Str;
 use Navigator\View\ViewServiceProvider;
 use Throwable;
 use Whoops\RunInterface;
@@ -92,7 +94,7 @@ class Application extends Container
             $this->get(ResponseFactory::class)->make(
                 $content,
                 $e instanceof HttpException ? $e->statusCode : 500,
-                $e instanceof HttpException ? $e->headers : [],
+                $e instanceof HttpException ? $e->headers : []
             )->send();
         } else {
             wp_die(__('There has been a critical error on this website.'));

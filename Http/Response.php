@@ -114,11 +114,11 @@ class Response extends WP_REST_Response implements Htmlable, JsonSerializable
 
     public function toHtml(): string
     {
-        return $this->getContent();
+        return $this->getContent() ?? '';
     }
 
     public function __toString(): string
     {
-        return $this->getContent();
+        return $this->getContent() ?? '';
     }
 }

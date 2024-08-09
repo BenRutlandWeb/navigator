@@ -3,6 +3,7 @@
 namespace Navigator\Http\Client;
 
 use Navigator\Collections\Arr;
+use Navigator\Http\Concerns\Method;
 use WP_HTTP_Requests_Response;
 use WpOrg\Requests\Exception;
 use WpOrg\Requests\Requests;
@@ -127,31 +128,31 @@ class Http
 
     public function get(string $url, string|array|null $query = null): Response|static
     {
-        return $this->send('GET', $url, ['body' => $query]);
+        return $this->send(Method::GET, $url, ['body' => $query]);
     }
 
     public function post(string $url, string|array $data = []): Response|static
     {
-        return $this->send('POST', $url, ['body' => $data]);
+        return $this->send(Method::POST, $url, ['body' => $data]);
     }
 
     public function patch(string $url, string|array $data = []): Response|static
     {
-        return $this->send('PATCH', $url, ['body' => $data]);
+        return $this->send(Method::PATCH, $url, ['body' => $data]);
     }
 
     public function put(string $url, string|array $data = []): Response|static
     {
-        return $this->send('PUT', $url, ['body' => $data]);
+        return $this->send(Method::PUT, $url, ['body' => $data]);
     }
 
     public function delete(string $url, string|array $data = []): Response|static
     {
-        return $this->send('DELETE', $url, ['body' => $data]);
+        return $this->send(Method::DELETE, $url, ['body' => $data]);
     }
 
     /** @param  array<string, mixed> $options */
-    public function send(string $method, string $url, array $options = []): Response|static
+    public function send(Method $method, string $url, array $options = []): Response|static
     {
         $url = ltrim(rtrim($this->baseUrl, '/') . '/' . ltrim($url, '/'), '/');
 
@@ -170,10 +171,10 @@ class Http
      * @param array<string, mixed> $options
      * @throws ConnectionException
      */
-    protected function sendRequest(string $method, string $url, array $options = []): Response
+    protected function sendRequest(Method $method, string $url, array $options = []): Response
     {
         $response = wp_remote_request($url, $this->mergeOptions([
-            'method' => $method,
+            'method' => $method->value,
         ], $options));
 
         if (!is_wp_error($response)) {
@@ -222,7 +223,7 @@ class Http
     }
 
     /** @param array<string, mixed> $options */
-    protected function makePromise(string $method, string $url, array $options = []): static
+    protected function makePromise(Method $method, string $url, array $options = []): static
     {
         $options = $this->mergeOptions($options);
 
@@ -230,7 +231,7 @@ class Http
             'url'     => $url,
             'headers' => $options['headers'] ?? [],
             'data'    => $options['body'] ?? [],
-            'type'    => $method,
+            'type'    => $method->value,
             'options' => $options,
             'cookies' => $options['cookies'] ?? [],
         ];
