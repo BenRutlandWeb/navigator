@@ -62,6 +62,8 @@ trait HasRelationships
         if ($this instanceof User) {
             if (is_a($model, Post::class, true)) {
                 return $model::query()->where('post_author', $this->id());
+            } elseif (is_a($model, Comment::class, true)) {
+                return $model::query()->where('user_id', $this->id());
             }
         } elseif ($this instanceof Post) {
             if (is_a($model, Post::class, true)) {
@@ -69,7 +71,7 @@ trait HasRelationships
             } elseif (is_a($model, Term::class, true)) {
                 return $model::query()->where('object_ids', $this->id());
             } elseif (is_a($model, Comment::class, true)) {
-                return $model::query()->where('post_id', $this->id());
+                return $model::query()->where('comment_post_ID', $this->id());
             }
         } elseif ($this instanceof Term) {
             if (is_a($model, Post::class, true)) {
@@ -81,7 +83,7 @@ trait HasRelationships
             }
         } elseif ($this instanceof Comment) {
             if (is_a($model, Comment::class, true)) {
-                return $model::query()->where('parent', $this->id());
+                return $model::query()->where('comment_parent', $this->id());
             }
         }
 

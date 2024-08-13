@@ -2,6 +2,7 @@
 
 namespace Navigator\Database\Query;
 
+use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
 use Navigator\Database\ModelInterface;
@@ -10,12 +11,13 @@ use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
 use Navigator\Database\Query\Concerns\QueriesMeta;
 use Navigator\Database\Relation;
+use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Pagination\Paginator;
 use WP_Term;
 use WP_Term_Query;
 
 /** @template T of ModelInterface */
-class TermBuilder implements BuilderInterface
+class TermBuilder implements Arrayable, BuilderInterface, JsonSerializable
 {
     use HasAttributes;
     use QueriesMeta;
@@ -94,8 +96,8 @@ class TermBuilder implements BuilderInterface
 
     public function delete(): bool
     {
-        foreach ($this->get() as $post) {
-            $post->delete();
+        foreach ($this->get() as $term) {
+            $term->delete();
         }
 
         return true;

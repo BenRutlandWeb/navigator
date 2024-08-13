@@ -2,10 +2,13 @@
 
 namespace Navigator\Database\Models;
 
+use Closure;
+use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
+use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\PostBuilder;
 use Navigator\Database\Relation;
 use Navigator\WordPress\Concerns\Dashicon;
@@ -15,6 +18,7 @@ class Post implements ModelInterface
 {
     use HasRelationships;
     use HasMeta;
+    use InteractsWithAttributes;
 
     public function __construct(readonly public WP_Post $object)
     {
@@ -86,24 +90,67 @@ class Post implements ModelInterface
         return wp_delete_post($this->id(), true) ? true : false;
     }
 
-    public function __isset(string $key): bool
+    public function publish(): static
     {
-        return isset($this->object->$key);
+        $this->update(['post_status' => 'publish']);
+
+        return $this;
     }
 
-    public function __get(string $key): mixed
+    public function associate(ModelInterface $model): void
     {
-        return $this->object->$key;
+        if ($model instanceof User) {
+            $this->update(['post_author' => $model->id()]);
+        } elseif ($model instanceof static) {
+            $this->update(['post_parent' => $model->id()]);
+        }
     }
 
-    public function toArray(): array
+    public function disassociate(ModelInterface $model): void
     {
-        return $this->object->to_array();
+        if ($model instanceof User) {
+            $this->update(['post_author' => 0]);
+        } elseif ($model instanceof static) {
+            $this->update(['post_parent' => 0]);
+        }
     }
 
-    public function jsonSerialize(): array
+    /** @param Collection<int, Term>|array<int, Term>|Term $terms */
+    public function attach(Collection|array|Term $terms): void
     {
-        return $this->object->to_array();
+        $this->setTermRelation($terms, function (array $ids, string $taxonomy): void {
+            wp_add_object_terms($this->id(), $ids, $taxonomy);
+        });
+    }
+
+    /** @param Collection<int, Term>|array<int, Term>|Term $terms */
+    public function detach(Collection|array|Term $terms): void
+    {
+        $this->setTermRelation($terms, function (array $ids, string $taxonomy): void {
+            wp_remove_object_terms($this->id(), $ids, $taxonomy);
+        });
+    }
+
+    /** @param Collection<int, Term>|array<int, Term>|Term $terms */
+    public function sync(Collection|array|Term $terms): void
+    {
+        $this->setTermRelation($terms, function (array $ids, string $taxonomy): void {
+            wp_set_object_terms($this->id(), $ids, $taxonomy);
+        });
+    }
+
+    /**
+     * @param Collection<int, Term>|array<int, Term>|Term $terms
+     * @param (Closure(array<int, int>, string): void) $terms
+     */
+    protected function setTermRelation(Collection|array|Term $terms, Closure $callback): void
+    {
+        Collection::make(is_iterable($terms) ? $terms : [$terms])
+            ->groupBy('taxonomy')
+            ->each(fn (Collection $group, string $taxonomy) => $callback(
+                $group->pluck('term_id')->toArray(),
+                $taxonomy
+            ));
     }
 
     public static function dashicon(): Dashicon

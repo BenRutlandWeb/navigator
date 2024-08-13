@@ -15,4 +15,14 @@ trait HasAttributes
     {
         return $this->where($key, $values);
     }
+
+    public function toArray(): array
+    {
+        return $this->attributes->toArray();
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
 }

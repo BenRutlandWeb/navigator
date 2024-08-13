@@ -2,22 +2,26 @@
 
 namespace Navigator\Database\Query;
 
+use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Post;
+use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
 use Navigator\Database\Query\Concerns\QueriesDates;
 use Navigator\Database\Query\Concerns\QueriesMeta;
 use Navigator\Database\Query\Concerns\QueriesTax;
 use Navigator\Database\Relation;
+use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Pagination\Paginator;
 use WP_Post;
 use WP_Query;
 
 /** @template T of ModelInterface */
-class PostBuilder implements BuilderInterface
+class PostBuilder implements Arrayable, BuilderInterface, JsonSerializable
 {
+    use HasAttributes;
     use QueriesDates;
     use QueriesMeta;
     use QueriesTax;
@@ -26,18 +30,6 @@ class PostBuilder implements BuilderInterface
     public function __construct(readonly public string $model, protected Attributes $attributes = new PostAttributes())
     {
         //
-    }
-
-    public function where(string $key, mixed $value): static
-    {
-        $this->attributes->set($key, $value);
-
-        return $this;
-    }
-
-    public function whereIn(string $key, array $values): static
-    {
-        return $this->where($key, $values);
     }
 
     public function include(array $ids): static

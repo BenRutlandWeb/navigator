@@ -4,6 +4,7 @@ namespace Navigator\Routing;
 
 use Navigator\Events\Dispatcher;
 use Navigator\Http\Concerns\Method;
+use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\Request;
 
 class Router
@@ -14,45 +15,51 @@ class Router
         //
     }
 
-    public function ajax(string $action, callable $callback): AjaxRoute
+    public function ajax(string $action, callable|array $callback): AjaxRoute
     {
-        return $this->addRoute(new AjaxRoute($action, $callback));
+        return $this->addRoute(new AjaxRoute($action, $this->resolveCallback($callback)));
     }
 
-    public function get(string $uri, callable $callback): RestRoute
+    public function get(string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute(Method::GET, $uri, $callback));
+        return $this->addRestRoute(Method::GET, $uri, $callback);
     }
 
-    public function post(string $uri, callable $callback): RestRoute
+    public function post(string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute(Method::POST, $uri, $callback));
+        return $this->addRestRoute(Method::POST, $uri, $callback);
     }
 
-    public function put(string $uri, callable $callback): RestRoute
+    public function put(string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute(Method::PUT, $uri, $callback));
+        return $this->addRestRoute(Method::PUT, $uri, $callback);
     }
 
-    public function patch(string $uri, callable $callback): RestRoute
+    public function patch(string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute(Method::PATCH, $uri, $callback));
+        return $this->addRestRoute(Method::PATCH, $uri, $callback);
     }
 
-    public function delete(string $uri, callable $callback): RestRoute
+    public function delete(string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute(Method::DELETE, $uri, $callback));
+        return $this->addRestRoute(Method::DELETE, $uri, $callback);
     }
 
     /** @param Method|array<int, Method> $methods */
-    public function matches(Method|array $methods, string $uri, callable $callback): RestRoute
+    public function matches(Method|array $methods, string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute($methods, $uri, $callback));
+        return $this->addRestRoute($methods, $uri, $callback);
     }
 
-    public function any(string $uri, callable $callback): RestRoute
+    public function any(string $uri, callable|array $callback): RestRoute
     {
-        return $this->addRoute(new RestRoute(Method::cases(), $uri, $callback));
+        return $this->addRestRoute(Method::cases(), $uri, $callback);
+    }
+
+    /** @param Method|array<int, Method> $methods */
+    public function addRestRoute(Method|array $methods, string $uri, callable|array $callback): RouteInterface
+    {
+        return $this->addRoute(new RestRoute($methods, $uri, $this->resolveCallback($callback)));
     }
 
     public function addRoute(RouteInterface $route): RouteInterface
@@ -67,5 +74,27 @@ class Router
                 return $route->dispatch($request);
             });
         }
+    }
+
+    public function resolveCallback(callable|array $callback): callable
+    {
+        if (is_callable($callback)) {
+            return $callback;
+        }
+
+        try {
+            [$class, $method] = $callback;
+
+            $callback = [new $class(), $method];
+
+            return is_callable($callback) ? $callback : $this->handleException($class, $method);
+        } catch (\Throwable $e) {
+            return $this->handleException($class, $method);
+        }
+    }
+
+    public function handleException(string $class, string $method): callable
+    {
+        return fn () => throw new HttpException(500, sprintf('%s::%s is invalid.', $class, $method));
     }
 }

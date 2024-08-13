@@ -2,9 +2,11 @@
 
 namespace Navigator\Database\Query;
 
+use JsonSerializable;
 use Navigator\Collections\Arr;
+use Navigator\Foundation\Concerns\Arrayable;
 
-class Attributes
+class Attributes implements Arrayable, JsonSerializable
 {
     public function __construct(protected array $attributes = [])
     {
@@ -33,5 +35,10 @@ class Attributes
     public function forQuery(): array
     {
         return $this->attributes;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

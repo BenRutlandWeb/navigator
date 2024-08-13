@@ -2,12 +2,13 @@
 
 namespace Navigator\Database;
 
+use ArrayAccess;
 use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Foundation\Concerns\Arrayable;
 
 /** @template T of BuilderInterface */
-interface ModelInterface extends Arrayable, JsonSerializable
+interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
 {
     /** @return T<static> */
     public static function query(): BuilderInterface;

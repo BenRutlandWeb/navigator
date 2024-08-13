@@ -22,6 +22,7 @@ use Navigator\Http\ResponseFactory;
 use Navigator\Mail\MailServiceProvider;
 use Navigator\Pagination\PaginationServiceProvider;
 use Navigator\Queue\QueueServiceProvider;
+use Navigator\Routing\Router;
 use Navigator\Str\Str;
 use Navigator\View\ViewServiceProvider;
 use Throwable;
@@ -49,6 +50,10 @@ class Application extends Container
     public function registerCoreProviders(): void
     {
         $this->singleton(Dispatcher::class, fn () => new Dispatcher($this));
+
+        $this->singleton(Router::class, fn (Application $app) => new Router(
+            $app->get(Dispatcher::class)
+        ));
 
         if ($this->runningInConsole()) {
             $this->register(ConsoleServiceProvider::class);

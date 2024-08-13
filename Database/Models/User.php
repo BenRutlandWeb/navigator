@@ -8,6 +8,7 @@ use Navigator\Contracts\MailableInterface;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
+use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\UserBuilder;
 use Navigator\Mail\Concerns\Notifiable;
 use WP_User;
@@ -17,6 +18,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     use HasRelationships;
     use HasMeta;
     use Notifiable;
+    use InteractsWithAttributes;
 
     public function __construct(readonly public WP_User $object)
     {
@@ -142,25 +144,5 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         require_once(ABSPATH . 'wp-admin/includes/user.php');
 
         return wp_delete_user($this->id());
-    }
-
-    public function __isset(string $key): bool
-    {
-        return isset($this->object->$key);
-    }
-
-    public function __get(string $key): mixed
-    {
-        return $this->object->$key;
-    }
-
-    public function toArray(): array
-    {
-        return $this->object->to_array();
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->object->to_array();
     }
 }

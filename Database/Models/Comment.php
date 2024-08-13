@@ -6,6 +6,7 @@ use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
+use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\CommentBuilder;
 use WP_Comment;
 
@@ -13,6 +14,7 @@ class Comment implements ModelInterface
 {
     use HasRelationships;
     use HasMeta;
+    use InteractsWithAttributes;
 
     public function __construct(readonly public WP_Comment $object)
     {
@@ -75,23 +77,25 @@ class Comment implements ModelInterface
         return wp_delete_comment($this->id(), true);
     }
 
-    public function __isset(string $key): bool
+    public function associate(ModelInterface $model): void
     {
-        return isset($this->object->$key);
+        if ($model instanceof User) {
+            $this->update(['user_id' => $model->id()]);
+        } elseif ($model instanceof Post) {
+            $this->update(['comment_post_ID' => $model->id()]);
+        } elseif ($model instanceof static) {
+            $this->update(['comment_parent' => $model->id()]);
+        }
     }
 
-    public function __get(string $key): mixed
+    public function disassociate(ModelInterface $model): void
     {
-        return $this->object->$key;
-    }
-
-    public function toArray(): array
-    {
-        return $this->object->to_array();
-    }
-
-    public function jsonSerialize(): array
-    {
-        return $this->object->to_array();
+        if ($model instanceof User) {
+            $this->update(['user_id' => 0]);
+        } elseif ($model instanceof Post) {
+            $this->update(['comment_post_ID' => 0]);
+        } elseif ($model instanceof static) {
+            $this->update(['comment_parent' => 0]);
+        }
     }
 }

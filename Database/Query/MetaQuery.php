@@ -29,6 +29,7 @@ class MetaQuery implements Arrayable
             } else {
                 $this->query[] = $subQuery = new static;
             }
+
             $key($subQuery);
 
             return $this;

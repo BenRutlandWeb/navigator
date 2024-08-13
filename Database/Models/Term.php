@@ -6,6 +6,7 @@ use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
+use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\TermBuilder;
 use Navigator\Database\Relation;
 use WP_Term;
@@ -14,6 +15,7 @@ class Term implements ModelInterface
 {
     use HasRelationships;
     use HasMeta;
+    use InteractsWithAttributes;
 
     public function __construct(readonly public WP_Term $object)
     {
@@ -67,12 +69,17 @@ class Term implements ModelInterface
 
         $term = wp_insert_term($attributes['name'], $taxonomy, $attributes);
 
-        if (!is_wp_error(dump($term))) {
-            return static::find($term['term_id']);
+        if (!is_wp_error($term)) {
+            $term = static::find($term['term_id']);
+
+            if (isset($attributes['object_ids'])) {
+                wp_add_object_terms($attributes['object_ids'], $term->id(), $term->taxonomy());
+            }
+
+            return $term;
         }
 
         return null;
-        #wp_set_object_terms($this->attributes['object_ids'], $term['term_id'], $taxonomy, false);
     }
 
     public function update(array $attributes = []): bool
@@ -89,23 +96,46 @@ class Term implements ModelInterface
         return is_wp_error($return) ? false : true;
     }
 
-    public function __isset(string $key): bool
+    public function associate(ModelInterface $model): void
     {
-        return isset($this->object->$key);
+        if ($model instanceof static) {
+            $this->update(['parent' => $model->id()]);
+        }
     }
 
-    public function __get(string $key): mixed
+    public function disassociate(ModelInterface $model): void
     {
-        return $this->object->$key;
+        if ($model instanceof static) {
+            $this->update(['parent' => 0]);
+        }
     }
 
-    public function toArray(): array
+    /** @param Collection<int, Post>|array<int, Post>|Post $posts */
+    public function attach(Collection|array|Post $posts): void
     {
-        return $this->object->to_array();
+        foreach ((is_iterable($posts) ? $posts : [$posts]) as $post) {
+            wp_add_object_terms($post->id(), $this->id(), $this->taxonomy());
+        }
     }
 
-    public function jsonSerialize(): array
+    /** @param Collection<int, Post>|array<int, Post>|Post $posts */
+    public function detach(Collection|array|Post $posts): void
     {
-        return $this->object->to_array();
+        foreach ((is_iterable($posts) ? $posts : [$posts]) as $post) {
+            wp_remove_object_terms($post->id(), $this->id(), $this->taxonomy());
+        }
+    }
+
+    /** @param Collection<int, Post>|array<int, Post>|Post $posts */
+    public function sync(Collection|array|Post $posts): void
+    {
+        foreach ((is_iterable($posts) ? $posts : [$posts]) as $post) {
+            wp_set_object_terms($post->id(), $this->id(), $this->taxonomy());
+        }
+    }
+
+    public function taxonomy(): string
+    {
+        return $this->object->taxonomy;
     }
 }

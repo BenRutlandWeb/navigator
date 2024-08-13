@@ -2,6 +2,7 @@
 
 namespace Navigator\Database\Query;
 
+use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
 use Navigator\Database\ModelInterface;
@@ -9,12 +10,13 @@ use Navigator\Database\Models\User;
 use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
 use Navigator\Database\Query\Concerns\QueriesMeta;
+use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Pagination\Paginator;
 use WP_User;
 use WP_User_Query;
 
 /** @template T of ModelInterface */
-class UserBuilder implements BuilderInterface
+class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
 {
     use HasAttributes;
     use QueriesMeta;
@@ -112,8 +114,8 @@ class UserBuilder implements BuilderInterface
 
     public function delete(): bool
     {
-        foreach ($this->get() as $post) {
-            $post->delete();
+        foreach ($this->get() as $user) {
+            $user->delete();
         }
 
         return true;

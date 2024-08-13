@@ -35,4 +35,9 @@ class ResponseFactory
     {
         return $this->make($this->view->make($view, $args), $status, $headers);
     }
+
+    public function markdown(string $view, array $args = [], int $status = 200, array $headers = []): Response
+    {
+        return $this->make($this->view->markdown($view, $args), $status, $headers);
+    }
 }

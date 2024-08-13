@@ -2,41 +2,31 @@
 
 namespace Navigator\Database\Query;
 
+use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Comment;
+use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
 use Navigator\Database\Query\Concerns\QueriesDates;
 use Navigator\Database\Query\Concerns\QueriesMeta;
+use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Pagination\Paginator;
 use WP_Comment;
 use WP_Comment_Query;
 
 /** @template T of ModelInterface */
-class CommentBuilder implements BuilderInterface
+class CommentBuilder implements Arrayable, BuilderInterface, JsonSerializable
 {
+    use HasAttributes;
     use QueriesDates;
     use QueriesMeta;
 
-    protected array $attributes = [];
-
     /** @param class-string<T> $model */
-    public function __construct(readonly public string $model)
+    public function __construct(readonly public string $model, protected Attributes $attributes = new CommentAttributes())
     {
         //
-    }
-
-    public function where(string $key, mixed $value): static
-    {
-        $this->attributes[$key] = $value;
-
-        return $this;
-    }
-
-    public function whereIn(string $key, array $values): static
-    {
-        return $this->where($key, $values);
     }
 
     public function include(array $ids): static
@@ -107,8 +97,8 @@ class CommentBuilder implements BuilderInterface
 
     public function delete(): bool
     {
-        foreach ($this->get() as $post) {
-            $post->delete();
+        foreach ($this->get() as $comment) {
+            $comment->delete();
         }
 
         return true;
@@ -116,7 +106,7 @@ class CommentBuilder implements BuilderInterface
 
     public function runQuery(): WP_Comment_Query
     {
-        return new WP_Comment_Query($this->attributes);
+        return new WP_Comment_Query($this->attributes->forQuery());
     }
 
     /** @return Paginator<T> */
@@ -132,12 +122,8 @@ class CommentBuilder implements BuilderInterface
     /** @return ?T */
     public function create(array $attributes = []): ?ModelInterface
     {
-        $id = wp_insert_comment($attributes);
-
-        if ($id) {
-            return $this->model::find($id);
-        }
-
-        return null;
+        return $this->model::create(
+            $this->attributes->merge($attributes)->toArray()
+        );
     }
 }

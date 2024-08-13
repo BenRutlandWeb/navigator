@@ -11,9 +11,7 @@ class RoutingServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(Router::class, fn (Application $app) => new Router(
-            $app->get(Dispatcher::class)
-        ));
+        //
     }
 
     public function boot(): void
