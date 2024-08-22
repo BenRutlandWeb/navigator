@@ -2,8 +2,6 @@
 
 namespace Navigator\Routing;
 
-use Navigator\Events\Dispatcher;
-use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
 use Navigator\Http\Request;
 

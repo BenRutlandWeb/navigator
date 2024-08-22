@@ -11,6 +11,7 @@ class ConsoleFactory
         //
     }
 
+    /** @param class-string<Command> $command */
     public function make(string $command): void
     {
         (new $command($this->app))->register();

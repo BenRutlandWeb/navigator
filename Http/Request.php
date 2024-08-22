@@ -12,6 +12,7 @@ use Navigator\Http\Concerns\HasHeaders;
 use Navigator\Http\Concerns\HasServer;
 use Navigator\Http\Concerns\Method;
 use Navigator\Str\Str;
+use Navigator\Validation\ValidationFactory;
 use WP_REST_Request;
 
 class Request extends WP_REST_Request implements Arrayable, JsonSerializable
@@ -22,6 +23,9 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
 
     /** @var (callable(): User) */
     protected static $userResolver;
+
+    /** @var (callable(): ValidationFactory) */
+    protected static $validatorResolver;
 
     public function __construct(array $query = [], array $request = [], array $cookies = [], array $files = [], array $server = [])
     {
@@ -73,6 +77,19 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     }
 
     public function method(): Method
+    {
+        $realMethod = $this->realMethod();
+
+        if ($realMethod == Method::POST) {
+            $method = $this->get_header('x-http-method-override') ?? $this->input('_method', 'POST');
+
+            return Method::tryFrom(Str::upper($method)) ?? Method::POST;
+        }
+
+        return $realMethod;
+    }
+
+    public function realMethod(): Method
     {
         return Method::tryFrom($this->get_method());
     }
@@ -218,5 +235,18 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     public function setUserResolver(callable $callback): void
     {
         static::$userResolver = $callback;
+    }
+
+    /** @param (callable(): ?User) $callback */
+    public function setValidatorResolver(callable $callback): void
+    {
+        static::$validatorResolver = $callback;
+    }
+
+    public function validate(array $rules, array $messages = []): array
+    {
+        $validator = call_user_func(static::$validatorResolver);
+
+        return $validator->make($this->all(), $rules, $messages)->validate();
     }
 }

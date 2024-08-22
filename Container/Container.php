@@ -19,11 +19,11 @@ class Container implements ContainerInterface
     private static self $instance;
 
     /**
-     * @template T
-     * @param class-string<T>|string $id
+     * @template TInstance
+     * @param class-string<TInstance>|string $id
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
-     * @return T|mixed
+     * @return TInstance
      */
     public function get(string $id): mixed
     {
@@ -40,14 +40,20 @@ class Container implements ContainerInterface
 
     public function has(string $id): bool
     {
-        return isset($this->instances[$id]) || isset($this->bindings[$id]);
+        return isset($this->bindings[$id]) || isset($this->instances[$id]);
     }
 
     public function resolved(string $id): bool
     {
-        return isset($this->instances[$id]) || isset($this->resolved[$id]);
+        return isset($this->resolved[$id]) || isset($this->instances[$id]);
     }
 
+    /**
+     * @template TInstance
+     * @param class-string<TInstance>|string $id
+     * @throws ContainerExceptionInterface
+     * @return TInstance|mixed
+     */
     public function resolve(string $id, mixed ...$args): mixed
     {
         if (isset($this->instances[$id])) {
@@ -85,13 +91,20 @@ class Container implements ContainerInterface
         }
     }
 
-    public function instance(string $id, mixed $instance): void
+    /**
+     * @template TInstance
+     * @param TInstance $instance
+     * @return TInstance
+     */
+    public function instance(string $id, mixed $instance): mixed
     {
         $this->instances[$id] = $instance;
 
         if ($this->has($id)) {
             $this->rebound($id);
         }
+
+        return $instance;
     }
 
     protected function rebound(string $id): void
@@ -112,7 +125,7 @@ class Container implements ContainerInterface
         }
     }
 
-    public static function getInstance(): self
+    public static function getInstance(): static
     {
         return self::$instance;
     }

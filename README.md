@@ -19,6 +19,7 @@ Navigator is a fluent interface to WordPress
 - [x] Database
 - [x] Encryption
 - [x] Events
+- [ ] Faker @inprogress
 - [x] Filesystem
 - [x] Foundation
 - [x] Hashing
@@ -27,15 +28,21 @@ Navigator is a fluent interface to WordPress
 - [ ] Macroable
 - [x] Mail
 - [ ] Notifications
+- [ ] Number @inprogress
 - [x] Pagination
 - [ ] Pipeline
 - [ ] Process
 - [x] Queue
 - [ ] Redis
-- [ ] Routing
+- [x] Routing
 - [ ] Session
 - [ ] Support
 - [ ] Testing
 - [ ] Translation
-- [ ] Validation
+- [x] Validation
 - [x] View
+
+Additional todo
+- [ ] Move helpers.php into theme
+- [ ] Create theme repo
+- [ ] Navigator as composer package

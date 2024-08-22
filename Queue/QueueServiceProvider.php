@@ -14,7 +14,7 @@ class QueueServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(Queue::class, function (Application $app) {
-            return wp_queue($app->config('queue.connection', 'sync'));
+            return wp_queue($app->env('QUEUE_CONNECTION', 'sync'));
         });
     }
 

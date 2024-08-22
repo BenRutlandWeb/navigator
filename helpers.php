@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\CarbonImmutable;
+use Faker\Generator as Faker;
 use Navigator\Auth\Auth;
 use Navigator\Cache\Repository;
 use Navigator\Collections\Collection;
@@ -9,6 +10,7 @@ use Navigator\Foundation\Application;
 use Navigator\Foundation\Mix;
 use Navigator\Hashing\Hasher;
 use Navigator\Http\Client\Http;
+use Navigator\Http\Concerns\Method;
 use Navigator\Http\Request;
 use Navigator\Http\Response;
 use Navigator\Http\ResponseFactory;
@@ -16,6 +18,8 @@ use Navigator\Http\Url;
 use Navigator\Mail\Mailer;
 use Navigator\Str\Str;
 use Navigator\Str\Stringable;
+use Navigator\Validation\ValidationFactory;
+use Navigator\Validation\Validator;
 use Navigator\View\View;
 use Navigator\View\ViewFactory;
 use WP_Queue\Queue;
@@ -74,6 +78,20 @@ if (!function_exists('config')) {
     }
 }
 
+if (!function_exists('csrf_field')) {
+    function csrf_field(): string
+    {
+        return wp_nonce_field('_token', '_token');
+    }
+}
+
+if (!function_exists('csrf_token')) {
+    function csrf_token(): string
+    {
+        return wp_create_nonce('_token');
+    }
+}
+
 if (!function_exists('decrypt')) {
     function decrypt(string $payload, bool $unserialize = true): mixed
     {
@@ -95,6 +113,13 @@ if (!function_exists('encrypt')) {
     }
 }
 
+if (!function_exists('fake')) {
+    function fake(?string $locale = null): Faker
+    {
+        return app(Faker::class, $locale);
+    }
+}
+
 if (!function_exists('hasher')) {
     function hasher(): Hasher
     {
@@ -113,6 +138,13 @@ if (!function_exists('mailer')) {
     function mailer(): Mailer
     {
         return app(Mailer::class);
+    }
+}
+
+if (!function_exists('method_field')) {
+    function method_field(Method $method): void
+    {
+        printf('<input type="hidden" name="_method" value="%s" />', $method->value);
     }
 }
 
@@ -163,7 +195,7 @@ if (!function_exists('str')) {
 if (!function_exists('svg')) {
     function svg(string $svg): string
     {
-        $path = app()->config('app.asset_url') . Str::finish($svg, '.svg');
+        $path = app()->assetUrl(Str::finish($svg, '.svg'));
 
         $file = Str::trim(ABSPATH, '/') . wp_make_link_relative($path);
 
@@ -184,6 +216,15 @@ if (!function_exists('url')) {
         $url = app(Url::class);
 
         return $path ? $url->home($path) : $url;
+    }
+}
+
+if (!function_exists('validator')) {
+    function validator(?array $input = null, array $rules = [], array $messages = []): ValidationFactory|Validator
+    {
+        $factory = app(ValidationFactory::class);
+
+        return !is_null($input) ? $factory->make($input, $rules, $messages) : $factory;
     }
 }
 

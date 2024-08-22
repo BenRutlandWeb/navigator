@@ -1,0 +1,23 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Validation\Rules\Rule;
+
+class {{ class }} extends Rule
+{
+    public function passes(mixed $value): bool
+    {
+        return true;
+    }
+
+    public function getMessage(): string
+    {
+        return __('The :attribute is invalid.');
+    }
+
+    public function getKey(): string
+    {
+        return '{{ key }}';
+    }
+}

@@ -10,6 +10,7 @@ use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
 use Navigator\Str\Str;
+use Navigator\Validation\Exceptions\ValidationException;
 use Throwable;
 use WP_REST_Request;
 
@@ -64,16 +65,18 @@ class RestRoute implements RouteInterface
         return function (WP_REST_Request $wp) use ($request) {
             $request->merge($wp->get_url_params());
 
-            #try {
-            return call_user_func($this->callback, $request);
-            # } catch (Throwable $e) {
-            #     $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
-            #     $headers = $e instanceof HttpException ? $e->headers : [];
-            #
-            #     return $request->expectsJson()
-            #         ? new JsonResponse(['message' => $e->getMessage()], $statusCode, $headers)
-            #         : new Response($e->getMessage(), $statusCode, $headers);
-            # }
+            try {
+                return call_user_func($this->callback, $request);
+            } catch (ValidationException $e) {
+                return $e->getResponse();
+            } catch (Throwable $e) {
+                $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
+                $headers = $e instanceof HttpException ? $e->headers : [];
+
+                return $request->expectsJson()
+                    ? new JsonResponse(['message' => $e->getMessage()], $statusCode, $headers)
+                    : new Response($e->getMessage(), $statusCode, $headers);
+            }
         };
     }
 }

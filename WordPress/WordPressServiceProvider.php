@@ -8,7 +8,7 @@ class WordPressServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(WordPressFactory::class, fn () => new WordPressFactory());
+        $this->app->singleton(WordPressFactory::class, fn() => new WordPressFactory());
     }
 
     public function boot(): void

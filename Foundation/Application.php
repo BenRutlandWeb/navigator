@@ -24,6 +24,7 @@ use Navigator\Pagination\PaginationServiceProvider;
 use Navigator\Queue\QueueServiceProvider;
 use Navigator\Routing\Router;
 use Navigator\Str\Str;
+use Navigator\Validation\ValidationServiceProvider;
 use Navigator\View\ViewServiceProvider;
 use Throwable;
 use Whoops\RunInterface;
@@ -37,21 +38,27 @@ class Application extends Container
      */
     protected array $providers = [];
 
+    public readonly string $baseUrl;
+
     public function __construct(public readonly string $basePath)
     {
         static::setInstance($this);
 
         $this->environment = Environment::from(wp_get_environment_type());
 
+        $this->baseUrl = $this->resolveBaseUrl();
+
         $this->registerExceptionHandler();
         $this->registerCoreProviders();
+
+        $this->instance(Request::class, Request::capture());
     }
 
     public function registerCoreProviders(): void
     {
-        $this->singleton(Dispatcher::class, fn () => new Dispatcher($this));
+        $this->singleton(Dispatcher::class, fn() => new Dispatcher($this));
 
-        $this->singleton(Router::class, fn (Application $app) => new Router(
+        $this->singleton(Router::class, fn(Application $app) => new Router(
             $app->get(Dispatcher::class)
         ));
 
@@ -71,6 +78,7 @@ class Application extends Container
         $this->register(MailServiceProvider::class);
         $this->register(PaginationServiceProvider::class);
         $this->register(QueueServiceProvider::class);
+        $this->register(ValidationServiceProvider::class);
         $this->register(ViewServiceProvider::class);
     }
 
@@ -144,6 +152,10 @@ class Application extends Container
 
     public function env(string $key, mixed $default = null): mixed
     {
+        if ($env = getenv($key)) {
+            return $env;
+        }
+
         return defined($key) ? constant($key) : $default;
     }
 
@@ -158,5 +170,19 @@ class Application extends Container
     public function path(string $path): string
     {
         return $this->basePath . DIRECTORY_SEPARATOR . trim($path, DIRECTORY_SEPARATOR);
+    }
+
+    public function assetUrl(string $path = ''): string
+    {
+        return $this->baseUrl . '/dist/' . trim($path, '/');
+    }
+
+    protected function resolveBaseUrl(): string
+    {
+        return esc_url_raw(Str::replace(
+            wp_normalize_path(untrailingslashit(ABSPATH)),
+            home_url(),
+            wp_normalize_path($this->basePath)
+        ));
     }
 }

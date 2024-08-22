@@ -2,6 +2,8 @@
 
 namespace Navigator\Foundation;
 
+use Faker\Factory;
+use Faker\Generator as Faker;
 use Navigator\Foundation\Console\Commands\GetEnvironment;
 use Navigator\Foundation\Console\Commands\ListCommands;
 use Navigator\Foundation\Console\Commands\MakeProvider;
@@ -12,10 +14,15 @@ class FoundationServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(
-            Mix::class,
-            fn (Application $app) => new Mix($app->config('app.asset_url'))
-        );
+        $this->app->singleton(Mix::class, fn(Application $app) => new Mix($app->assetUrl()));
+
+        $this->app->bind(Faker::class, function (Application $app, ?string $locale = null) {
+            $generator = Factory::create($locale ?? get_locale());
+
+            $generator->addProvider(new FakerProvider($generator));
+
+            return $generator;
+        });
     }
 
     public function boot(): void

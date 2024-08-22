@@ -32,7 +32,7 @@ class Url
 
     public function asset(string $path): string
     {
-        return trim($this->app->config('app.asset_url', $this->home('/')), '/') . '/' . $path;
+        return $this->app->assetUrl($path);
     }
 
     public function register(string $redirect = '/'): string

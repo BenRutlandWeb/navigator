@@ -177,7 +177,7 @@ class Arr
     {
         $keys = array_rand($items, $num);
 
-        return static::map((array) $keys, fn ($key) => $items[$key]);
+        return static::map((array) $keys, fn($key) => $items[$key]);
     }
 
     public static function query(array $items): string
@@ -270,7 +270,7 @@ class Arr
 
     public static function toCssStyles(array $items): string
     {
-        return static::join(static::map($items, fn ($v, $p) => "{$p}: {$v};"), ' ');
+        return static::join(static::map($items, fn($v, $p) => "{$p}: {$v};"), ' ');
     }
 
     public static function toHtmlAttributes(array $items): string
