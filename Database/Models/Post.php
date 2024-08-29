@@ -2,11 +2,12 @@
 
 namespace Navigator\Database\Models;
 
+use Carbon\Carbon;
 use Closure;
-use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
+use Navigator\Database\Models\Concerns\HasPostStatus;
 use Navigator\Database\Models\Concerns\HasRelationships;
 use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\PostBuilder;
@@ -16,6 +17,7 @@ use WP_Post;
 
 class Post implements ModelInterface
 {
+    use HasPostStatus;
     use HasRelationships;
     use HasMeta;
     use InteractsWithAttributes;
@@ -65,6 +67,16 @@ class Post implements ModelInterface
         return $this->object->ID;
     }
 
+    public function createdAt(): Carbon
+    {
+        return Carbon::create($this->post_date);
+    }
+
+    public function updatedAt(): Carbon
+    {
+        return Carbon::create($this->post_modified);
+    }
+
     public static function create(array $attributes = []): ?static
     {
         $attributes['post_type'] = Relation::getObjectType(static::class);
@@ -88,13 +100,6 @@ class Post implements ModelInterface
     public function delete(): bool
     {
         return wp_delete_post($this->id(), true) ? true : false;
-    }
-
-    public function publish(): static
-    {
-        $this->update(['post_status' => 'publish']);
-
-        return $this;
     }
 
     public function associate(ModelInterface $model): void
@@ -147,7 +152,7 @@ class Post implements ModelInterface
     {
         Collection::make(is_iterable($terms) ? $terms : [$terms])
             ->groupBy('taxonomy')
-            ->each(fn (Collection $group, string $taxonomy) => $callback(
+            ->each(fn(Collection $group, string $taxonomy) => $callback(
                 $group->pluck('term_id')->toArray(),
                 $taxonomy
             ));

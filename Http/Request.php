@@ -237,7 +237,7 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
         static::$userResolver = $callback;
     }
 
-    /** @param (callable(): ?User) $callback */
+    /** @param (callable(): ValidationFactory) $callback */
     public function setValidatorResolver(callable $callback): void
     {
         static::$validatorResolver = $callback;
@@ -245,6 +245,7 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
 
     public function validate(array $rules, array $messages = []): array
     {
+        /** @var ValidationFactory $validator */
         $validator = call_user_func(static::$validatorResolver);
 
         return $validator->make($this->all(), $rules, $messages)->validate();

@@ -8,4 +8,9 @@ trait HasTitle
     {
         return get_the_title($this->object);
     }
+
+    public function setTitle(string $title): bool
+    {
+        return $this->update(['post_title' => $title]);
+    }
 }

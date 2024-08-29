@@ -2,6 +2,7 @@
 
 namespace Navigator\Database\Models;
 
+use Carbon\Carbon;
 use Navigator\Collections\Collection;
 use Navigator\Contracts\Authenticatable;
 use Navigator\Contracts\MailableInterface;
@@ -60,6 +61,11 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     public function id(): int
     {
         return $this->object->ID;
+    }
+
+    public function createdAt(): Carbon
+    {
+        return Carbon::create($this->user_registered);
     }
 
     public function email(): string

@@ -81,14 +81,14 @@ if (!function_exists('config')) {
 if (!function_exists('csrf_field')) {
     function csrf_field(): string
     {
-        return wp_nonce_field('_token', '_token');
+        return wp_nonce_field('wp_rest', '_token', true, false);
     }
 }
 
 if (!function_exists('csrf_token')) {
     function csrf_token(): string
     {
-        return wp_create_nonce('_token');
+        return wp_create_nonce('wp_rest');
     }
 }
 
@@ -134,6 +134,13 @@ if (!function_exists('http')) {
     }
 }
 
+if (!function_exists('is_front_end_request')) {
+    function is_front_end_request(): bool
+    {
+        return !is_admin() && !wp_doing_ajax() && !wp_is_json_request();
+    }
+}
+
 if (!function_exists('mailer')) {
     function mailer(): Mailer
     {
@@ -142,9 +149,9 @@ if (!function_exists('mailer')) {
 }
 
 if (!function_exists('method_field')) {
-    function method_field(Method $method): void
+    function method_field(Method $method): string
     {
-        printf('<input type="hidden" name="_method" value="%s" />', $method->value);
+        return sprintf('<input type="hidden" name="_method" value="%s" />', $method->value);
     }
 }
 

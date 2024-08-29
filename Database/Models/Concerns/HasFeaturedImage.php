@@ -33,4 +33,9 @@ trait HasFeaturedImage
     {
         return get_the_post_thumbnail_caption($this->object);
     }
+
+    public function setFeaturedImage(int $id): bool
+    {
+        return set_post_thumbnail($this->object, $id);
+    }
 }

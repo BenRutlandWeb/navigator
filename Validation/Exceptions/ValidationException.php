@@ -20,6 +20,6 @@ class ValidationException extends Exception
 
     public function getResponse(): JsonResponse
     {
-        return new JsonResponse($this->getErrors(), 422);
+        return new JsonResponse(['errors' => $this->getErrors()], 422);
     }
 }

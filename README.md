@@ -11,15 +11,18 @@ Navigator is a fluent interface to WordPress
 - [x] Cache
 - [x] Collections
 - [ ] Conditionable
-- [ ] Config
+- [x] Config
 - [x] Console
 - [x] Container
 - [x] Contracts
 - [ ] Cookie
-- [x] Database
+- [ ] Database
+  - [ ] Attachment model
+  - [ ] User capabilities
 - [x] Encryption
 - [x] Events
-- [ ] Faker @inprogress
+- [ ] Faker
+  - [ ] WP faker provider
 - [x] Filesystem
 - [x] Foundation
 - [x] Hashing

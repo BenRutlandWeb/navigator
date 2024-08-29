@@ -2,6 +2,7 @@
 
 namespace Navigator\Database\Models;
 
+use Carbon\Carbon;
 use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
@@ -54,6 +55,11 @@ class Comment implements ModelInterface
     public function id(): int
     {
         return $this->object->comment_ID;
+    }
+
+    public function createdAt(): Carbon
+    {
+        return Carbon::create($this->comment_date);
     }
 
     public static function create(array $attributes = []): static

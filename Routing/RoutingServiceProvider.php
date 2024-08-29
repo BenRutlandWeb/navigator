@@ -4,6 +4,7 @@ namespace Navigator\Routing;
 
 use Navigator\Foundation\ServiceProvider;
 use Navigator\Http\Request;
+use Navigator\Routing\Console\Commands\MakeController;
 
 class RoutingServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,10 @@ class RoutingServiceProvider extends ServiceProvider
         $this->registerRoutes($router = $this->app->get(Router::class));
 
         $router->dispatch($this->app->get(Request::class));
+
+        $this->commands([
+            MakeController::class,
+        ]);
     }
 
     public function registerRoutes(Router $router): void
