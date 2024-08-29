@@ -125,6 +125,37 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         return $this;
     }
 
+    public function can(string $capability, mixed ...$args): bool
+    {
+        return $this->object->has_cap($capability, ...$args);
+    }
+
+    public function cannot(string $capability, mixed ...$args): bool
+    {
+        return !$this->can($capability, ...$args);
+    }
+
+    public function canAny(array $capabilities, mixed ...$args): bool
+    {
+        foreach ($capabilities as $capability) {
+            if ($this->can($capability, ...$args)) {
+                return true;
+            };
+        }
+
+        return false;
+    }
+
+    public function addCapability(string $capability): void
+    {
+        $this->object->add_cap($capability);
+    }
+
+    public function removeCapability(string $capability): void
+    {
+        $this->object->remove_cap($capability);
+    }
+
     public static function create(array $attributes = []): static
     {
         $id = wp_insert_user($attributes);

@@ -36,7 +36,7 @@ if (!function_exists('app')) {
      * @template T
      * @param class-string<T>|null $id
      * @param mixed ...$args
-     * @return T|Application
+     * @return ($id is null ? Application : T)
      */
     function app(?string $id = null, mixed ...$args): mixed
     {
@@ -137,7 +137,11 @@ if (!function_exists('http')) {
 if (!function_exists('is_front_end_request')) {
     function is_front_end_request(): bool
     {
-        return !is_admin() && !wp_doing_ajax() && !wp_is_json_request();
+        return !is_admin()
+            && !wp_doing_ajax()
+            && !wp_is_json_request()
+            && !wp_doing_cron()
+            && !app()->runningInConsole();
     }
 }
 
