@@ -9,6 +9,7 @@ use Navigator\Http\Concerns\Method;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
+use Navigator\Routing\Concerns\HasActionName;
 use Navigator\Str\Str;
 use Navigator\Validation\Exceptions\ValidationException;
 use Throwable;
@@ -16,6 +17,8 @@ use WP_REST_Request;
 
 class RestRoute implements RouteInterface
 {
+    use HasActionName;
+
     protected $callback;
 
     /** @param Method|array<int, Method> $methods*/
@@ -35,7 +38,7 @@ class RestRoute implements RouteInterface
             throw new RouteNamespaceException('No namespace specified.');
         }
 
-        register_rest_route($this->namespace(), $this->uri(), [
+        register_rest_route($this->namespace(), $this->parsedUri(), [
             'permission_callback' => '__return_true',
             'methods'             => $this->methods(),
             'callback'            => $this->callback($request),
@@ -54,7 +57,12 @@ class RestRoute implements RouteInterface
 
     public function uri(): string
     {
-        return Str::of($this->uri)
+        return $this->uri;
+    }
+
+    public function parsedUri(): string
+    {
+        return Str::of($this->uri())
             ->trim('/')
             ->after('/')
             ->replaceMatches('@\/\{([\w]+?)(\?)?\}@', '\/?(?P<$1>[\w-]+)$2');

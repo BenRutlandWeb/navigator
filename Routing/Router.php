@@ -2,6 +2,7 @@
 
 namespace Navigator\Routing;
 
+use Navigator\Collections\Collection;
 use Navigator\Events\Dispatcher;
 use Navigator\Http\Concerns\Method;
 use Navigator\Http\Exceptions\HttpException;
@@ -95,6 +96,12 @@ class Router
 
     public function handleException(string $class, string $method): callable
     {
-        return fn () => throw new HttpException(500, sprintf('%s::%s is invalid.', $class, $method));
+        return fn() => throw new HttpException(500, sprintf('%s::%s is invalid.', $class, $method));
+    }
+
+    /** @return Collection<int, RouteInterface> */
+    public function getRoutes(): Collection
+    {
+        return Collection::make($this->routes);
     }
 }

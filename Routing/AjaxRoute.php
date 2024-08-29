@@ -4,23 +4,37 @@ namespace Navigator\Routing;
 
 use ArrayObject;
 use JsonSerializable;
+use Navigator\Collections\Arr;
 use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Foundation\Concerns\Htmlable;
+use Navigator\Http\Concerns\Method;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
 use Navigator\Http\Response;
+use Navigator\Routing\Concerns\HasActionName;
 use Stringable;
 use Throwable;
 
 class AjaxRoute implements RouteInterface
 {
+    use HasActionName;
+
     protected $callback;
 
-    /** @param Method|array<int, Method> $methods*/
     public function __construct(protected string $action, callable $callback)
     {
         $this->callback = $callback;
+    }
+
+    public function methods(): array
+    {
+        return Arr::pluck([Method::GET, Method::POST], 'value');
+    }
+
+    public function uri(): string
+    {
+        return $this->action;
     }
 
     public function events(): array

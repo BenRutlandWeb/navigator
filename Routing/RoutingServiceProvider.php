@@ -5,6 +5,7 @@ namespace Navigator\Routing;
 use Navigator\Foundation\ServiceProvider;
 use Navigator\Http\Request;
 use Navigator\Routing\Console\Commands\MakeController;
+use Navigator\Routing\Console\Commands\RoutesList;
 
 class RoutingServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,7 @@ class RoutingServiceProvider extends ServiceProvider
 
         $this->commands([
             MakeController::class,
+            RoutesList::class,
         ]);
     }
 

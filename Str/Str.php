@@ -368,17 +368,32 @@ class Str
 
     public static function padBoth(string $string, int $length, string $pad = ' ', ?string $encoding = Str::UTF_8): string
     {
-        return mb_str_pad($string, $length, $pad, STR_PAD_BOTH, $encoding);
+        // mb_str_pad is not defined when running in the console
+        if (function_exists('mb_str_pad')) {
+            return mb_str_pad($string, $length, $pad, STR_PAD_BOTH, $encoding);
+        }
+
+        return str_pad($string, $length, $pad, STR_PAD_BOTH);
     }
 
     public static function padLeft(string $string, int $length, string $pad = ' ', ?string $encoding = Str::UTF_8): string
     {
-        return mb_str_pad($string, $length, $pad, STR_PAD_LEFT, $encoding);
+        // mb_str_pad is not defined when running in the console
+        if (function_exists('mb_str_pad')) {
+            return mb_str_pad($string, $length, $pad, STR_PAD_LEFT, $encoding);
+        }
+
+        return str_pad($string, $length, $pad, STR_PAD_LEFT);
     }
 
     public static function padRight(string $string, int $length, string $pad = ' ', ?string $encoding = Str::UTF_8): string
     {
-        return mb_str_pad($string, $length, $pad, STR_PAD_RIGHT, $encoding);
+        // mb_str_pad is not defined when running in the console
+        if (function_exists('mb_str_pad')) {
+            return mb_str_pad($string, $length, $pad, STR_PAD_RIGHT, $encoding);
+        }
+
+        return str_pad($string, $length, $pad, STR_PAD_RIGHT);
     }
 
     public static function password(int $length = 32, bool $specialChars = true): string
@@ -567,7 +582,7 @@ class Str
         return static::of($string)
             ->replace(['-', '_'], ' ')
             ->explode()
-            ->map(fn ($word) => static::ucfirst($word))
+            ->map(fn($word) => static::ucfirst($word))
             ->join();
     }
 
