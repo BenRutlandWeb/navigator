@@ -23,7 +23,7 @@ class Schedule
 
     public function job(Job $job): Event
     {
-        return $this->call([$job, 'handle'])->name(get_class($job));
+        return $this->call([$job, 'handle']);
     }
 
     public function registerScheduledEvents(): void
