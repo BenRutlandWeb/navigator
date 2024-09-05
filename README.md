@@ -18,7 +18,7 @@ Navigator is a fluent interface to WordPress
 - [ ] Cookie
 - [ ] Database
   - [ ] Attachment model
-  - [ ] User capabilities
+  - [x] User capabilities
 - [x] Encryption
 - [x] Events
 - [ ] Faker

@@ -64,6 +64,8 @@ class Comment implements ModelInterface
 
     public static function create(array $attributes = []): static
     {
+        unset($attributes['comment_ID']);
+
         if ($id = wp_insert_comment($attributes)) {
             return static::find($id);
         }

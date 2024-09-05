@@ -3,6 +3,7 @@
 namespace Navigator\Database\Models;
 
 use Carbon\Carbon;
+use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Contracts\Authenticatable;
 use Navigator\Contracts\MailableInterface;
@@ -91,7 +92,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     public function hasRole(string|array $roles): bool
     {
         foreach ((array) $roles as $role) {
-            if (in_array($role, $this->roles())) {
+            if (Arr::has($role, $this->roles())) {
                 return true;
             }
         }
@@ -146,6 +147,17 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         return false;
     }
 
+    public function canAll(array $capabilities, mixed ...$args): bool
+    {
+        foreach ($capabilities as $capability) {
+            if ($this->cannot($capability, ...$args)) {
+                return false;
+            };
+        }
+
+        return true;
+    }
+
     public function addCapability(string $capability): void
     {
         $this->object->add_cap($capability);
@@ -158,6 +170,8 @@ class User implements Authenticatable, MailableInterface, ModelInterface
 
     public static function create(array $attributes = []): static
     {
+        unset($attributes['ID']);
+
         $id = wp_insert_user($attributes);
 
         if (!is_wp_error($id)) {

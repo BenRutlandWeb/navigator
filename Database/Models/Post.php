@@ -81,6 +81,8 @@ class Post implements ModelInterface
     {
         $attributes['post_type'] = Relation::getObjectType(static::class);
 
+        unset($attributes['ID']);
+
         $id = wp_insert_post($attributes, true, true);
 
         if (!is_wp_error($id)) {

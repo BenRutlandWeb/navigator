@@ -67,12 +67,14 @@ class Term implements ModelInterface
     {
         $taxonomy = Relation::getObjectType(static::class);
 
+        unset($attributes['term_id']);
+
         $term = wp_insert_term($attributes['name'], $taxonomy, $attributes);
 
         if (!is_wp_error($term)) {
             $term = static::find($term['term_id']);
 
-            if (isset($attributes['object_ids'])) {
+            if ($term && isset($attributes['object_ids'])) {
                 wp_add_object_terms($attributes['object_ids'], $term->id(), $term->taxonomy());
             }
 

@@ -180,12 +180,18 @@ abstract class Command
         die;
     }
 
-    protected function call(string $command): bool
+    protected function call(string $command, bool $silent = true): bool
     {
-        return WP_CLI::runcommand($command, [
+        $return = WP_CLI::runcommand($command, [
             'return'     => true,
             'launch'     => false,
             'exit_error' => false,
-        ]) ? true : false;
+        ]);
+
+        if (!$silent) {
+            echo $return;
+        }
+
+        return $return ? true : false;
     }
 }
