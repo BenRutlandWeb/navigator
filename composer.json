@@ -1,0 +1,26 @@
+{
+    "name": "brw/navigator",
+    "require": {
+        "filp/whoops": "^2.15",
+        "psr/container": "^2.0",
+        "symfony/var-dumper": "^6.4",
+        "erusev/parsedown": "^1.7",
+        "nesbot/carbon": "^2.0|^3.6",
+        "deliciousbrains/wp-queue": "^2.1",
+        "doctrine/inflector": "^2.0",
+        "fakerphp/faker": "^1.23",
+        "rakit/validation": "^1.4",
+        "dragonmantank/cron-expression": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Navigator\\": "navigator/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ben Rutland",
+            "email": "ben@10degrees.uk"
+        }
+    ]
+}

@@ -38,6 +38,7 @@ Navigator is a fluent interface to WordPress
 - [x] Queue
 - [ ] Redis
 - [x] Routing
+- [x] Schedule
 - [ ] Session
 - [ ] Support
 - [ ] Testing
