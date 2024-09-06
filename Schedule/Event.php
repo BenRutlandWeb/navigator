@@ -83,7 +83,7 @@ class Event
         return $this;
     }
 
-    public function skip(Closure|bool $callback): static
+    public function skip(callable|bool $callback): static
     {
         $this->rejects[] = is_callable($callback) ? $callback : function () use ($callback) {
             return $callback;
