@@ -46,6 +46,13 @@ class Event
         return $this;
     }
 
+    public function timezone(DateTimeZone|string $timezone): static
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
     public function getSummaryForDisplay(): string
     {
         return $this->description;
