@@ -1,6 +1,25 @@
 {
     "name": "brw/navigator",
+    "description": "A WordPress plugin and theme framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ben Rutland",
+            "email": "ben@10degrees.uk"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Navigator\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
+        "php": "^8.3",
         "filp/whoops": "^2.15",
         "psr/container": "^2.0",
         "symfony/var-dumper": "^6.4",
@@ -11,19 +30,5 @@
         "fakerphp/faker": "^1.23",
         "rakit/validation": "^1.4",
         "dragonmantank/cron-expression": "^3.3"
-    },
-    "autoload": {
-        "psr-4": {
-            "Navigator\\": "src/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
-    },
-    "authors": [
-        {
-            "name": "Ben Rutland",
-            "email": "ben@10degrees.uk"
-        }
-    ]
+    }
 }
