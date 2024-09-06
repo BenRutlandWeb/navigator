@@ -14,8 +14,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Navigator\\": "navigator/"
-        }
+            "Navigator\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "authors": [
         {
