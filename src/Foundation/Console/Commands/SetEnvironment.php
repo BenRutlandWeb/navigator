@@ -17,11 +17,13 @@ class SetEnvironment extends Command
         $env = $this->argument('type');
 
         if (Environment::tryFrom($env)) {
-            $this->call('config set WP_ENVIRONMENT_TYPE ' . $env);
-            return;
+            if ($this->callSilently('config set WP_ENVIRONMENT_TYPE ' . $env)) {
+                $this->success("Environment successfully set as {$env}.");
+                return;
+            }
         }
 
-        $types = join(', ', Arr::map(Environment::cases(), fn ($type) => $type->value));
+        $types = join(', ', Arr::enumValues(Environment::class));
 
         $this->error("Valid environment types are: [{$types}]");
     }

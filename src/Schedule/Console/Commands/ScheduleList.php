@@ -12,6 +12,6 @@ class ScheduleList extends Command
 
     protected function handle(): void
     {
-        $this->call('cron event list', false);
+        $this->call('cron event list');
     }
 }

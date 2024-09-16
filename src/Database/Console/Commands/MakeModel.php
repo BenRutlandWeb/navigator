@@ -4,7 +4,7 @@ namespace Navigator\Database\Console\Commands;
 
 use Navigator\Collections\Arr;
 use Navigator\Console\GeneratorCommand;
-use Navigator\Str\Str;
+use Navigator\Database\ModelType;
 
 class MakeModel extends GeneratorCommand
 {
@@ -16,28 +16,23 @@ class MakeModel extends GeneratorCommand
 
     protected string $description = 'Make a model class.';
 
-    protected function replaceClass(string $stub, string $name): string
-    {
-        $stub = parent::replaceClass($stub, $name);
-
-        $type = $this->option('type');
-
-        if (!$this->validate($type)) {
-            $this->error("--type={$type} is invalid. Valid options are [post, term, comment, user]");
-        }
-
-        return $stub;
-    }
-
     protected function getStub(): string
     {
-        if ($this->option('type') == 'post') {
+        $type = $this->option('type');
+
+        if (!ModelType::tryFrom($type)) {
+            $types = join(', ', Arr::enumValues(ModelType::class));
+
+            $this->error("--type={$type} is invalid. Valid options are [{$types}].");
+        }
+
+        if ($type == 'post') {
             return __DIR__ . '/stubs/model.post.stub';
-        } elseif ($this->option('type') == 'term') {
+        } elseif ($type == 'term') {
             return __DIR__ . '/stubs/model.term.stub';
-        } elseif ($this->option('type') == 'comment') {
+        } elseif ($type == 'comment') {
             return __DIR__ . '/stubs/model.comment.stub';
-        } elseif ($this->option('type') == 'user') {
+        } elseif ($type == 'user') {
             return __DIR__ . '/stubs/model.user.stub';
         }
     }
@@ -45,10 +40,5 @@ class MakeModel extends GeneratorCommand
     protected function getDefaultNamespace(string $rootNamespace): string
     {
         return $rootNamespace . '\\Models';
-    }
-
-    public function validate(string $type): bool
-    {
-        return Arr::has(Str::lower(Str::trim($type)), ['post', 'term', 'comment', 'user']);
     }
 }

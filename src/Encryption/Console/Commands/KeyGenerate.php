@@ -18,7 +18,7 @@ class KeyGenerate extends Command
             Encrypter::generateKey($this->app->config('app.cipher', 'aes-256-cbc'))
         )->toBase64()->prepend('base64:');
 
-        if ($this->call('config set APP_KEY ' . $key)) {
+        if ($this->callSilently('config set APP_KEY ' . $key)) {
             $this->success('Generated key.');
             return;
         };

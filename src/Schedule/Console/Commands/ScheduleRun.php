@@ -12,6 +12,6 @@ class ScheduleRun extends Command
 
     protected function handle(): void
     {
-        $this->call('cron event run --all', false);
+        $this->call('cron event run --all');
     }
 }

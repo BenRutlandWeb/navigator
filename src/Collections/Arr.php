@@ -2,7 +2,9 @@
 
 namespace Navigator\Collections;
 
+use InvalidArgumentException;
 use Throwable;
+use UnitEnum;
 
 class Arr
 {
@@ -36,6 +38,16 @@ class Arr
     public static function diff(mixed $items, array ...$arrays): array
     {
         return array_diff($items, ...$arrays);
+    }
+
+    /** @param class-string<UnitEnum> $enum */
+    public static function enumValues(string $enum): array
+    {
+        if (enum_exists($enum)) {
+            return static::map($enum::cases(), fn($type) => $type->value);
+        }
+
+        throw new InvalidArgumentException("{$enum} must be an instance of UnitEnum.");
     }
 
     public static function fill(mixed $item, int $count, int $start = 0): array
