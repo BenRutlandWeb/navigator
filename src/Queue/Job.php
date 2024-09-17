@@ -4,12 +4,10 @@ namespace Navigator\Queue;
 
 use WP_Queue\Job as BaseJob;
 
-use function Navigator\queue;
-
 abstract class Job extends BaseJob
 {
-    public static function dispatch(mixed ...$args): bool
+    public static function dispatch(mixed ...$args): PendingDispatch
     {
-        return queue()->push(new static(...$args));
+        return new PendingDispatch(new static(...$args));
     }
 }

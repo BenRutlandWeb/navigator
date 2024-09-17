@@ -4,9 +4,9 @@ namespace Navigator\Queue\Console\Commands;
 
 use Navigator\Console\Command;
 
-class QueueTable extends Command
+class QueueTables extends Command
 {
-    protected string $signature = 'queue:table';
+    protected string $signature = 'queue:tables';
 
     protected string $description = 'Create the queue jobs database tables.';
 

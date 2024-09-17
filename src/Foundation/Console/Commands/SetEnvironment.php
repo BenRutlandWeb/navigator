@@ -8,7 +8,7 @@ use Navigator\Foundation\Environment;
 
 class SetEnvironment extends Command
 {
-    protected string $signature = 'env:set { type : The environment type }';
+    protected string $signature = 'env:set {type : The environment type.}';
 
     protected string $description = 'Set the environment.';
 

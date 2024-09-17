@@ -2,24 +2,21 @@
 
 namespace Navigator\View;
 
+use Navigator\Filesystem\Filesystem;
 use Navigator\Str\Markdown;
 use Navigator\Str\Str;
 use Navigator\Str\Stringable;
 
 class ViewFactory
 {
-    protected string $view;
-
-    public function __construct(protected string $dir)
+    public function __construct(protected Filesystem $files, protected string $dir)
     {
         //
     }
 
     public function make(string $path, array $data = []): View
     {
-        $path = $this->normalizeName($path);
-
-        return new View($path->wrap($this->dir . DIRECTORY_SEPARATOR, '.php'), $data);
+        return new View($this->normalizeName($path), $data);
     }
 
     public function markdown(string $path, array $data = []): Markdown
@@ -30,6 +27,12 @@ class ViewFactory
     protected function normalizeName(string $path): Stringable
     {
         return Str::of($path)->replace(['/', '.'], DIRECTORY_SEPARATOR)
-            ->trim('/' . DIRECTORY_SEPARATOR);
+            ->trim('/' . DIRECTORY_SEPARATOR)
+            ->wrap($this->dir . DIRECTORY_SEPARATOR, '.php');
+    }
+
+    public function exists(string $path): bool
+    {
+        return $this->files->exists($this->normalizeName($path));
     }
 }
