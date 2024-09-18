@@ -24,5 +24,7 @@ interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
 
     public function update(array $attributes = []): bool;
 
+    public function save(): bool;
+
     public function delete(): bool;
 }

@@ -90,9 +90,14 @@ class Term implements ModelInterface
             $this->object->$key = $value;
         }
 
-        $return = wp_update_term($this->id(), $this->taxonomy, $attributes);
+        return $this->save();
+    }
 
-        return is_wp_error($return) ? false : true;
+    public function save(): bool
+    {
+        $return = wp_update_term($this->id(), $this->taxonomy, $this->toArray());
+
+        return !is_wp_error($return);
     }
 
     public function delete(): bool

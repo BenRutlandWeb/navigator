@@ -189,9 +189,14 @@ class User implements Authenticatable, MailableInterface, ModelInterface
             $this->object->$key = $value;
         }
 
-        $return = wp_update_user($this->object);
+        return $this->save();
+    }
 
-        return is_wp_error($return) ? false : true;
+    public function save(): bool
+    {
+        $return = wp_update_user($this->toArray());
+
+        return !is_wp_error($return);
     }
 
     public function delete(): bool

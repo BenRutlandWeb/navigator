@@ -81,7 +81,12 @@ class Comment implements ModelInterface
             $this->object->$key = $value;
         }
 
-        return wp_update_comment($attributes, false);
+        return $this->save();
+    }
+
+    public function save(): bool
+    {
+        return wp_update_comment($this->toArray(), false) ? true : false;
     }
 
     public function delete(): bool

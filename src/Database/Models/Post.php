@@ -100,7 +100,12 @@ class Post implements ModelInterface
             $this->object->$key = $value;
         }
 
-        return wp_update_post($attributes, false, true);
+        return $this->save();
+    }
+
+    public function save(): bool
+    {
+        return wp_update_post($this->toArray(), false, true) ? true : false;
     }
 
     public function delete(): bool
