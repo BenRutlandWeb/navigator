@@ -96,6 +96,10 @@ class Post implements ModelInterface
     {
         $attributes['ID'] = $this->id();
 
+        foreach ($attributes as $key => $value) {
+            $this->object->$key = $value;
+        }
+
         return wp_update_post($attributes, false, true);
     }
 

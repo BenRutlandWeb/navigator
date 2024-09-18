@@ -185,7 +185,11 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     {
         $attributes['ID'] = $this->id();
 
-        $return = wp_update_user($attributes);
+        foreach ($attributes as $key => $value) {
+            $this->object->$key = $value;
+        }
+
+        $return = wp_update_user($this->object);
 
         return is_wp_error($return) ? false : true;
     }

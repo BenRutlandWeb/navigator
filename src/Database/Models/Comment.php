@@ -77,6 +77,10 @@ class Comment implements ModelInterface
     {
         $attributes['comment_ID'] = $this->id();
 
+        foreach ($attributes as $key => $value) {
+            $this->object->$key = $value;
+        }
+
         return wp_update_comment($attributes, false);
     }
 

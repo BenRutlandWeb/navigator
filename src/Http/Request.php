@@ -5,12 +5,15 @@ namespace Navigator\Http;
 use JsonSerializable;
 use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
+use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\User;
+use Navigator\Database\Relation;
 use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Http\Concerns\HasCookies;
 use Navigator\Http\Concerns\HasHeaders;
 use Navigator\Http\Concerns\HasServer;
 use Navigator\Http\Concerns\Method;
+use Navigator\Http\Exceptions\HttpException;
 use Navigator\Str\Str;
 use Navigator\Validation\ValidationFactory;
 use WP_REST_Request;
@@ -27,7 +30,7 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     /** @var (callable(): ValidationFactory) */
     protected static $validatorResolver;
 
-    public function __construct(array $query = [], array $request = [], array $cookies = [], array $files = [], array $server = [])
+    public function __construct(array $query = [], array $request = [], array $cookies = [], array $files = [], array $server = [], array $attributes = [])
     {
         parent::__construct($server['REQUEST_METHOD'], $server['PATH_INFO'] ?? '/');
         $this->set_query_params(wp_unslash($query));
@@ -37,6 +40,7 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
         $this->set_body(file_get_contents('php://input'));
         $this->set_cookie_params($cookies);
         $this->set_server_params($server);
+        $this->set_url_params($attributes);
     }
 
     protected function getHeadersFromServer(array $server): array
@@ -72,7 +76,8 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
             $base->get_body_params(),
             $_COOKIE,
             $base->get_file_params(),
-            $_SERVER
+            $_SERVER,
+            $base->get_url_params(),
         );
     }
 
@@ -249,5 +254,21 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
         $validator = call_user_func(static::$validatorResolver);
 
         return $validator->make($this->all(), $rules, $messages)->validate();
+    }
+
+    /**
+     * @template TModelInterface
+     * @param class-string<TModelInterface> $model
+     * @return ?TModelInterface
+     */
+    public function model(string $model): ?ModelInterface
+    {
+        if ($key = Relation::getObjectType($model)) {
+            if ($value = $this->input($key)) {
+                return $model::find($value) ?? throw new HttpException(404, "No query results for model [{$model}].");
+            }
+        }
+
+        return null;
     }
 }

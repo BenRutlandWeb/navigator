@@ -4,6 +4,7 @@ namespace Navigator\Database;
 
 use Navigator\Collections\Collection;
 use Navigator\Database\Query\Concerns\Order;
+use Navigator\Pagination\Paginator;
 
 /** @template T of ModelInterface */
 interface BuilderInterface
@@ -22,6 +23,9 @@ interface BuilderInterface
     public function count(): int;
 
     public function toSql(): ?string;
+
+    /** @return Paginator<T> */
+    public function paginate(int $perPage = 5, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator;
 
     public function where(string $key, mixed $value): static;
 

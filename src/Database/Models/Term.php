@@ -86,6 +86,10 @@ class Term implements ModelInterface
 
     public function update(array $attributes = []): bool
     {
+        foreach ($attributes as $key => $value) {
+            $this->object->$key = $value;
+        }
+
         $return = wp_update_term($this->id(), $this->taxonomy, $attributes);
 
         return is_wp_error($return) ? false : true;
