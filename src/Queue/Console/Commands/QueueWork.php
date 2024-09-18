@@ -16,6 +16,8 @@ class QueueWork extends Command
 
     protected function handle(): void
     {
+        $this->line('Starting queue worker.');
+
         $queue = $this->app->get(Queue::class);
 
         if ($this->option('once')) {
@@ -40,9 +42,7 @@ class QueueWork extends Command
 
     public function process(Queue $queue): bool
     {
-        $success = $queue->worker($this->option('tries'))->process();
-
-        if ($success) {
+        if ($success = $queue->worker($this->option('tries'))->process()) {
             $this->success('Job processed.');
         }
 

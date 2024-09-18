@@ -25,9 +25,9 @@ class QueueServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $queue = $this->app->get(Queue::class);
-
-        $this->app->get(Schedule::class)->job(new ProcessQueue($queue))->everyFiveMinutes();
+        $this->app->get(Schedule::class)->job(new ProcessQueue(
+            $this->app->get(Queue::class)
+        ))->everyMinute();
 
         $this->commands([
             MakeJob::class,
