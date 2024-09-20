@@ -2,13 +2,13 @@
 
 namespace Navigator\Routing;
 
-use Atomic\Http\Response;
 use Closure;
 use Navigator\Collections\Arr;
 use Navigator\Http\Concerns\Method;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
+use Navigator\Http\Response;
 use Navigator\Routing\Concerns\HasActionName;
 use Navigator\Str\Str;
 use Navigator\Validation\Exceptions\ValidationException;

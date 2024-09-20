@@ -5,6 +5,8 @@ namespace {{ namespace }};
 use Navigator\Http\Request;
 use Navigator\Routing\ControllerInterface;
 
+use function Navigator\response;
+
 class {{ class }} implements ControllerInterface
 {
     public function index(Request $request): mixed
