@@ -5,6 +5,7 @@ namespace Navigator\Database\Query;
 use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Term;
 use Navigator\Database\Query\Concerns\HasAttributes;
@@ -84,6 +85,12 @@ class TermBuilder implements Arrayable, BuilderInterface, JsonSerializable
         return $this->limit(1)->get()->first();
     }
 
+    /** @return ?T */
+    public function firstOrFail(): ?Term
+    {
+        return $this->first() ?? throw new ModelNotFoundException($this->model);
+    }
+
     public function count(): int
     {
         return $this->where('fields', 'count')->runQuery()->get_terms();
@@ -92,15 +99,6 @@ class TermBuilder implements Arrayable, BuilderInterface, JsonSerializable
     public function toSql(): ?string
     {
         return $this->runQuery()->request;
-    }
-
-    public function delete(): bool
-    {
-        foreach ($this->get() as $term) {
-            $term->delete();
-        }
-
-        return true;
     }
 
     public function runQuery(): WP_Term_Query
@@ -119,10 +117,36 @@ class TermBuilder implements Arrayable, BuilderInterface, JsonSerializable
     }
 
     /** @return ?T */
-    public function create(array $attributes = []): ?ModelInterface
+    public function create(array $attributes): ?ModelInterface
     {
         return $this->model::create(
             $this->attributes->merge($attributes)->toArray()
         );
+    }
+
+    public function update(array $attributes): int
+    {
+        $affectedRows = 0;
+
+        foreach ($this->get() as $term) {
+            if ($term->update($attributes)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
+    }
+
+    public function delete(): int
+    {
+        $affectedRows = 0;
+
+        foreach ($this->get() as $term) {
+            if ($term->delete()) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 }

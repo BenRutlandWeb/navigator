@@ -3,6 +3,7 @@
 namespace Navigator\Database\Models;
 
 use Navigator\Collections\Collection;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
@@ -51,6 +52,11 @@ class Term implements ModelInterface
         return null;
     }
 
+    public static function findOrFail(int $id): ?static
+    {
+        return static::find($id) ?? throw new ModelNotFoundException(static::class);
+    }
+
     /** @return Collection<int, static> */
     public static function all(): Collection
     {
@@ -63,7 +69,7 @@ class Term implements ModelInterface
     }
 
     /** @return ?T */
-    public static function create(array $attributes = []): ?static
+    public static function create(array $attributes): ?static
     {
         $taxonomy = Relation::getObjectType(static::class);
 
@@ -84,13 +90,9 @@ class Term implements ModelInterface
         return null;
     }
 
-    public function update(array $attributes = []): bool
+    public function update(array $attributes): bool
     {
-        foreach ($attributes as $key => $value) {
-            $this->object->$key = $value;
-        }
-
-        return $this->save();
+        return $this->fill($attributes)->save();
     }
 
     public function save(): bool
@@ -102,9 +104,24 @@ class Term implements ModelInterface
 
     public function delete(): bool
     {
-        $return = wp_delete_term($this->id(), $this->taxonomy);
+        return static::destroy($this->id()) ? true : false;
+    }
 
-        return is_wp_error($return) ? false : true;
+    /** @param int|array<int, int> $ids */
+    public static function destroy(int|array $ids): int
+    {
+        $taxonomy = Relation::getObjectType(static::class);
+
+        $affectedRows = 0;
+
+        foreach ((array) $ids as $id) {
+            $deleted = wp_delete_term($id, $taxonomy);
+            if ($deleted && !is_wp_error($deleted)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 
     public function associate(ModelInterface $model): void

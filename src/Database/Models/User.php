@@ -7,6 +7,7 @@ use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Contracts\Authenticatable;
 use Navigator\Contracts\MailableInterface;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
@@ -51,6 +52,11 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         }
 
         return null;
+    }
+
+    public static function findOrFail(int $id): ?static
+    {
+        return static::find($id) ?? throw new ModelNotFoundException(static::class);
     }
 
     /** @return Collection<int, static> */
@@ -168,7 +174,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         $this->object->remove_cap($capability);
     }
 
-    public static function create(array $attributes = []): static
+    public static function create(array $attributes): static
     {
         unset($attributes['ID']);
 
@@ -181,15 +187,11 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         return null;
     }
 
-    public function update(array $attributes = []): bool
+    public function update(array $attributes): bool
     {
         $attributes['ID'] = $this->id();
 
-        foreach ($attributes as $key => $value) {
-            $this->object->$key = $value;
-        }
-
-        return $this->save();
+        return $this->fill($attributes)->save();
     }
 
     public function save(): bool
@@ -201,8 +203,22 @@ class User implements Authenticatable, MailableInterface, ModelInterface
 
     public function delete(): bool
     {
+        return static::destroy($this->id()) ? true : false;
+    }
+
+    /** @param int|array<int, int> $ids */
+    public static function destroy(int|array $ids): int
+    {
         require_once(ABSPATH . 'wp-admin/includes/user.php');
 
-        return wp_delete_user($this->id());
+        $affectedRows = 0;
+
+        foreach ((array) $ids as $id) {
+            if (wp_delete_user($id)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 }

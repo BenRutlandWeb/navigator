@@ -13,7 +13,6 @@ use Navigator\Http\Concerns\HasCookies;
 use Navigator\Http\Concerns\HasHeaders;
 use Navigator\Http\Concerns\HasServer;
 use Navigator\Http\Concerns\Method;
-use Navigator\Http\Exceptions\HttpException;
 use Navigator\Str\Str;
 use Navigator\Validation\ValidationFactory;
 use WP_REST_Request;
@@ -265,7 +264,7 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     {
         if ($key = Relation::getObjectType($model)) {
             if ($value = $this->input($key)) {
-                return $model::find($value) ?? throw new HttpException(404, "No query results for model [{$model}].");
+                return $model::findOrFail($value);
             }
         }
 

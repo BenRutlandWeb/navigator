@@ -65,7 +65,7 @@ class RestRoute implements RouteInterface
         return Str::of($this->uri())
             ->trim('/')
             ->after('/')
-            ->replaceMatches('@\/\{([\w]+?)(\?)?\}@', '\/?(?P<$1>[\w-]+)$2');
+            ->replaceMatches('@\/\{([\w]+?)(\?)?\}@', '\/?(?P<$1>[\w\.\_\~\:\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=\%\-]+)$2');
     }
 
     public function callback(Request $request): Closure

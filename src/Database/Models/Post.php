@@ -5,6 +5,7 @@ namespace Navigator\Database\Models;
 use Carbon\Carbon;
 use Closure;
 use Navigator\Collections\Collection;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasPostStatus;
@@ -56,6 +57,11 @@ class Post implements ModelInterface
         return null;
     }
 
+    public static function findOrFail(int $id): ?static
+    {
+        return static::find($id) ?? throw new ModelNotFoundException(static::class);
+    }
+
     /** @return Collection<int, static> */
     public static function all(): Collection
     {
@@ -77,7 +83,7 @@ class Post implements ModelInterface
         return Carbon::create($this->post_modified);
     }
 
-    public static function create(array $attributes = []): ?static
+    public static function create(array $attributes): ?static
     {
         $attributes['post_type'] = Relation::getObjectType(static::class);
 
@@ -92,15 +98,11 @@ class Post implements ModelInterface
         return null;
     }
 
-    public function update(array $attributes = []): bool
+    public function update(array $attributes): bool
     {
         $attributes['ID'] = $this->id();
 
-        foreach ($attributes as $key => $value) {
-            $this->object->$key = $value;
-        }
-
-        return $this->save();
+        return $this->fill($attributes)->save();
     }
 
     public function save(): bool
@@ -110,7 +112,21 @@ class Post implements ModelInterface
 
     public function delete(): bool
     {
-        return wp_delete_post($this->id(), true) ? true : false;
+        return static::destroy($this->id()) ? true : false;
+    }
+
+    /** @param int|array<int, int> $ids */
+    public static function destroy(int|array $ids): int
+    {
+        $affectedRows = 0;
+
+        foreach ((array) $ids as $id) {
+            if (wp_delete_post($id, true)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 
     public function associate(ModelInterface $model): void

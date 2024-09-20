@@ -52,4 +52,13 @@ trait InteractsWithAttributes
     {
         return $this->toArray();
     }
+
+    public function fill(array $attributes): static
+    {
+        foreach ($attributes as $key => $value) {
+            $this->object->$key = $value;
+        }
+
+        return $this;
+    }
 }

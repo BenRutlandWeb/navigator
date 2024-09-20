@@ -5,6 +5,7 @@ namespace Navigator\Database\Query;
 use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\User;
 use Navigator\Database\Query\Concerns\HasAttributes;
@@ -40,7 +41,11 @@ class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
     public function search(string $query): static
     {
         return $this->where('search', $query)->whereIn('search_columns', [
-            'ID', 'user_login', 'user_nicename', 'user_email', 'user_url',
+            'ID',
+            'user_login',
+            'user_nicename',
+            'user_email',
+            'user_url',
         ]);
     }
 
@@ -102,6 +107,12 @@ class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
         return $this->limit(1)->get()->first();
     }
 
+    /** @return ?T */
+    public function firstOrFail(): ?User
+    {
+        return $this->first() ?? throw new ModelNotFoundException($this->model);
+    }
+
     public function count(): int
     {
         return $this->where('count_total', true)->runQuery()->get_total();
@@ -110,15 +121,6 @@ class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
     public function toSql(): ?string
     {
         return $this->runQuery()->request;
-    }
-
-    public function delete(): bool
-    {
-        foreach ($this->get() as $user) {
-            $user->delete();
-        }
-
-        return true;
     }
 
     public function runQuery(): WP_User_Query
@@ -137,10 +139,36 @@ class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
     }
 
     /** @return ?T */
-    public function create(array $attributes = []): ?ModelInterface
+    public function create(array $attributes): ?ModelInterface
     {
         return $this->model::create(
             $this->attributes->merge($attributes)->toArray()
         );
+    }
+
+    public function update(array $attributes): int
+    {
+        $affectedRows = 0;
+
+        foreach ($this->get() as $user) {
+            if ($user->update($attributes)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
+    }
+
+    public function delete(): int
+    {
+        $affectedRows = 0;
+
+        foreach ($this->get() as $user) {
+            if ($user->delete()) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 }

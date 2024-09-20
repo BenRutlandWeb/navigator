@@ -4,6 +4,7 @@ namespace Navigator\Database\Models;
 
 use Carbon\Carbon;
 use Navigator\Collections\Collection;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
@@ -46,6 +47,11 @@ class Comment implements ModelInterface
         return null;
     }
 
+    public static function findOrFail(int $id): ?static
+    {
+        return static::find($id) ?? throw new ModelNotFoundException(static::class);
+    }
+
     /** @return Collection<int, static> */
     public static function all(): Collection
     {
@@ -62,7 +68,7 @@ class Comment implements ModelInterface
         return Carbon::create($this->comment_date);
     }
 
-    public static function create(array $attributes = []): static
+    public static function create(array $attributes): static
     {
         unset($attributes['comment_ID']);
 
@@ -73,15 +79,11 @@ class Comment implements ModelInterface
         return null;
     }
 
-    public function update(array $attributes = []): bool
+    public function update(array $attributes): bool
     {
         $attributes['comment_ID'] = $this->id();
 
-        foreach ($attributes as $key => $value) {
-            $this->object->$key = $value;
-        }
-
-        return $this->save();
+        return $this->fill($attributes)->save();
     }
 
     public function save(): bool
@@ -91,7 +93,21 @@ class Comment implements ModelInterface
 
     public function delete(): bool
     {
-        return wp_delete_comment($this->id(), true);
+        return static::destroy($this->id()) ? true : false;
+    }
+
+    /** @param int|array<int, int> $ids */
+    public static function destroy(int|array $ids): int
+    {
+        $affectedRows = 0;
+
+        foreach ((array) $ids as $id) {
+            if (wp_delete_comment($id, true)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 
     public function associate(ModelInterface $model): void

@@ -5,6 +5,7 @@ namespace Navigator\Database\Query;
 use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
+use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Post;
 use Navigator\Database\Query\Concerns\HasAttributes;
@@ -113,7 +114,7 @@ class PostBuilder implements Arrayable, BuilderInterface, JsonSerializable
 
     public function postFormat(string|array $format): static
     {
-        return $this->whereTax(fn (TaxQuery $q) => $q->where('post_format', 'IN', $format));
+        return $this->whereTax(fn(TaxQuery $q) => $q->where('post_format', 'IN', $format));
     }
 
     /** @return Collection<int ,T> */
@@ -133,6 +134,12 @@ class PostBuilder implements Arrayable, BuilderInterface, JsonSerializable
         return $this->limit(1)->get()->first();
     }
 
+    /** @return ?T */
+    public function firstOrFail(): ?Post
+    {
+        return $this->first() ?? throw new ModelNotFoundException($this->model);
+    }
+
     public function count(): int
     {
         return $this->limit(-1)->runQuery()->post_count;
@@ -141,15 +148,6 @@ class PostBuilder implements Arrayable, BuilderInterface, JsonSerializable
     public function toSql(): ?string
     {
         return $this->runQuery()->request;
-    }
-
-    public function delete(): bool
-    {
-        foreach ($this->get() as $post) {
-            $post->delete();
-        }
-
-        return true;
     }
 
     public function runQuery(): WP_Query
@@ -168,10 +166,36 @@ class PostBuilder implements Arrayable, BuilderInterface, JsonSerializable
     }
 
     /** @return ?T */
-    public function create(array $attributes = []): ?ModelInterface
+    public function create(array $attributes): ?ModelInterface
     {
         return $this->model::create(
             $this->attributes->merge($attributes)->toArray()
         );
+    }
+
+    public function update(array $attributes): int
+    {
+        $affectedRows = 0;
+
+        foreach ($this->get() as $post) {
+            if ($post->update($attributes)) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
+    }
+
+    public function delete(): int
+    {
+        $affectedRows = 0;
+
+        foreach ($this->get() as $post) {
+            if ($post->delete()) {
+                $affectedRows++;
+            }
+        }
+
+        return $affectedRows;
     }
 }

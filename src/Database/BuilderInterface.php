@@ -50,7 +50,9 @@ interface BuilderInterface
     public function oldest(): static;
 
     /** @return ?T */
-    public function create(array $attributes = []): ?ModelInterface;
+    public function create(array $attributes): ?ModelInterface;
 
-    public function delete(): bool;
+    public function update(array $attributes): int;
+
+    public function delete(): int;
 }

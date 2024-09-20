@@ -20,11 +20,16 @@ interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
 
     public function id(): int;
 
-    public static function create(array $attributes = []): ?static;
+    public static function create(array $attributes): ?static;
 
-    public function update(array $attributes = []): bool;
+    public function update(array $attributes): bool;
+
+    public function fill(array $attributes): static;
 
     public function save(): bool;
 
     public function delete(): bool;
+
+    /** @param int|array<int, int> $ids */
+    public static function destroy(int|array $ids): int;
 }
