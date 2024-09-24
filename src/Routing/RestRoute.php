@@ -13,6 +13,7 @@ use Navigator\Routing\Concerns\HasActionName;
 use Navigator\Str\Str;
 use Navigator\Validation\Exceptions\ValidationException;
 use Throwable;
+use Traversable;
 use WP_REST_Request;
 
 class RestRoute implements RouteInterface
@@ -74,7 +75,9 @@ class RestRoute implements RouteInterface
             $request->merge($wp->get_url_params());
 
             try {
-                return call_user_func($this->callback, $request);
+                $return = call_user_func($this->callback, $request);
+
+                return is_iterable($return) ? iterator_to_array($return) : $return;
             } catch (ValidationException $e) {
                 return $e->getResponse();
             } catch (Throwable $e) {
