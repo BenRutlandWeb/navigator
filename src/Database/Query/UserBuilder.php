@@ -18,6 +18,7 @@ use WP_User_Query;
 class UserBuilder implements BuilderInterface
 {
     use HasAttributes;
+    /** @use PaginatesQueries<T> */
     use PaginatesQueries;
     use QueriesMeta;
 

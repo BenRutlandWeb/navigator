@@ -11,6 +11,7 @@ use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
 use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\CommentBuilder;
+use Navigator\Pagination\Paginator;
 use WP_Comment;
 
 class Comment implements ModelInterface
@@ -59,12 +60,19 @@ class Comment implements ModelInterface
         return static::query()->get();
     }
 
-    /** @param (callable(T, int): mixed) $callback */
+    /** @param (callable(Collection<int, static>, int): mixed) $callback */
     public static function chunk(int $count, callable $callback): bool
     {
         return static::query()->chunk($count, $callback);
     }
 
+    /** @return Paginator<static> */
+    public static function paginate(int $perPage = 15, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator
+    {
+        return static::query()->paginate($perPage, $pageName, $page, $total);
+    }
+
+    /** @return Generator<static> */
     public static function lazy(int $chunk = 1000): Generator
     {
         return static::query()->lazy($chunk);

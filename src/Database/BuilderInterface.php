@@ -30,9 +30,10 @@ interface BuilderInterface extends Arrayable, JsonSerializable
     /** @return Paginator<T> */
     public function paginate(int $perPage = 15, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator;
 
-    /** @param (callable(T, int): mixed) $callback */
+    /** @param (callable(Collection<int, T>, int): mixed) $callback */
     public function chunk(int $count, callable $callback): bool;
 
+    /** @return Generator<T> */
     public function lazy(int $chunk = 1000): Generator;
 
     public function where(string $key, mixed $value): static;

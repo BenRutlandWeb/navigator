@@ -7,6 +7,7 @@ use Generator;
 use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Foundation\Concerns\Arrayable;
+use Navigator\Pagination\Paginator;
 
 /** @template T of BuilderInterface */
 interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
@@ -19,10 +20,14 @@ interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
     /** @return Collection<int, static> */
     public static function all(): Collection;
 
-    /** @param (callable(T, int): mixed) $callback */
+    /** @param (callable(Collection<int, static>, int): mixed) $callback */
     public static function chunk(int $count, callable $callback): bool;
 
+    /** @return Generator<static> */
     public static function lazy(int $chunk = 1000): Generator;
+
+    /** @return Paginator<static> */
+    public static function paginate(int $perPage = 15, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator;
 
     public function id(): int;
 

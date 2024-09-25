@@ -3,8 +3,11 @@
 namespace Navigator\Database\Query\Concerns;
 
 use Generator;
+use Navigator\Collections\Collection;
+use Navigator\Database\ModelInterface;
 use Navigator\Pagination\Paginator;
 
+/** @template T instanceof ModelInterface */
 trait PaginatesQueries
 {
     public function forPage(int $page, int $perPage = 15): static
@@ -22,7 +25,7 @@ trait PaginatesQueries
         return new Paginator($results, $total ?? $query->count(), $perPage, $page, $pageName);
     }
 
-    /** @param (callable(T, int): mixed) $callback */
+    /** @param (callable(Collection<int, T>, int): mixed) $callback */
     public function chunk(int $count, callable $callback): bool
     {
         $page = 1;
@@ -48,6 +51,7 @@ trait PaginatesQueries
         return true;
     }
 
+    /** @return Generator<T> */
     public function lazy(int $chunk = 1000): Generator
     {
         $page = 1;
