@@ -72,6 +72,10 @@ class AjaxRoute implements RouteInterface
             );
         }
 
+        if (is_iterable($response)) {
+            $response = iterator_to_array($response);
+        }
+
         if (
             $response instanceof Arrayable ||
             $response instanceof ArrayObject ||

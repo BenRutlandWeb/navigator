@@ -2,12 +2,15 @@
 
 namespace Navigator\Database;
 
+use Generator;
+use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\Query\Concerns\Order;
+use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Pagination\Paginator;
 
 /** @template T of ModelInterface */
-interface BuilderInterface
+interface BuilderInterface extends Arrayable, JsonSerializable
 {
     /**
      * @param class-string<T> $model
@@ -25,7 +28,11 @@ interface BuilderInterface
     public function toSql(): ?string;
 
     /** @return Paginator<T> */
-    public function paginate(int $perPage = 5, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator;
+    public function paginate(int $perPage = 15, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator;
+
+    public function chunk(int $count, callable $callback): bool;
+
+    public function lazy(int $chunk = 1000): Generator;
 
     public function where(string $key, mixed $value): static;
 
@@ -42,6 +49,8 @@ interface BuilderInterface
     public function limit(int $limit): static;
 
     public function offset(int $offset): static;
+
+    public function forPage(int $page, int $perPage = 15): static;
 
     public function orderBy(string $column, Order $direction = Order::ASC): static;
 

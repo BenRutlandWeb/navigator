@@ -2,7 +2,6 @@
 
 namespace Navigator\Database\Query;
 
-use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Database\BuilderInterface;
 use Navigator\Database\Exceptions\ModelNotFoundException;
@@ -10,16 +9,16 @@ use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\User;
 use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
+use Navigator\Database\Query\Concerns\PaginatesQueries;
 use Navigator\Database\Query\Concerns\QueriesMeta;
-use Navigator\Foundation\Concerns\Arrayable;
-use Navigator\Pagination\Paginator;
 use WP_User;
 use WP_User_Query;
 
 /** @template T of ModelInterface */
-class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
+class UserBuilder implements BuilderInterface
 {
     use HasAttributes;
+    use PaginatesQueries;
     use QueriesMeta;
 
     /** @param class-string<T> $model */
@@ -126,16 +125,6 @@ class UserBuilder implements Arrayable, BuilderInterface, JsonSerializable
     public function runQuery(): WP_User_Query
     {
         return new WP_User_Query($this->attributes->forQuery());
-    }
-
-    /** @return Paginator<T> */
-    public function paginate(int $perPage = 5, string $pageName = 'page', ?int $page = null, ?int $total = null): Paginator
-    {
-        $page = $page ?: Paginator::resolveCurrentPage($pageName);
-        $query = clone $this;
-        $results = $this->limit($perPage)->offset(($page - 1) * $perPage)->get();
-
-        return new Paginator($results, $total ?? $query->count(), $perPage, $page, $pageName);
     }
 
     /** @return ?T */
