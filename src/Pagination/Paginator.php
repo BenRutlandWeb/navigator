@@ -8,13 +8,14 @@ use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 use Navigator\Collections\Arr;
+use Navigator\Foundation\Concerns\Arrayable;
 use Navigator\Foundation\Concerns\Htmlable;
 use Navigator\View\View;
 use Navigator\View\ViewFactory;
 use Traversable;
 
 /** @template T */
-class Paginator implements ArrayAccess, Countable, Htmlable, IteratorAggregate, JsonSerializable
+class Paginator implements Arrayable, ArrayAccess, Countable, Htmlable, IteratorAggregate, JsonSerializable
 {
     protected string $path = '/';
 
@@ -153,6 +154,11 @@ class Paginator implements ArrayAccess, Countable, Htmlable, IteratorAggregate, 
         ]));
     }
 
+    public function toArray(): array
+    {
+        return $this->items();
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -245,9 +251,9 @@ class Paginator implements ArrayAccess, Countable, Htmlable, IteratorAggregate, 
     /** @return ArrayIterator<int, T> */
     public function getIterator(): Traversable
     {
-        return $this->items instanceof IteratorAggregate ?
-            $this->items->getIterator() :
-            new ArrayIterator($this->items);
+        return $this->items instanceof IteratorAggregate
+            ? $this->items->getIterator()
+            : new ArrayIterator($this->items);
     }
 
     public function toHtml(): string

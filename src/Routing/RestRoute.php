@@ -3,12 +3,15 @@
 namespace Navigator\Routing;
 
 use Closure;
+use Generator;
+use Iterator;
 use Navigator\Collections\Arr;
 use Navigator\Http\Concerns\Method;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
 use Navigator\Http\Response;
+use Navigator\Pagination\Paginator;
 use Navigator\Routing\Concerns\HasActionName;
 use Navigator\Str\Str;
 use Navigator\Validation\Exceptions\ValidationException;
@@ -77,7 +80,7 @@ class RestRoute implements RouteInterface
             try {
                 $return = call_user_func($this->callback, $request);
 
-                return is_iterable($return) ? iterator_to_array($return) : $return;
+                return $return instanceof Generator ? iterator_to_array($return) : $return;
             } catch (ValidationException $e) {
                 return $e->getResponse();
             } catch (Throwable $e) {

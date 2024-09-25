@@ -3,6 +3,7 @@
 namespace Navigator\Routing;
 
 use ArrayObject;
+use Generator;
 use JsonSerializable;
 use Navigator\Collections\Arr;
 use Navigator\Foundation\Concerns\Arrayable;
@@ -72,7 +73,7 @@ class AjaxRoute implements RouteInterface
             );
         }
 
-        if (is_iterable($response)) {
+        if ($response instanceof Generator) {
             $response = iterator_to_array($response);
         }
 
