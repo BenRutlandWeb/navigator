@@ -22,6 +22,7 @@ trait PaginatesQueries
         return new Paginator($results, $total ?? $query->count(), $perPage, $page, $pageName);
     }
 
+    /** @param (callable(T, int): mixed) $callback */
     public function chunk(int $count, callable $callback): bool
     {
         $page = 1;

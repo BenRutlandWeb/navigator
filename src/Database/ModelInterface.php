@@ -3,6 +3,7 @@
 namespace Navigator\Database;
 
 use ArrayAccess;
+use Generator;
 use JsonSerializable;
 use Navigator\Collections\Collection;
 use Navigator\Foundation\Concerns\Arrayable;
@@ -17,6 +18,11 @@ interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
 
     /** @return Collection<int, static> */
     public static function all(): Collection;
+
+    /** @param (callable(T, int): mixed) $callback */
+    public static function chunk(int $count, callable $callback): bool;
+
+    public static function lazy(int $chunk = 1000): Generator;
 
     public function id(): int;
 

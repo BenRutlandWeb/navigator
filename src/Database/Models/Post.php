@@ -4,6 +4,7 @@ namespace Navigator\Database\Models;
 
 use Carbon\Carbon;
 use Closure;
+use Generator;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
@@ -66,6 +67,17 @@ class Post implements ModelInterface
     public static function all(): Collection
     {
         return static::query()->get();
+    }
+
+    /** @param (callable(T, int): mixed) $callback */
+    public static function chunk(int $count, callable $callback): bool
+    {
+        return static::query()->chunk($count, $callback);
+    }
+
+    public static function lazy(int $chunk = 1000): Generator
+    {
+        return static::query()->lazy($chunk);
     }
 
     public function id(): int

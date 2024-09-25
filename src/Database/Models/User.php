@@ -3,6 +3,7 @@
 namespace Navigator\Database\Models;
 
 use Carbon\Carbon;
+use Generator;
 use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Contracts\Authenticatable;
@@ -63,6 +64,17 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     public static function all(): Collection
     {
         return static::query()->get();
+    }
+
+    /** @param (callable(T, int): mixed) $callback */
+    public static function chunk(int $count, callable $callback): bool
+    {
+        return static::query()->chunk($count, $callback);
+    }
+
+    public static function lazy(int $chunk = 1000): Generator
+    {
+        return static::query()->lazy($chunk);
     }
 
     public function id(): int
