@@ -3,6 +3,7 @@
 namespace Navigator\Notifications;
 
 use Navigator\Database\Models\Concerns\HasContent;
+use Navigator\Database\Models\Concerns\HasSerializedContent;
 use Navigator\Database\Models\Concerns\HasTitle;
 use Navigator\Database\Models\Concerns\IsPrivate;
 use Navigator\Database\Models\Post as Model;
@@ -10,7 +11,7 @@ use Navigator\Database\Query\PostBuilder;
 
 class DatabaseNotification extends Model
 {
-    use HasContent;
+    use HasSerializedContent;
     use HasTitle;
     use IsPrivate;
 
