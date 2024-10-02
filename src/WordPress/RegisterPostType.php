@@ -34,7 +34,7 @@ class RegisterPostType
             'hierarchical' => $hierarchical = $this->uses(HasChildren::class),
             'has_archive'  => !$hierarchical,
             'supports'     => $this->supports($model) ?: false,
-            'show_in_rest' => true,
+            'show_in_rest' => !$this->uses(IsPrivate::class),
         ]);
 
         return $this;
