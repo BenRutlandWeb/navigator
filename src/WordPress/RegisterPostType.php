@@ -27,14 +27,17 @@ class RegisterPostType
     {
         $this->postType = Relation::getObjectType($model);
 
+        $hierarchical = $this->uses(HasChildren::class);
+        $private = $this->uses(IsPrivate::class);
+
         register_post_type($this->postType, [
             'labels'       => $this->labels(),
             'menu_icon'    => $model::dashicon()->withPrefix(),
-            'public'       => !$this->uses(IsPrivate::class),
-            'hierarchical' => $hierarchical = $this->uses(HasChildren::class),
+            'public'       => !$private,
+            'hierarchical' => $hierarchical,
             'has_archive'  => !$hierarchical,
             'supports'     => $this->supports($model) ?: false,
-            'show_in_rest' => !$this->uses(IsPrivate::class),
+            'show_in_rest' => !$private,
         ]);
 
         return $this;
