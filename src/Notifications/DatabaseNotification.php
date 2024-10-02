@@ -24,7 +24,7 @@ class DatabaseNotification extends Model
         $this->setPostStatus('read');
     }
 
-    public function markAsUnead(): void
+    public function markAsUnread(): void
     {
         $this->setPostStatus('unread');
     }
