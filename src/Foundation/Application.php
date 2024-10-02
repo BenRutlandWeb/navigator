@@ -20,6 +20,7 @@ use Navigator\Http\HttpServiceProvider;
 use Navigator\Http\Request;
 use Navigator\Http\ResponseFactory;
 use Navigator\Mail\MailServiceProvider;
+use Navigator\Notifications\NotificationsServiceProvider;
 use Navigator\Pagination\PaginationServiceProvider;
 use Navigator\Queue\QueueServiceProvider;
 use Navigator\Routing\Router;
@@ -76,6 +77,7 @@ class Application extends Container
         $this->register(HashServiceProvider::class);
         $this->register(HttpServiceProvider::class);
         $this->register(MailServiceProvider::class);
+        $this->register(NotificationsServiceProvider::class);
         $this->register(PaginationServiceProvider::class);
         $this->register(QueueServiceProvider::class);
         $this->register(ValidationServiceProvider::class);

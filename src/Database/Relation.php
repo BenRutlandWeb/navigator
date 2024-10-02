@@ -16,7 +16,15 @@ class Relation
      */
     public static function enforceMorphMap(array $map = []): void
     {
-        static::$morphMap = $map;
+        foreach ($map as $alias => $model) {
+            static::addMorphedModel($alias, $model);
+        }
+    }
+
+    /** @param class-string<ModelInterface> $model */
+    public static function addMorphedModel(string $alias, string $model): void
+    {
+        static::$morphMap[$alias] = $model;
     }
 
     /** @return class-string<ModelInterface>|null */
