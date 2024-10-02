@@ -23,6 +23,9 @@ interface BuilderInterface extends Arrayable, JsonSerializable
     /** @return ?T */
     public function first(): ?ModelInterface;
 
+    /** @return ?T */
+    public function firstOrFail(): ?ModelInterface;
+
     public function count(): int;
 
     public function toSql(): ?string;
