@@ -17,6 +17,8 @@ interface ModelInterface extends Arrayable, ArrayAccess, JsonSerializable
 
     public static function find(int $id): ?static;
 
+    public static function findOrFail(int $id): ?static;
+
     /** @return Collection<int, static> */
     public static function all(): Collection;
 
