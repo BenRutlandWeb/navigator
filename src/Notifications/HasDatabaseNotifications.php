@@ -12,11 +12,13 @@ trait HasDatabaseNotifications
         return $this->hasMany(DatabaseNotification::class);
     }
 
+    /** @return PostBuilder<DatabaseNotification> */
     public function readNotifications(): PostBuilder
     {
         return $this->notifications()->status('read');
     }
 
+    /** @return PostBuilder<DatabaseNotification> */
     public function unreadNotifications(): PostBuilder
     {
         return $this->notifications()->status('unread');
