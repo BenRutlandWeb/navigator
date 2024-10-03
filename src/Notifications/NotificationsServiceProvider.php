@@ -25,10 +25,13 @@ class NotificationsServiceProvider extends ServiceProvider
             return $manager;
         });
 
-        $this->app->singleton(
-            NotificationSender::class,
-            fn(Application $app) => new NotificationSender($app->get(ChannelManager::class))
-        );
+        $this->app->singleton(NotificationSender::class, function (Application $app) {
+            $sender = new NotificationSender($app->get(ChannelManager::class));
+
+            Notification::setNotificationSender($sender);
+
+            return $sender;
+        });
     }
 
     public function boot(): void

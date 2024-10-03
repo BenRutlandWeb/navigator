@@ -14,7 +14,7 @@ use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
 use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\UserBuilder;
-use Navigator\Mail\Concerns\Notifiable;
+use Navigator\Notifications\Concerns\Notifiable;
 use Navigator\Pagination\Paginator;
 use WP_User;
 
