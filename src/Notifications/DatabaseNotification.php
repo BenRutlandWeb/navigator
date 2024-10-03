@@ -7,6 +7,7 @@ use Navigator\Database\Models\Concerns\HasTitle;
 use Navigator\Database\Models\Concerns\IsPrivate;
 use Navigator\Database\Models\Post as Model;
 use Navigator\Database\Query\PostBuilder;
+use Navigator\Notifications\Concerns\NotificationStatus;
 
 class DatabaseNotification extends Model
 {
@@ -16,26 +17,26 @@ class DatabaseNotification extends Model
 
     public static function withGlobalScopes(PostBuilder $query): void
     {
-        $query->status(['read', 'unread']);
+        $query->status([NotificationStatus::READ->value, NotificationStatus::UNREAD->value]);
     }
 
     public function markAsRead(): void
     {
-        $this->setPostStatus('read');
+        $this->setPostStatus(NotificationStatus::READ->value);
     }
 
     public function markAsUnread(): void
     {
-        $this->setPostStatus('unread');
+        $this->setPostStatus(NotificationStatus::UNREAD->value);
     }
 
     public function read(): bool
     {
-        return $this->hasPostStatus('read');
+        return $this->hasPostStatus(NotificationStatus::READ->value);
     }
 
     public function unread(): bool
     {
-        return $this->hasPostStatus('unread');
+        return $this->hasPostStatus(NotificationStatus::UNREAD->value);
     }
 }

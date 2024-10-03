@@ -7,7 +7,6 @@ use Navigator\Collections\Collection;
 use Navigator\Contracts\MailableInterface;
 use Navigator\Contracts\ShouldQueue;
 use Navigator\Foundation\Concerns\Htmlable;
-use Navigator\Queue\ClosureJob;
 
 class Mailer
 {
@@ -140,7 +139,7 @@ class Mailer
         }
 
         $headers = Collection::make($mail->headers())
-            ->map(fn ($value, $key) => $this->formatHeader($key, $value))
+            ->map(fn($value, $key) => $this->formatHeader($key, $value))
             ->merge($this->headers)
             ->values()
             ->all();

@@ -9,7 +9,7 @@ class MailServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(Mailer::class, fn () => new Mailer);
+        $this->app->bind(Mailer::class, fn() => new Mailer());
     }
 
     public function boot(): void

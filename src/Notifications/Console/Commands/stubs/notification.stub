@@ -1,0 +1,21 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Contracts\ShouldQueue;
+use Navigator\Mail\Mailable;
+use Navigator\Notifications\Channels\MailChannel;
+use Navigator\Notifications\NotificationInterface;
+
+class {{ class }} implements NotificationInterface
+{
+    public function via(mixed $notifiable): array
+    {
+        return [MailChannel::class];
+    }
+
+    public function toMail(mixed $notifiable): Mailable
+    {
+        //
+    }
+}
