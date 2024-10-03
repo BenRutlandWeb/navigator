@@ -26,11 +26,7 @@ class NotificationsServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(NotificationSender::class, function (Application $app) {
-            $sender = new NotificationSender($app->get(ChannelManager::class));
-
-            Notification::setNotificationSender($sender);
-
-            return $sender;
+            return new NotificationSender($app->get(ChannelManager::class));
         });
     }
 
@@ -39,6 +35,10 @@ class NotificationsServiceProvider extends ServiceProvider
         $this->commands([
             MakeNotification::class,
         ]);
+
+        Notification::setNotificationSender(
+            $this->app->get(NotificationSender::class)
+        );
 
         $this->registerDatabaseNotificationPostType();
     }
