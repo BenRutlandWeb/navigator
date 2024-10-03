@@ -6,10 +6,10 @@ use Navigator\Database\Relation;
 use Navigator\Events\Dispatcher;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
-use Navigator\Mail\Console\Commands\MakeNotification;
 use Navigator\Notifications\Channels\DatabaseChannel;
 use Navigator\Notifications\Channels\MailChannel;
 use Navigator\Notifications\Concerns\NotificationStatus;
+use Navigator\Notifications\Console\Commands\MakeNotification;
 use Navigator\WordPress\WordPressFactory;
 
 class NotificationsServiceProvider extends ServiceProvider

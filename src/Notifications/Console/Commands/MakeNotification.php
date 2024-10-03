@@ -1,6 +1,6 @@
 <?php
 
-namespace Navigator\Mail\Console\Commands;
+namespace Navigator\Notifications\Console\Commands;
 
 use Navigator\Console\GeneratorCommand;
 
