@@ -8,30 +8,46 @@ use Navigator\Database\Models\Post;
 use Navigator\Database\Models\Term;
 use Navigator\Database\Relation;
 use Navigator\Str\Str;
+use Navigator\WordPress\Concerns\ValidatesModels;
 
 class RegisterTaxonomy
 {
-    protected ?string $taxonomy = null;
+    use ValidatesModels;
 
-    protected ?string $postType = null;
+    protected ?string $taxonomy = null;
 
     /**
      * @param class-string<Term> $model
-     * @param class-string<Post> $postTypeModel
      */
-    public function __construct(protected string $model, protected string $postTypeModel, protected WordPressFactory $factory)
+    public function __construct(protected string $model, protected WordPressFactory $factory)
     {
+        $this->validateModel($model, Term::class);
+
         $this->taxonomy = Relation::getObjectType($model);
 
-        $this->postType = Relation::getObjectType($postTypeModel);
-
-        register_taxonomy($this->taxonomy, $this->postType, [
+        register_taxonomy($this->taxonomy, [], [
             'labels'            => $this->labels(),
             'hierarchical'      => $this->uses(HasChildren::class),
             'public'            => !$this->uses(IsPrivate::class),
             'show_admin_column' => true,
             'show_in_rest'      => true,
         ]);
+    }
+
+    /** @param class-string<Post> $model */
+    public function withPostType(string $model): static
+    {
+        $this->validateModel($model, Post::class);
+
+        $postType = Relation::getObjectType($model);
+
+        if (!post_type_exists($postType)) {
+            $this->factory->registerPostType($model);
+        }
+
+        register_taxonomy_for_object_type($this->taxonomy, $postType);
+
+        return $this;
     }
 
     public function labels(): array

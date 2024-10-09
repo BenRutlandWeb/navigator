@@ -186,4 +186,9 @@ class Term implements ModelInterface
     {
         return $this->object->taxonomy;
     }
+
+    public static function slug(): string
+    {
+        return Relation::getObjectType(static::class);
+    }
 }

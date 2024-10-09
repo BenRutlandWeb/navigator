@@ -14,11 +14,10 @@ class WordPressFactory
     }
 
     /**
-     * @param class-string<Term> $termModel
-     * @param class-string<Post> $postTypeModel
+     * @param class-string<Term> $model
      */
-    public function registerTaxonomy(string $termModel, string $postTypeModel): RegisterTaxonomy
+    public function registerTaxonomy(string $model): RegisterTaxonomy
     {
-        return new RegisterTaxonomy($termModel, $postTypeModel, $this);
+        return new RegisterTaxonomy($model, $this);
     }
 }

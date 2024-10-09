@@ -17,14 +17,19 @@ use Navigator\Database\Models\Post;
 use Navigator\Database\Models\Term;
 use Navigator\Database\Relation;
 use Navigator\Str\Str;
+use Navigator\WordPress\Concerns\ValidatesModels;
 
 class RegisterPostType
 {
+    use ValidatesModels;
+
     protected ?string $postType = null;
 
     /** @param class-string<Post> $model */
     public function __construct(protected string $model, protected WordPressFactory $factory)
     {
+        $this->validateModel($model, Post::class);
+
         $this->postType = Relation::getObjectType($model);
 
         $hierarchical = $this->uses(HasChildren::class);
@@ -47,6 +52,8 @@ class RegisterPostType
     /** @param class-string<Term> $model */
     public function withTaxonomy(string $model): static
     {
+        $this->validateModel($model, Term::class);
+
         $taxonomy = Relation::getObjectType($model);
 
         if (!taxonomy_exists($taxonomy)) {
