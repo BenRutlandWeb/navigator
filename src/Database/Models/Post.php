@@ -209,4 +209,9 @@ class Post implements ModelInterface
     {
         return Dashicon::ADMIN_POST;
     }
+
+    public static function slug(): string
+    {
+        return Relation::getObjectType(static::class);
+    }
 }

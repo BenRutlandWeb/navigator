@@ -38,6 +38,7 @@ class RegisterPostType
             'has_archive'  => !$hierarchical,
             'supports'     => $this->supports($model) ?: false,
             'show_in_rest' => !$private,
+            'rewrite'      => ['slug' => $model::slug()],
         ]);
 
         return $this;

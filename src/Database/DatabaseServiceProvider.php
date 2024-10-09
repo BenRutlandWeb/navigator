@@ -2,6 +2,7 @@
 
 namespace Navigator\Database;
 
+use Navigator\Database\Console\Commands\FlushPermalinks;
 use Navigator\Database\Console\Commands\MakeModel;
 use Navigator\Foundation\ServiceProvider;
 
@@ -18,6 +19,7 @@ class DatabaseServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->commands([
+            FlushPermalinks::class,
             MakeModel::class,
         ]);
     }
