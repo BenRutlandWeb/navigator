@@ -63,6 +63,11 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
         return new static(Arr::combine($this->all(), $values));
     }
 
+    public function contains(mixed $key): bool
+    {
+        return Arr::has($key, $this->items);
+    }
+
     public function containsOneItem(): bool
     {
         return $this->count() === 1;
@@ -248,7 +253,7 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
      */
     public function mapInto(string $class): static
     {
-        return $this->map(fn ($item) => new $class($item));
+        return $this->map(fn($item) => new $class($item));
     }
 
     /** * @param array<TKey, TValue> $items */
@@ -362,7 +367,7 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
     public function toArray(): array
     {
         return $this->map(
-            fn ($value) => $value instanceof Arrayable ? $value->toArray() : $value
+            fn($value) => $value instanceof Arrayable ? $value->toArray() : $value
         )->all();
     }
 
