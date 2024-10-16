@@ -25,12 +25,15 @@ class RegisterTaxonomy
 
         $this->taxonomy = Relation::getObjectType($model);
 
+        $hierarchical = $this->uses(HasChildren::class);
+        $private = $this->uses(IsPrivate::class);
+
         register_taxonomy($this->taxonomy, [], [
             'labels'            => $this->labels(),
-            'hierarchical'      => $this->uses(HasChildren::class),
-            'public'            => !$this->uses(IsPrivate::class),
-            'show_admin_column' => true,
-            'show_in_rest'      => true,
+            'hierarchical'      => $hierarchical,
+            'public'            => !$private,
+            'show_admin_column' => !$private,
+            'show_in_rest'      => !$private,
         ]);
     }
 
