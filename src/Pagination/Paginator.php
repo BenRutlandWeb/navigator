@@ -148,10 +148,16 @@ class Paginator implements Arrayable, ArrayAccess, Countable, Htmlable, Iterator
 
     public function links(?string $view = null, array $data = []): View
     {
-        return static::viewFactory()->make($view ?? 'navigator/Pagination/resources/views/default', Arr::merge($data, [
+        $data = Arr::merge($data, [
             'paginator' => $this,
             'elements'  => $this->elements(),
-        ]));
+        ]);
+
+        $factory = static::viewFactory();
+
+        return $view
+            ? $factory->make($view, $data)
+            : $factory->file(__DIR__ . '/resources/views/default.php', $data);
     }
 
     public function toArray(): array
