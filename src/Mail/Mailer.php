@@ -6,6 +6,7 @@ use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Contracts\MailableInterface;
 use Navigator\Contracts\ShouldQueue;
+use Navigator\Events\Dispatcher;
 use Navigator\Foundation\Concerns\Htmlable;
 
 class Mailer
@@ -21,9 +22,9 @@ class Mailer
     /** @var array<int, string> */
     protected array $attachments = [];
 
-    public static function make(): static
+    public function __construct(protected Dispatcher $dispatcher)
     {
-        return new static;
+        //
     }
 
     /** @param MailableInterface|string $address */
