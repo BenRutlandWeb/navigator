@@ -20,7 +20,7 @@ class Markdown extends Parsedown implements Stringable, Htmlable
 
     public function toHtml(): string
     {
-        return $this->text($this->content);
+        return $this->setUrlsLinked(false)->text($this->content);
     }
 
     public function __toString(): string
