@@ -131,12 +131,18 @@ class Mailer
             $this->header('from', $this->from);
         }
 
+        $to = $this->to;
+
+        $subject = $mail->subject();
+
         $content = $mail->content();
 
         if ($content instanceof Htmlable) {
             $this->header('content-type', 'text/html');
             $content = $content->toHtml();
         }
+
+        $content = $this->dispatcher->filter('navigator_mailer_content', $content, $content);
 
         $headers = Collection::make($mail->headers())
             ->map(fn($value, $key) => $this->formatHeader($key, $value))
@@ -145,10 +151,6 @@ class Mailer
             ->all();
 
         $attachments = Arr::merge($this->attachments, $mail->attachments());
-
-        $to = $this->to;
-
-        $subject = $mail->subject();
 
         if ($mail instanceof ShouldQueue) {
             SendQueuedMail::dispatch($to, $subject, $content, $headers, $attachments);
