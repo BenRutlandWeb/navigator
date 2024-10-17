@@ -20,4 +20,9 @@ class WordPressFactory
     {
         return new RegisterTaxonomy($model, $this);
     }
+
+    public function registerShortcode(string $name, callable $callback): void
+    {
+        add_shortcode($name, $callback);
+    }
 }
