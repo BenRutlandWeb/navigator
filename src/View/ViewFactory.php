@@ -14,6 +14,11 @@ class ViewFactory
         //
     }
 
+    public function file(string $path, array $data = []): View
+    {
+        return new View($path, $data);
+    }
+
     public function make(string $path, array $data = []): View
     {
         return new View($this->normalizeName($path), $data);
