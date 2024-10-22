@@ -2,6 +2,7 @@
 
 namespace Navigator\Notifications\Channels;
 
+use Navigator\Foundation\Application;
 use Navigator\Mail\Mailable;
 use Navigator\Mail\Mailer;
 use Navigator\Notifications\ChannelInterface;
@@ -10,9 +11,16 @@ use RuntimeException;
 
 class MailChannel implements ChannelInterface
 {
+    public function __construct(protected Application $app)
+    {
+        //
+    }
+
     public function send(mixed $notifiable, NotificationInterface $notification): void
     {
-        Mailer::make()->to($notifiable)->send($this->getMail($notifiable, $notification));
+        $this->app->get(Mailer::class)
+            ->to($notifiable)
+            ->send($this->getMail($notifiable, $notification));
     }
 
     public function getMail(mixed $notifiable, NotificationInterface $notification): Mailable
