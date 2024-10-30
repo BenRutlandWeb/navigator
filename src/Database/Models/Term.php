@@ -14,6 +14,18 @@ use Navigator\Database\Relation;
 use Navigator\Pagination\Paginator;
 use WP_Term;
 
+/**
+ * @property-read int $term_id
+ * @property string $name
+ * @property string $slug
+ * @property int $term_group
+ * @property int $term_taxonomy_id
+ * @property string $taxonomy
+ * @property string $description
+ * @property int $parent
+ * @property-read int $count
+ * @property string $filter
+ */
 class Term implements ModelInterface
 {
     use HasRelationships;

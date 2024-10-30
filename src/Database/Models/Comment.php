@@ -14,6 +14,23 @@ use Navigator\Database\Query\CommentBuilder;
 use Navigator\Pagination\Paginator;
 use WP_Comment;
 
+/**
+ * @property-read int $comment_ID
+ * @property int $comment_post_ID
+ * @property string $comment_author
+ * @property string $comment_author_email
+ * @property string $comment_author_url
+ * @property string $comment_author_IP
+ * @property string $comment_date
+ * @property string $comment_date_gmt
+ * @property string $comment_content
+ * @property string $comment_karma
+ * @property string $comment_approved
+ * @property string $comment_agent
+ * @property string $comment_type
+ * @property int $comment_parent
+ * @property int $user_id
+ */
 class Comment implements ModelInterface
 {
     use HasRelationships;

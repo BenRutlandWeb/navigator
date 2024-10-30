@@ -18,6 +18,17 @@ use Navigator\Notifications\Concerns\Notifiable;
 use Navigator\Pagination\Paginator;
 use WP_User;
 
+/**
+ * @property-read int $ID
+ * @property-read string $user_login
+ * @property string $user_pass
+ * @property string $user_nicename
+ * @property string $user_email
+ * @property string $user_url
+ * @property string $user_registered
+ * @property string $user_activation_key
+ * @property string $display_name
+ */
 class User implements Authenticatable, MailableInterface, ModelInterface
 {
     use HasRelationships;
