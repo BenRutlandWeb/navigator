@@ -7,6 +7,7 @@ use Navigator\Foundation\Concerns\Htmlable;
 use Navigator\Http\Response;
 use Navigator\Mail\Mailable;
 use Navigator\Mail\Mailer;
+use Navigator\Queue\Concerns\Queueable;
 
 class {{ class }} extends Mailable
 {
