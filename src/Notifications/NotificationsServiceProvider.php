@@ -16,11 +16,11 @@ class NotificationsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(ChannelManager::class, function (Application $app) {
+        $this->app->singleton(ChannelManager::class, function () {
             $manager = new ChannelManager();
 
             $manager->addChannel(DatabaseChannel::class, new DatabaseChannel());
-            $manager->addChannel(MailChannel::class, new MailChannel($app));
+            $manager->addChannel(MailChannel::class, new MailChannel());
 
             return $manager;
         });

@@ -2,25 +2,26 @@
 
 namespace Navigator\Notifications\Channels;
 
-use Navigator\Foundation\Application;
 use Navigator\Mail\Mailable;
 use Navigator\Mail\Mailer;
 use Navigator\Notifications\ChannelInterface;
 use Navigator\Notifications\NotificationInterface;
 use RuntimeException;
 
+/**
+ * @todo
+ * remove reliance on helper method. Mailer is currently a binding instead of a
+ * singleton so it needs to act as a factory to return a new object each time.
+ * Once that is in place, the factory can be passd in the constructor.
+ */
+
+use function Navigator\app;
+
 class MailChannel implements ChannelInterface
 {
-    public function __construct(protected Application $app)
-    {
-        //
-    }
-
     public function send(mixed $notifiable, NotificationInterface $notification): void
     {
-        $this->app->get(Mailer::class)
-            ->to($notifiable)
-            ->send($this->getMail($notifiable, $notification));
+        app(Mailer::class)->to($notifiable)->send($this->getMail($notifiable, $notification));
     }
 
     public function getMail(mixed $notifiable, NotificationInterface $notification): Mailable

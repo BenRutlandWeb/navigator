@@ -6,6 +6,7 @@ use Navigator\Contracts\ShouldQueue;
 use Navigator\Mail\Mailable;
 use Navigator\Notifications\Channels\MailChannel;
 use Navigator\Notifications\NotificationInterface;
+use Navigator\Queue\Concerns\Queueable;
 
 class {{ class }} implements NotificationInterface
 {
