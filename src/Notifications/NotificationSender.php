@@ -38,7 +38,11 @@ class NotificationSender
             $channels = $notification->via($notifiable);
 
             foreach ($channels as $channel) {
-                SendQueuedNotifications::dispatch($this, $notifiables, $notification, [$channel]);
+                $dispatch = SendQueuedNotifications::dispatch($this, $notifiables, $notification, [$channel]);
+
+                if (isset($notification->delay)) {
+                    $dispatch->delay($notification->delay);
+                }
             }
         }
     }
