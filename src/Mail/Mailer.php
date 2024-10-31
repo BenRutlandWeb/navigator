@@ -154,7 +154,12 @@ class Mailer
         $attachments = Arr::merge($this->attachments, $mail->attachments());
 
         if ($mail instanceof ShouldQueue) {
-            SendQueuedMail::dispatch($to, $subject, $content, $headers, $attachments);
+            $dispatch = SendQueuedMail::dispatch($to, $subject, $content, $headers, $attachments);
+
+            if (isset($mail->delay)) {
+                $dispatch->delay($mail->delay ?? 0);
+            }
+
             return true;
         } else {
             return wp_mail($to, $subject, $content, $headers, $attachments);
