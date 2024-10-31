@@ -8,6 +8,14 @@ abstract class Job extends BaseJob
 {
     public static function dispatch(mixed ...$args): PendingDispatch
     {
-        return new PendingDispatch(new static(...$args));
+        $job = new static(...$args);
+
+        $dispatch = new PendingDispatch($job);
+
+        if (isset($notification->delay)) {
+            $dispatch->delay($notification->delay);
+        }
+
+        return $dispatch;
     }
 }
