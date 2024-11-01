@@ -2,8 +2,12 @@
 
 namespace Navigator\Http;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use InvalidArgumentException;
 use Navigator\Collections\Arr;
 use Navigator\Foundation\Application;
+use Navigator\Hashing\Hasher;
 
 class Url
 {
@@ -91,5 +95,43 @@ class Url
     public function isValidUrl(string $url): bool
     {
         return wp_http_validate_url($url) !== false;
+    }
+
+    public function signedUrl(string $url, array $parameters = [], ?CarbonInterface $expiration = null): string
+    {
+        if (array_key_exists('signature', $parameters)) {
+            throw new InvalidArgumentException('"Signature" is a reserved parameter when generating signed URLs. Please rename your parameter.');
+        }
+
+        if (array_key_exists('expires', $parameters)) {
+            throw new InvalidArgumentException('"Expires" is a reserved parameter when generating signed URLs. Please rename your parameter.');
+        }
+
+        if ($expiration) {
+            $parameters = Arr::merge($parameters, ['expires' => $expiration->getTimestamp()]);
+        }
+
+        ksort($parameters);
+
+        $signature = (new Hasher())->make($this->withQuery($url, $parameters));
+
+        return $this->withQuery($url, Arr::merge($parameters, compact('signature')));
+    }
+
+    public function temporarySignedUrl(string $url, CarbonInterface $expiration, array $parameters = []): string
+    {
+        return $this->signedUrl($url, $parameters, $expiration);
+    }
+
+    public function hasCorrectSignature(Request $request): bool
+    {
+        $url = remove_query_arg('signature', $request->fullUrl());
+
+        return (new Hasher())->check($url, $request->input('signature'));
+    }
+
+    public function signatureHasNotExpired(Request $request): bool
+    {
+        return $request->integer('expires') >= time();
     }
 }
