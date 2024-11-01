@@ -123,15 +123,24 @@ class Url
         return $this->signedUrl($url, $parameters, $expiration);
     }
 
+    public function hasValidSignature(Request $request): bool
+    {
+        return $this->hasCorrectSignature($request) && $this->signatureHasNotExpired($request);
+    }
+
     public function hasCorrectSignature(Request $request): bool
     {
         $url = remove_query_arg('signature', $request->fullUrl());
 
-        return (new Hasher())->check($url, $request->input('signature'));
+        return (new Hasher())->check($url, $request->input('signature', ''));
     }
 
     public function signatureHasNotExpired(Request $request): bool
     {
-        return $request->integer('expires') >= time();
+        if ($request->has('expires')) {
+            return $request->integer('expires') >= time();
+        }
+
+        return true;
     }
 }
