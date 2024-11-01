@@ -4,19 +4,16 @@ namespace Navigator\Routing;
 
 use Closure;
 use Generator;
-use Iterator;
 use Navigator\Collections\Arr;
 use Navigator\Http\Concerns\Method;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
 use Navigator\Http\Response;
-use Navigator\Pagination\Paginator;
 use Navigator\Routing\Concerns\HasActionName;
 use Navigator\Str\Str;
 use Navigator\Validation\Exceptions\ValidationException;
 use Throwable;
-use Traversable;
 use WP_REST_Request;
 
 class RestRoute implements RouteInterface

@@ -14,6 +14,7 @@ use Navigator\Http\JsonResponse;
 use Navigator\Http\Request;
 use Navigator\Http\Response;
 use Navigator\Routing\Concerns\HasActionName;
+use Navigator\Validation\Exceptions\ValidationException;
 use Stringable;
 use Throwable;
 
@@ -47,6 +48,8 @@ class AjaxRoute implements RouteInterface
     {
         try {
             $response = call_user_func($this->callback, $request);
+        } catch (ValidationException $e) {
+            $response = $e->getResponse();
         } catch (Throwable $e) {
             $statusCode = $e instanceof HttpException ? $e->statusCode : 500;
             $headers = $e instanceof HttpException ? $e->headers : [];
