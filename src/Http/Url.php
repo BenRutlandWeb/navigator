@@ -2,7 +2,6 @@
 
 namespace Navigator\Http;
 
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use InvalidArgumentException;
 use Navigator\Collections\Arr;
@@ -16,9 +15,14 @@ class Url
         //
     }
 
-    public function withQuery(string $url, array $parameters = []): string
+    public function withQueryParameters(string $url, array $parameters = []): string
     {
         return add_query_arg($parameters, $url);
+    }
+
+    public function withoutQueryParameters(string $url, array $parameters = []): string
+    {
+        return remove_query_arg($parameters, $url);
     }
 
     public function current(): string
@@ -47,31 +51,31 @@ class Url
 
     public function register(string $redirect = '/', array $parameters = []): string
     {
-        return $this->withQuery(wp_registration_url(), Arr::merge($parameters, [
+        return $this->withQueryParameters(wp_registration_url(), Arr::merge($parameters, [
             'redirect_to' => urlencode($redirect),
         ]));
     }
 
     public function login(string $redirect = '/', array $parameters = []): string
     {
-        return $this->withQuery(wp_login_url($redirect), $parameters);
+        return $this->withQueryParameters(wp_login_url($redirect), $parameters);
     }
 
     public function logout(string $redirect = '/', array $parameters = []): string
     {
-        return $this->withQuery(wp_logout_url($redirect), $parameters);
+        return $this->withQueryParameters(wp_logout_url($redirect), $parameters);
     }
 
     public function home(string $path = '', array $parameters = []): string
     {
-        return $this->withQuery(home_url($path), $parameters);
+        return $this->withQueryParameters(home_url($path), $parameters);
     }
 
     public function ajax(string $action = '', array $parameters = []): string
     {
         $args = $action ? compact('action') : [];
 
-        return $this->withQuery(
+        return $this->withQueryParameters(
             $this->admin('admin-ajax.php'),
             Arr::merge($parameters, $args)
         );
@@ -79,12 +83,12 @@ class Url
 
     public function rest(string $url = '', array $parameters = []): string
     {
-        return $this->withQuery(rest_url($url), $parameters);
+        return $this->withQueryParameters(rest_url($url), $parameters);
     }
 
     public function admin(string $path = '', array $parameters = []): string
     {
-        return $this->withQuery(admin_url($path), $parameters);
+        return $this->withQueryParameters(admin_url($path), $parameters);
     }
 
     public function archive(string $postType): string
@@ -113,9 +117,9 @@ class Url
 
         ksort($parameters);
 
-        $signature = (new Hasher())->make($this->withQuery($url, $parameters));
+        $signature = (new Hasher())->make($this->withQueryParameters($url, $parameters));
 
-        return $this->withQuery($url, Arr::merge($parameters, compact('signature')));
+        return $this->withQueryParameters($url, Arr::merge($parameters, compact('signature')));
     }
 
     public function temporarySignedUrl(string $url, CarbonInterface $expiration, array $parameters = []): string
@@ -130,7 +134,7 @@ class Url
 
     public function hasCorrectSignature(Request $request): bool
     {
-        $url = remove_query_arg('signature', $request->fullUrl());
+        $url = $this->withoutQueryParameters($request->fullUrl(), ['signature']);
 
         return (new Hasher())->check($url, $request->input('signature', ''));
     }

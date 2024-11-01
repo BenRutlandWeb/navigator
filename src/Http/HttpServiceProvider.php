@@ -22,6 +22,10 @@ class HttpServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(Http::class, fn() => new Http());
+
+        $this->app->rebinding(Request::class, function (Application $app, Request $request) {
+            $request->setUrlResolver(fn() => $app->get(Url::class));
+        });
     }
 
     public function boot(): void

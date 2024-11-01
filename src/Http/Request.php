@@ -29,6 +29,9 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     /** @var (callable(): ValidationFactory) */
     protected static $validatorResolver;
 
+    /** @var (callable(): Url) */
+    protected static $urlResolver;
+
     public function __construct(array $query = [], array $request = [], array $cookies = [], array $files = [], array $server = [], array $attributes = [])
     {
         parent::__construct($server['REQUEST_METHOD'], $server['PATH_INFO'] ?? '/');
@@ -269,5 +272,19 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
         }
 
         return null;
+    }
+
+    /** @param (callable(): Url) $callback */
+    public function setUrlResolver(callable $callback): void
+    {
+        static::$urlResolver = $callback;
+    }
+
+    public function hasValidSignature(): bool
+    {
+        /** @var Url $validator */
+        $url = call_user_func(static::$urlResolver);
+
+        return $url->hasValidSignature($this);
     }
 }
