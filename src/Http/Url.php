@@ -15,12 +15,12 @@ class Url
         //
     }
 
-    public function withQueryParameters(string $url, array $parameters = []): string
+    public function withQueryParameters(string $url, array $parameters): string
     {
         return add_query_arg($parameters, $url);
     }
 
-    public function withoutQueryParameters(string $url, array $parameters = []): string
+    public function withoutQueryParameters(string $url, array $parameters): string
     {
         return remove_query_arg($parameters, $url);
     }
