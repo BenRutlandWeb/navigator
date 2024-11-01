@@ -2,6 +2,7 @@
 
 namespace Navigator\Http;
 
+use Navigator\Collections\Arr;
 use Navigator\Foundation\Application;
 
 class Url
@@ -9,6 +10,11 @@ class Url
     public function __construct(protected Application $app, protected Request $request)
     {
         //
+    }
+
+    public function withQuery(string $url, array $parameters = []): string
+    {
+        return add_query_arg($parameters, $url);
     }
 
     public function current(): string
@@ -35,44 +41,46 @@ class Url
         return $this->app->assetUrl($path);
     }
 
-    public function register(string $redirect = '/'): string
+    public function register(string $redirect = '/', array $parameters = []): string
     {
-        return add_query_arg(
-            ['redirect_to' => urlencode($redirect)],
-            wp_registration_url()
-        );
+        return $this->withQuery(wp_registration_url(), Arr::merge($parameters, [
+            'redirect_to' => urlencode($redirect),
+        ]));
     }
 
-    public function login(string $redirect = '/'): string
+    public function login(string $redirect = '/', array $parameters = []): string
     {
-        return wp_login_url($redirect);
+        return $this->withQuery(wp_login_url($redirect), $parameters);
     }
 
-    public function logout(string $redirect = '/'): string
+    public function logout(string $redirect = '/', array $parameters = []): string
     {
-        return wp_logout_url($redirect);
+        return $this->withQuery(wp_logout_url($redirect), $parameters);
     }
 
-    public function home(string $path = ''): string
+    public function home(string $path = '', array $parameters = []): string
     {
-        return home_url($path);
+        return $this->withQuery(home_url($path), $parameters);
     }
 
-    public function ajax(string $action = ''): string
+    public function ajax(string $action = '', array $parameters = []): string
     {
         $args = $action ? compact('action') : [];
 
-        return add_query_arg($args, $this->admin('admin-ajax.php'));
+        return $this->withQuery(
+            $this->admin('admin-ajax.php'),
+            Arr::merge($parameters, $args)
+        );
     }
 
-    public function rest(string $url = ''): string
+    public function rest(string $url = '', array $parameters = []): string
     {
-        return rest_url($url);
+        return $this->withQuery(rest_url($url), $parameters);
     }
 
-    public function admin(string $path = ''): string
+    public function admin(string $path = '', array $parameters = []): string
     {
-        return admin_url($path);
+        return $this->withQuery(admin_url($path), $parameters);
     }
 
     public function archive(string $postType): string
