@@ -17,16 +17,16 @@ class Url
 
     public function withQueryParameters(string $url, array $parameters): string
     {
-        return add_query_arg($parameters, $url);
+        return add_query_arg($parameters, trailingslashit($url));
     }
 
     public function withoutQueryParameters(string $url, ?array $parameters = null): string
     {
         if ($parameters) {
-            return remove_query_arg($parameters, $url);
+            return remove_query_arg($parameters, trailingslashit($url));
         }
 
-        return strtok($url, '?');
+        return trailingslashit(strtok($url, '?'));
     }
 
     public function current(): string
