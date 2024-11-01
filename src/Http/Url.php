@@ -20,9 +20,13 @@ class Url
         return add_query_arg($parameters, $url);
     }
 
-    public function withoutQueryParameters(string $url, array $parameters): string
+    public function withoutQueryParameters(string $url, ?array $parameters = null): string
     {
-        return remove_query_arg($parameters, $url);
+        if ($parameters) {
+            return remove_query_arg($parameters, $url);
+        }
+
+        return strtok($url, '?');
     }
 
     public function current(): string
