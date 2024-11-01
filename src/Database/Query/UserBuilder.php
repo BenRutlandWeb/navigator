@@ -74,6 +74,13 @@ class UserBuilder implements BuilderInterface
         return $this->orderBy('registered');
     }
 
+    public function email(string $email): static
+    {
+        return $this->where('search', $email)->whereIn('search_columns', [
+            'user_email',
+        ]);
+    }
+
     public function role(string $role): static
     {
         return $this->where('role', $role);
