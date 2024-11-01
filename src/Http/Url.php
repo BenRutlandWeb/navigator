@@ -6,11 +6,10 @@ use Carbon\CarbonInterface;
 use InvalidArgumentException;
 use Navigator\Collections\Arr;
 use Navigator\Foundation\Application;
-use Navigator\Hashing\Hasher;
 
 class Url
 {
-    public function __construct(protected Application $app, protected Request $request)
+    public function __construct(protected Application $app, protected Request $request, protected string $key)
     {
         //
     }
@@ -121,7 +120,7 @@ class Url
 
         ksort($parameters);
 
-        $signature = (new Hasher())->make($this->withQueryParameters($url, $parameters));
+        $signature = hash_hmac('sha256', $this->withQueryParameters($url, $parameters), $this->key);
 
         return $this->withQueryParameters($url, Arr::merge($parameters, compact('signature')));
     }
@@ -140,7 +139,7 @@ class Url
     {
         $url = $this->withoutQueryParameters($request->fullUrl(), ['signature']);
 
-        return (new Hasher())->check($url, $request->input('signature', ''));
+        return hash_equals(hash_hmac('sha256', $url, $this->key), $request->input('signature', ''));
     }
 
     public function signatureHasNotExpired(Request $request): bool

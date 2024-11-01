@@ -2,9 +2,11 @@
 
 namespace Navigator\Http;
 
+use Navigator\Encryption\Exceptions\MissingAppKeyException;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
 use Navigator\Http\Client\Http;
+use Navigator\Str\Str;
 use Navigator\View\ViewFactory;
 
 class HttpServiceProvider extends ServiceProvider
@@ -13,7 +15,8 @@ class HttpServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Url::class, fn(Application $app) => new Url(
             $app,
-            $app->get(Request::class)
+            $app->get(Request::class),
+            $this->parseKey($app->env('APP_KEY')),
         ));
 
         $this->app->singleton(
@@ -31,5 +34,20 @@ class HttpServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+    }
+
+    protected function parseKey(string $key): string
+    {
+        if (empty($key)) {
+            throw new MissingAppKeyException();
+        }
+
+        $key = Str::of($key);
+
+        if ($key->startsWith($prefix = 'base64:')) {
+            $key = $key->replace($prefix, '')->fromBase64();
+        }
+
+        return $key;
     }
 }
