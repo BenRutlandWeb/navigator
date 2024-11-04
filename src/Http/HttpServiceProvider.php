@@ -4,7 +4,7 @@ namespace Navigator\Http;
 
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
-use Navigator\Hashing\Hasher;
+use Navigator\Hashing\HmacHasher;
 use Navigator\Http\Client\Http;
 use Navigator\View\ViewFactory;
 
@@ -15,7 +15,7 @@ class HttpServiceProvider extends ServiceProvider
         $this->app->singleton(Url::class, fn(Application $app) => new Url(
             $app->assetUrl(),
             $app->get(Request::class),
-            $app->get(Hasher::class),
+            $app->get(HmacHasher::class),
         ));
 
         $this->app->singleton(

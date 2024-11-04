@@ -11,9 +11,16 @@ class HashServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(Hasher::class, fn(Application $app) => new Hasher(
-            $this->parseKey($app->env('APP_KEY'))
-        ));
+        $this->app->singleton(BcryptHasher::class, fn() => new BcryptHasher());
+
+        $this->app->singleton(HmacHasher::class, function (Application $app) {
+            return new HmacHasher($this->parseKey($app->env('APP_KEY')));
+        });
+
+        $this->app->singleton(HashManager::class, fn(Application $app) => new HashManager([
+            'bcrypt' => $app->get(BcryptHasher::class),
+            'hmac'   => $app->get(HmacHasher::class),
+        ]));
     }
 
     public function boot(): void
