@@ -5,11 +5,11 @@ namespace Navigator\Http;
 use Carbon\CarbonInterface;
 use InvalidArgumentException;
 use Navigator\Collections\Arr;
-use Navigator\Foundation\Application;
+use Navigator\Hashing\Hasher;
 
 class Url
 {
-    public function __construct(protected Application $app, protected Request $request, protected string $key)
+    public function __construct(protected string $assetUrl, protected Request $request, protected Hasher $hasher)
     {
         //
     }
@@ -49,7 +49,7 @@ class Url
 
     public function asset(string $path): string
     {
-        return $this->app->assetUrl($path);
+        return $this->assetUrl . trim($path, '/');
     }
 
     public function register(string $redirect = '/', array $parameters = []): string
@@ -120,7 +120,7 @@ class Url
 
         ksort($parameters);
 
-        $signature = hash_hmac('sha256', $this->withQueryParameters($url, $parameters), $this->key);
+        $signature = $this->hasher->hmac($this->withQueryParameters($url, $parameters));
 
         return $this->withQueryParameters($url, Arr::merge($parameters, compact('signature')));
     }
@@ -139,7 +139,7 @@ class Url
     {
         $url = $this->withoutQueryParameters($request->fullUrl(), ['signature']);
 
-        return hash_equals(hash_hmac('sha256', $url, $this->key), $request->input('signature', ''));
+        return $this->hasher->hmacCheck($url, $request->input('signature', ''));
     }
 
     public function signatureHasNotExpired(Request $request): bool

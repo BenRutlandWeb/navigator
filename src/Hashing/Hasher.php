@@ -4,6 +4,11 @@ namespace Navigator\Hashing;
 
 class Hasher
 {
+    public function __construct(protected string $key)
+    {
+        //
+    }
+
     public function info(string $hashedValue): array
     {
         return password_get_info($hashedValue);
@@ -26,5 +31,19 @@ class Hasher
     public function needsRehash(string $hashedValue, array $options = []): bool
     {
         return password_needs_rehash($hashedValue, PASSWORD_BCRYPT, $options);
+    }
+
+    public function hmac(string $value): string
+    {
+        return hash_hmac('sha256', $value, $this->key);
+    }
+
+    public function hmacCheck(string $value, string $hashedValue): bool
+    {
+        if (strlen($hashedValue) === 0) {
+            return false;
+        }
+
+        return hash_equals($this->hmac($value), $hashedValue);
     }
 }
