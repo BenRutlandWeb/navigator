@@ -7,6 +7,7 @@ use Faker\Generator as Faker;
 use Navigator\Foundation\Console\Commands\GetEnvironment;
 use Navigator\Foundation\Console\Commands\ListCommands;
 use Navigator\Foundation\Console\Commands\MakeProvider;
+use Navigator\Foundation\Console\Commands\Publish;
 use Navigator\Foundation\Console\Commands\SetEnvironment;
 use Navigator\Foundation\ServiceProvider;
 
@@ -31,6 +32,7 @@ class FoundationServiceProvider extends ServiceProvider
             GetEnvironment::class,
             MakeProvider::class,
             ListCommands::class,
+            Publish::class,
             SetEnvironment::class,
         ]);
     }

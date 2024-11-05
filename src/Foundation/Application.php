@@ -152,6 +152,12 @@ class Application extends Container
         $this->providers[] = $provider;
     }
 
+    /** @return array<int, ServiceProviderInterface> */
+    public function getProviders(): array
+    {
+        return $this->providers;
+    }
+
     public function env(string $key, mixed $default = null): mixed
     {
         if ($env = getenv($key)) {

@@ -125,6 +125,11 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
         return $default;
     }
 
+    public function flatten(int $depth = 256): static
+    {
+        return new static(Arr::flatten($this->items, $depth));
+    }
+
     /** @return static<TValue, TKey> */
     public function flip(): static
     {
