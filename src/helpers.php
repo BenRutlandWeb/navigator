@@ -11,6 +11,7 @@ use Navigator\Collections\Collection;
 use Navigator\Encryption\Encrypter;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\Mix;
+use Navigator\Hashing\Hash;
 use Navigator\Hashing\HasherInterface;
 use Navigator\Hashing\HashManager;
 use Navigator\Http\Client\Http;
@@ -100,11 +101,9 @@ function fake(?string $locale = null): Faker
     return app(Faker::class, $locale);
 }
 
-function hasher(?string $driver = null): HashManager|HasherInterface
+function hasher(Hash $driver = Hash::BCRYPT): HasherInterface
 {
-    $manager = app(HashManager::class);
-
-    return $driver ? $manager->driver($driver) : $manager;
+    return app(HashManager::class)->driver($driver);
 }
 
 function http(): Http
