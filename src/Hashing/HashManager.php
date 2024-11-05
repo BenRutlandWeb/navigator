@@ -4,6 +4,9 @@ namespace Navigator\Hashing;
 
 class HashManager implements HasherInterface
 {
+    /** @var array<string, HasherInterface> */
+    protected array $drivers = [];
+
     public function add(Hash $driver, HasherInterface $hasher): void
     {
         $this->drivers[$driver->value] = $hasher;

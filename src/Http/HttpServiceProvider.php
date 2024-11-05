@@ -4,7 +4,7 @@ namespace Navigator\Http;
 
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
-use Navigator\Hashing\HmacHasher;
+use Navigator\Hashing\Drivers\HmacHasher;
 use Navigator\Http\Client\Http;
 use Navigator\View\ViewFactory;
 

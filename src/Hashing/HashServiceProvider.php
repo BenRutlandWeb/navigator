@@ -4,6 +4,8 @@ namespace Navigator\Hashing;
 
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
+use Navigator\Hashing\Drivers\BcryptHasher;
+use Navigator\Hashing\Drivers\HmacHasher;
 
 class HashServiceProvider extends ServiceProvider
 {
