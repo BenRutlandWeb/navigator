@@ -1,22 +1,19 @@
 <?php
 
-namespace Navigator\Hashing;
+namespace Navigator\Hashing\Drivers;
 
-class HmacHasher implements HasherInterface
+use Navigator\Hashing\HasherInterface;
+
+class BcryptHasher implements HasherInterface
 {
-    public function __construct(protected string $key)
-    {
-        //
-    }
-
     public function info(string $hashedValue): array
     {
-        return [];
+        return password_get_info($hashedValue);
     }
 
     public function make(string $value, array $options = []): string
     {
-        return hash_hmac($options['algo'] ?? 'sha256', $value, $this->key, $options['binary'] ?? false);
+        return password_hash($value, PASSWORD_BCRYPT, $options);
     }
 
     public function check(string $value, string $hashedValue, array $options = []): bool
@@ -25,11 +22,11 @@ class HmacHasher implements HasherInterface
             return false;
         }
 
-        return hash_equals($this->make($value, $options), $hashedValue);
+        return password_verify($value, $hashedValue);
     }
 
     public function needsRehash(string $hashedValue, array $options = []): bool
     {
-        return false;
+        return password_needs_rehash($hashedValue, PASSWORD_BCRYPT, $options);
     }
 }

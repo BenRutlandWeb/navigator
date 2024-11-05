@@ -2,18 +2,16 @@
 
 namespace Navigator\Hashing;
 
-use InvalidArgumentException;
-
 class HashManager implements HasherInterface
 {
-    public function __construct(protected array $drivers)
+    public function add(Hash $driver, HasherInterface $hasher): void
     {
-        //
+        $this->drivers[$driver->value] = $hasher;
     }
 
-    public function driver(?string $driver = 'bcrypt'): HasherInterface
+    public function driver(Hash $driver = Hash::BCRYPT): HasherInterface
     {
-        return $this->drivers[$driver] ?? throw new InvalidArgumentException("Driver [$driver] not supported.");
+        return $this->drivers[$driver->value];
     }
 
     public function info(string $hashedValue): array
