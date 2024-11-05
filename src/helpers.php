@@ -101,9 +101,11 @@ function fake(?string $locale = null): Faker
     return app(Faker::class, $locale);
 }
 
-function hasher(Hash $driver = Hash::BCRYPT): HasherInterface
+function hasher(?Hash $driver = null): HashManager|HasherInterface
 {
-    return app(HashManager::class)->driver($driver);
+    $manager = app(HashManager::class);
+
+    return $driver ? $manager->driver($driver) : $manager;
 }
 
 function http(): Http
