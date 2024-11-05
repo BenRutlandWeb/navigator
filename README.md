@@ -30,7 +30,7 @@ Navigator is a fluent interface to WordPress
 - [ ] Log
 - [ ] Macroable
 - [x] Mail
-- [ ] Notifications
+- [x] Notifications
 - [ ] Number @inprogress
 - [x] Pagination
 - [ ] Pipeline

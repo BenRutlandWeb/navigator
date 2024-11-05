@@ -4,7 +4,6 @@ namespace Navigator\Database\Query;
 
 use Carbon\CarbonImmutable;
 use Closure;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Navigator\Collections\Arr;
 use Navigator\Database\Query\Concerns\Relation;
@@ -65,7 +64,7 @@ class DateQuery implements Arrayable
 
     public function whereDateTime(string $column, string $compare, DateTimeInterface|string $datetime, Relation $relation = Relation::AND): static
     {
-        $datetime = DateQuery::resolveDateTime($datetime);
+        $datetime = static::resolveDateTime($datetime);
 
         return $this->where($column, $compare, [
             'year'   => $datetime->format('Y'),
@@ -84,7 +83,7 @@ class DateQuery implements Arrayable
 
     public function whereDate(string $column, string $compare, DateTimeInterface|string $date, Relation $relation = Relation::AND): static
     {
-        $date = DateQuery::resolveDateTime($date);
+        $date = static::resolveDateTime($date);
 
         return $this->where($column, $compare, [
             'year'  => $date->format('Y'),
@@ -160,7 +159,7 @@ class DateQuery implements Arrayable
 
     public function whereTime(string $column, string $compare, DateTimeInterface|string $time, Relation $relation = Relation::AND): static
     {
-        $time = DateQuery::resolveDateTime($time);
+        $time = static::resolveDateTime($time);
 
         return $this->where($column, $compare, [
             'hour'   => $time->format('H'),
@@ -212,7 +211,7 @@ class DateQuery implements Arrayable
 
     public static function resolveDateTime(DateTimeInterface|string $datetime): DateTimeInterface
     {
-        return $datetime instanceof DateTimeImmutable ? $datetime : CarbonImmutable::create($datetime);
+        return $datetime instanceof DateTimeInterface ? $datetime : CarbonImmutable::create($datetime);
     }
 
     /**
@@ -222,7 +221,7 @@ class DateQuery implements Arrayable
     public static function formatDateTimeSegment(DateTimeInterface|int|string|array $segment, string $format): int|array
     {
         if (is_array($segment)) {
-            return Arr::map($segment, fn ($s) => static::formatDateTimeSegment($s, $format));
+            return Arr::map($segment, fn($s) => static::formatDateTimeSegment($s, $format));
         }
 
         if (!is_numeric($segment)) {
