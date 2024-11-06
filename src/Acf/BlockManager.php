@@ -2,7 +2,6 @@
 
 namespace Navigator\Acf;
 
-use Navigator\Foundation\Application;
 use Navigator\View\ViewFactory;
 
 class BlockManager
