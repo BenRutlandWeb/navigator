@@ -3,6 +3,7 @@
 namespace Navigator\Foundation;
 
 use ErrorException;
+use Navigator\Acf\AcfServiceProvider;
 use Navigator\Auth\AuthServiceProvider;
 use Navigator\Cache\CacheServiceProvider;
 use Navigator\Config\ConfigServiceProvider;
@@ -67,6 +68,7 @@ class Application extends Container
             $this->register(ConsoleServiceProvider::class);
         }
 
+        $this->register(AcfServiceProvider::class);
         $this->register(AuthServiceProvider::class);
         $this->register(CacheServiceProvider::class);
         $this->register(ConfigServiceProvider::class);

@@ -32,14 +32,14 @@ class AcfServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->commands([
-            MakeBlock::class,
-        ]);
-
         $blockManager = $this->app->get(BlockManager::class);
 
         foreach ($this->blocks as $block) {
             $blockManager->registerBlock($block);
         }
+
+        $this->commands([
+            MakeBlock::class,
+        ]);
     }
 }
