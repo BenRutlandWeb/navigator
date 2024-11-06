@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "acf/{{ name }}",
+    "title": "{{ title }}",
+    "description": "Block description",
+    "category": "custom",
+    "icon": "block-default",
+    "keywords": [
+        "example"
+    ],
+    "acf": {
+        "mode": "preview",
+        "renderTemplate": "template.php"
+    },
+    "supports": {
+          "align": [
+            "wide",
+            "full"
+        ]
+    },
+    "example": {
+        "attributes": {
+            "data": {}
+        }
+    }
+}

@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Acf\Block;
+
+class {{ class }} extends Block
+{
+    protected string $name = '{{ name }}';
+}
