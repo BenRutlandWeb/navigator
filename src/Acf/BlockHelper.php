@@ -2,11 +2,14 @@
 
 namespace Navigator\Acf;
 
+use Navigator\Acf\Models\Concerns\HasAcfFields;
 use Navigator\Database\Models\Post;
 use Navigator\Database\Relation;
 
-class BlockHelper
+class BlockHelper implements BlockInterface
 {
+    use HasAcfFields;
+
     protected Post $object;
 
     protected array $fields = [];
@@ -25,28 +28,8 @@ class BlockHelper
         return $this->preview ? '' : get_block_wrapper_attributes($attributes);
     }
 
-    public function fields(): array
+    public function id(): string
     {
-        return $this->fields;
-    }
-
-    public function hasField(string $key): bool
-    {
-        return isset($this->fields[$key]);
-    }
-
-    public function field(string $key, mixed $default = null): mixed
-    {
-        return $this->fields[$key] ?? $default;
-    }
-
-    public function __isset(string $key): bool
-    {
-        return $this->hasField($key);
-    }
-
-    public function __get(string $key): mixed
-    {
-        return $this->field($key);
+        return $this->block['id'];
     }
 }

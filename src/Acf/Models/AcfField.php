@@ -4,6 +4,7 @@ namespace Navigator\Acf\Models;
 
 use ArrayAccess;
 use JsonSerializable;
+use Navigator\Acf\BlockInterface;
 use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Term;
@@ -14,12 +15,12 @@ class AcfField implements Arrayable, ArrayAccess, JsonSerializable
 {
     protected string|int $id = 0;
 
-    public function __construct(protected ModelInterface $model)
+    public function __construct(protected ModelInterface|BlockInterface $model)
     {
         $this->id = $this->resolveId($model);
     }
 
-    public function resolveId(ModelInterface $model): string|int
+    public function resolveId(ModelInterface|BlockInterface $model): string|int
     {
         if ($model instanceof Term) {
             return $model->taxonomy() . '_' . $model->id();
