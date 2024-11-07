@@ -212,7 +212,7 @@ abstract class Command
         $return = [];
 
         foreach ($arguments as $name => $value) {
-            if ($value !== false) {
+            if ($value) {
                 if (Str::startsWith($name, '--')) {
                     $return[] = $value === true ? $name : $name . '=' . $value;
                 } else {
