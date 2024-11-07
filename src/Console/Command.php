@@ -180,12 +180,13 @@ abstract class Command
         die;
     }
 
-    protected function call(string $command): bool
+    protected function call(string $command, array $arguments = []): bool
     {
         $return = WP_CLI::runcommand($command, [
-            'return'     => true,
-            'launch'     => false,
-            'exit_error' => false,
+            'return'       => true,
+            'launch'       => false,
+            'exit_error'   => false,
+            'command_args' => Arr::keys(Arr::filter($arguments)),
         ]);
 
         echo $return;
@@ -193,12 +194,13 @@ abstract class Command
         return $return ? true : false;
     }
 
-    protected function callSilently(string $command): bool
+    protected function callSilently(string $command, array $arguments = []): bool
     {
         $return = WP_CLI::runcommand($command, [
-            'return'     => true,
-            'launch'     => false,
-            'exit_error' => false,
+            'return'       => true,
+            'launch'       => false,
+            'exit_error'   => false,
+            'command_args' => Arr::keys(Arr::filter($arguments)),
         ]);
 
         return $return ? true : false;

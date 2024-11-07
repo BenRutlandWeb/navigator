@@ -8,6 +8,6 @@ class {{ class }} extends FieldGroup
 {
     public function schema(): array
     {
-        //
+        return [];
     }
 }
