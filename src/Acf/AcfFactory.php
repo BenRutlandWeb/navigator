@@ -4,7 +4,7 @@ namespace Navigator\Acf;
 
 use Navigator\View\ViewFactory;
 
-class BlockManager
+class AcfFactory
 {
     public function __construct(protected ViewFactory $view, protected string $path)
     {
@@ -17,5 +17,13 @@ class BlockManager
         $block = new $block($this->view, $this->path);
 
         $block->register();
+    }
+
+    /** @param class-string<FieldGroup> $fieldGroup */
+    public function registerFieldGroup(string $fieldGroup): void
+    {
+        $fieldGroup = new $fieldGroup();
+
+        $fieldGroup->register();
     }
 }

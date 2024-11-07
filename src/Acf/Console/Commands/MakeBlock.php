@@ -22,7 +22,7 @@ class MakeBlock extends GeneratorCommand
 
         $stubs = [
             'block.json'   => __DIR__ . '/stubs/block-json.stub',
-            'template.php' => __DIR__ . '/stubs/template.stub',
+            'template.php' => __DIR__ . '/stubs/block-template.stub',
         ];
 
         $dir = $this->app->path('resources/blocks/' . $dirName);
@@ -40,6 +40,8 @@ class MakeBlock extends GeneratorCommand
 
             $this->files->put($dir . '/' . $fileName, $stub);
         }
+
+        $this->call('navigator make:field ' . $this->argument('name'));
     }
 
     protected function resolveBlockName(): string

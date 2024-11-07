@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Acf\FieldGroup;
+
+class {{ class }} extends FieldGroup
+{
+    public function schema(): array
+    {
+        //
+    }
+}
