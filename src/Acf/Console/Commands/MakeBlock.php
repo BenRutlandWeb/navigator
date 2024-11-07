@@ -42,7 +42,7 @@ class MakeBlock extends GeneratorCommand
         }
 
         $this->call('navigator make:field-group', [
-            $this->argument('name'),
+            'name'    => $this->argument('name'),
             '--force' => $this->option('force'),
         ]);
     }

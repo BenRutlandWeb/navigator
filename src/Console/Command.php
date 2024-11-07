@@ -6,6 +6,7 @@ use Navigator\Collections\Arr;
 use Navigator\Console\Parser;
 use Navigator\Console\ProgressBar;
 use Navigator\Foundation\Application;
+use Navigator\Str\Str;
 use WP_CLI;
 
 use function WP_CLI\Utils\format_items as wpcli_format_items;
@@ -186,7 +187,7 @@ abstract class Command
             'return'       => true,
             'launch'       => false,
             'exit_error'   => false,
-            'command_args' => Arr::keys(Arr::filter($arguments)),
+            'command_args' => $this->formatCommandArgs($arguments),
         ]);
 
         echo $return;
@@ -200,9 +201,26 @@ abstract class Command
             'return'       => true,
             'launch'       => false,
             'exit_error'   => false,
-            'command_args' => Arr::keys(Arr::filter($arguments)),
+            'command_args' => $this->formatCommandArgs($arguments),
         ]);
 
         return $return ? true : false;
+    }
+
+    protected function formatCommandArgs(array $arguments = []): array
+    {
+        $return = [];
+
+        foreach ($arguments as $name => $value) {
+            if ($value !== false) {
+                if (Str::startsWith($name, '--')) {
+                    $return[] = $value === true ? $name : $name . '=' . $value;
+                } else {
+                    $return[] = $value;
+                }
+            }
+        }
+
+        return $return;
     }
 }
