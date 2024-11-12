@@ -12,15 +12,11 @@ class BlockHelper implements BlockInterface
 
     protected Post $object;
 
-    protected array $fields = [];
-
     public function __construct(public array $block, protected int $post_id, protected bool $preview)
     {
         $model = Relation::getMorphedModel(get_post_type($post_id));
 
         $this->object = $model::find($post_id);
-
-        $this->fields = get_fields() ?: [];
     }
 
     public function attributes(array $attributes = []): string

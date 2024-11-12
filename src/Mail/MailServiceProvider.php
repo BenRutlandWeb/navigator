@@ -14,8 +14,8 @@ class MailServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(Mailer::class, function (Application $app) {
-            return new Mailer($app->get(Dispatcher::class));
+        $this->app->singleton(MailFactory::class, function (Application $app) {
+            return new MailFactory($app->get(Dispatcher::class));
         });
     }
 

@@ -6,10 +6,9 @@ use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Contracts\MailableInterface;
 use Navigator\Contracts\ShouldQueue;
-use Navigator\Events\Dispatcher;
 use Navigator\Foundation\Concerns\Htmlable;
 
-class Mailer
+class PendingMail implements EnvelopeInterface
 {
     /** @var array<int, string> */
     protected array $to = [];
@@ -22,7 +21,7 @@ class Mailer
     /** @var array<int, string> */
     protected array $attachments = [];
 
-    public function __construct(protected Dispatcher $dispatcher)
+    public function __construct(protected MailFactory $mailer)
     {
         //
     }
@@ -143,7 +142,7 @@ class Mailer
             $content = $content->toHtml();
         }
 
-        $content = $this->dispatcher->filter('navigator_mailer_content', $content, $content);
+        $content = $this->mailer->dispatcher->filter('navigator_mailer_content', $content, $content);
 
         $headers = Collection::make($mail->headers())
             ->map(fn($value, $key) => $this->formatHeader($key, $value))

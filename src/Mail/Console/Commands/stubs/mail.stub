@@ -5,8 +5,8 @@ namespace {{ namespace }};
 use Navigator\Contracts\ShouldQueue;
 use Navigator\Foundation\Concerns\Htmlable;
 use Navigator\Http\Response;
+use Navigator\Mail\EnvelopeInterface;
 use Navigator\Mail\Mailable;
-use Navigator\Mail\Mailer;
 use Navigator\Queue\Concerns\Queueable;
 
 class {{ class }} extends Mailable
@@ -16,7 +16,7 @@ class {{ class }} extends Mailable
         //
     }
 
-    public function envelope(Mailer $mailer): void
+    public function envelope(EnvelopeInterface $envelope): void
     {
         //
     }

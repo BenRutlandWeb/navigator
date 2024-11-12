@@ -6,6 +6,7 @@ use Navigator\Database\Relation;
 use Navigator\Events\Dispatcher;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
+use Navigator\Mail\MailFactory;
 use Navigator\Notifications\Channels\DatabaseChannel;
 use Navigator\Notifications\Channels\MailChannel;
 use Navigator\Notifications\Concerns\NotificationStatus;
@@ -16,11 +17,11 @@ class NotificationsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(ChannelManager::class, function () {
+        $this->app->singleton(ChannelManager::class, function (Application $app) {
             $manager = new ChannelManager();
 
             $manager->addChannel(DatabaseChannel::class, new DatabaseChannel());
-            $manager->addChannel(MailChannel::class, new MailChannel());
+            $manager->addChannel(MailChannel::class, new MailChannel($app->get(MailFactory::class)));
 
             return $manager;
         });

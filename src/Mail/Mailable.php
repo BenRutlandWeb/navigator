@@ -7,7 +7,7 @@ use Navigator\Http\Response;
 
 abstract class Mailable
 {
-    public function envelope(Mailer $mailer): void
+    public function envelope(EnvelopeInterface $envelope): void
     {
         //
     }

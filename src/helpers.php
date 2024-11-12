@@ -20,7 +20,7 @@ use Navigator\Http\Request;
 use Navigator\Http\Response;
 use Navigator\Http\ResponseFactory;
 use Navigator\Http\Url;
-use Navigator\Mail\Mailer;
+use Navigator\Mail\MailFactory;
 use Navigator\Str\Str;
 use Navigator\Str\Stringable;
 use Navigator\Validation\ValidationFactory;
@@ -122,9 +122,9 @@ function is_front_end_request(): bool
         && !app()->runningInConsole();
 }
 
-function mailer(): Mailer
+function mailer(): MailFactory
 {
-    return app(Mailer::class);
+    return app(MailFactory::class);
 }
 
 function method_field(Method $method): string
