@@ -131,29 +131,19 @@ class PendingMail implements EnvelopeInterface
             $this->header('from', $this->from);
         }
 
-        $to = $this->to;
-
         $subject = $mail->subject();
 
         $content = $mail->content();
 
         if ($content instanceof Htmlable) {
             $this->header('content-type', 'text/html');
-            $content = $content->toHtml();
+            $content = $this->mailer->dispatcher->filter('navigator_mailer_content', $content->toHtml());
         }
 
-        $content = $this->mailer->dispatcher->filter('navigator_mailer_content', $content, $content);
-
-        $headers = Collection::make($mail->headers())
-            ->map(fn($value, $key) => $this->formatHeader($key, $value))
-            ->merge($this->headers)
-            ->values()
-            ->all();
-
-        $attachments = Arr::merge($this->attachments, $mail->attachments());
+        $this->headers($mail->headers())->attach($mail->attachments());
 
         if ($mail instanceof ShouldQueue) {
-            $dispatch = SendQueuedMail::dispatch($to, $subject, $content, $headers, $attachments);
+            $dispatch = SendQueuedMail::dispatch($this->to, $subject, $content, $this->headers, $this->attachments);
 
             if (isset($mail->delay)) {
                 $dispatch->delay($mail->delay ?? 0);
@@ -161,7 +151,7 @@ class PendingMail implements EnvelopeInterface
 
             return true;
         } else {
-            return wp_mail($to, $subject, $content, $headers, $attachments);
+            return wp_mail($this->to, $subject, $content, $this->headers, $this->attachments);
         }
     }
 }
