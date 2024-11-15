@@ -9,7 +9,6 @@ use Navigator\Collections\Collection;
 use Navigator\Contracts\Authenticatable;
 use Navigator\Contracts\MailableInterface;
 use Navigator\Database\Exceptions\ModelNotFoundException;
-use Navigator\Database\Factories\Concerns\HasFactory;
 use Navigator\Database\Factories\UserFactory;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
@@ -33,7 +32,6 @@ use WP_User;
  */
 class User implements Authenticatable, MailableInterface, ModelInterface
 {
-    use HasFactory;
     use HasMeta;
     use HasRelationships;
     use Notifiable;
