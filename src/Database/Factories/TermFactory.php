@@ -7,7 +7,7 @@ use Navigator\Database\Relation;
 use WP_Term;
 
 /**
- * @template T of ModelInterface
+ * @template T of Term
  * @extends Factory<T>
  */
 class TermFactory extends Factory

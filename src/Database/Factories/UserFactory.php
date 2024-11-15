@@ -6,7 +6,7 @@ use Navigator\Database\Models\User;
 use WP_User;
 
 /**
- * @template T of ModelInterface
+ * @template T of User
  * @extends Factory<T>
  */
 class UserFactory extends Factory

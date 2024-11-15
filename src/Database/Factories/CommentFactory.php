@@ -7,7 +7,7 @@ use Navigator\Database\Models\Comment;
 use WP_Comment;
 
 /**
- * @template T of ModelInterface
+ * @template T of Comment
  * @extends Factory<T>
  */
 class CommentFactory extends Factory

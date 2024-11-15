@@ -35,7 +35,7 @@ abstract class Factory
         return new static($model, $states, $count);
     }
 
-    /** @return T */
+    /** @ return T */
     abstract public function newModel(array $attributes = []): ModelInterface;
 
     abstract public function definition(): array;
