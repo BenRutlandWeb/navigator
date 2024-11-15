@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Generator;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
+use Navigator\Database\Factories\Concerns\HasFactory;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
@@ -33,8 +34,9 @@ use WP_Comment;
  */
 class Comment implements ModelInterface
 {
-    use HasRelationships;
+    use HasFactory;
     use HasMeta;
+    use HasRelationships;
     use InteractsWithAttributes;
 
     public function __construct(readonly public WP_Comment $object)

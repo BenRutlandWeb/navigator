@@ -7,6 +7,7 @@ use Closure;
 use Generator;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
+use Navigator\Database\Factories\Concerns\HasFactory;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasPostStatus;
@@ -45,9 +46,10 @@ use WP_Post;
  */
 class Post implements ModelInterface
 {
+    use HasFactory;
+    use HasMeta;
     use HasPostStatus;
     use HasRelationships;
-    use HasMeta;
     use InteractsWithAttributes;
 
     public function __construct(readonly public WP_Post $object)
