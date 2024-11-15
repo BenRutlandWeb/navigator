@@ -12,9 +12,7 @@ use Navigator\Pagination\Paginator;
 /** @template T of ModelInterface */
 interface BuilderInterface extends Arrayable, JsonSerializable
 {
-    /**
-     * @param class-string<T> $model
-     */
+    /** @param class-string<T> $model */
     public function __construct(string $model);
 
     /** @return Collection<int, T> */

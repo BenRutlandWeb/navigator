@@ -7,7 +7,7 @@ use Closure;
 use Generator;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
-use Navigator\Database\Factories\Concerns\HasFactory;
+use Navigator\Database\Factories\PostFactory;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasPostStatus;
@@ -46,7 +46,6 @@ use WP_Post;
  */
 class Post implements ModelInterface
 {
-    use HasFactory;
     use HasMeta;
     use HasPostStatus;
     use HasRelationships;
@@ -240,5 +239,10 @@ class Post implements ModelInterface
     public static function slug(): string
     {
         return Relation::getObjectType(static::class);
+    }
+
+    public static function factory(): PostFactory
+    {
+        return new PostFactory(static::class);
     }
 }

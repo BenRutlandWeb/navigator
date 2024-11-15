@@ -6,6 +6,10 @@ use Navigator\Database\Models\Term;
 use Navigator\Database\Relation;
 use WP_Term;
 
+/**
+ * @template T of ModelInterface
+ * @extends Factory<Term>
+ */
 class TermFactory extends Factory
 {
     /** @return Term */

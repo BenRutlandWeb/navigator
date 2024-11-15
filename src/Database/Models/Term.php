@@ -6,6 +6,7 @@ use Generator;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\Factories\Concerns\HasFactory;
+use Navigator\Database\Factories\TermFactory;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
 use Navigator\Database\Models\Concerns\HasRelationships;
@@ -204,5 +205,10 @@ class Term implements ModelInterface
     public static function slug(): string
     {
         return Relation::getObjectType(static::class);
+    }
+
+    public static function factory(): TermFactory
+    {
+        return new TermFactory(static::class);
     }
 }

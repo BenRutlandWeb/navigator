@@ -5,6 +5,10 @@ namespace Navigator\Database\Factories;
 use Navigator\Database\Models\User;
 use WP_User;
 
+/**
+ * @template T of ModelInterface
+ * @extends Factory<User>
+ */
 class UserFactory extends Factory
 {
     /** @return User */

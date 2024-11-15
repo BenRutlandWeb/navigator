@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Generator;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
+use Navigator\Database\Factories\CommentFactory;
 use Navigator\Database\Factories\Concerns\HasFactory;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Concerns\HasMeta;
@@ -169,5 +170,10 @@ class Comment implements ModelInterface
         } elseif ($model instanceof static) {
             $this->update(['comment_parent' => 0]);
         }
+    }
+
+    public static function factory(): CommentFactory
+    {
+        return new CommentFactory(static::class);
     }
 }

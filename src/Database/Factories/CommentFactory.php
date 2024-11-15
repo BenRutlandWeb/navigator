@@ -6,6 +6,10 @@ use DateTimeZone;
 use Navigator\Database\Models\Comment;
 use WP_Comment;
 
+/**
+ * @template T of ModelInterface
+ * @extends Factory<Comment>
+ */
 class CommentFactory extends Factory
 {
     /** @return Comment */

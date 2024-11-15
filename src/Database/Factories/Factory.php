@@ -12,7 +12,7 @@ use Navigator\Database\Models\Post;
 use Navigator\Database\Models\Term;
 use Navigator\Database\Models\User;
 
-/** @template TModel instanceof ModelInterface */
+/** @template T of ModelInterface */
 abstract class Factory
 {
     /** @var (callable(): Generator) */
@@ -20,7 +20,7 @@ abstract class Factory
 
     protected Generator $faker;
 
-    /** @param class-string<TModel> $model */
+    /** @param class-string<T> $model */
     public function __construct(
         protected string $model,
         protected array $states = [],
@@ -29,27 +29,22 @@ abstract class Factory
         $this->resolveFaker();
     }
 
-    /**
-     * @param class-string<TModel> $model
-     * @return static<TModel>
-     */
+    /** @param class-string<T> $model */
     public function newInstance(string $model, array $states = [], ?int $count = null): static
     {
         return new static($model, $states, $count);
     }
 
-    /** @return TModel */
+    /** @return T */
     abstract public function newModel(array $attributes = []): ModelInterface;
 
     abstract public function definition(): array;
 
-    /** @return static<TModel> */
     public function count(int $count): static
     {
         return $this->newInstance($this->model, $this->states, $count);
     }
 
-    /** @return static<TModel> */
     public function with(array $attributes = []): static
     {
         return $this->newInstance($this->model, Arr::merge($this->states, $attributes), $this->count);
@@ -60,7 +55,7 @@ abstract class Factory
         return Arr::merge($this->definition(), $this->states);
     }
 
-    /** @return TModel|Collection<int, TModel> */
+    /** @return T|Collection<int, T> */
     public function make(array $attributes = []): ModelInterface|Collection
     {
         if (!empty($attributes)) {

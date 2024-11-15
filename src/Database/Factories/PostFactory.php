@@ -7,6 +7,10 @@ use Navigator\Database\Models\Post;
 use Navigator\Database\Relation;
 use WP_Post;
 
+/**
+ * @template T of ModelInterface
+ * @extends Factory<Post>
+ */
 class PostFactory extends Factory
 {
     /** @return Post */
