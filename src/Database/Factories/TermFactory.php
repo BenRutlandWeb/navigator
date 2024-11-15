@@ -8,7 +8,7 @@ use WP_Term;
 
 /**
  * @template T of ModelInterface
- * @extends Factory<Term>
+ * @extends Factory<T>
  */
 class TermFactory extends Factory
 {

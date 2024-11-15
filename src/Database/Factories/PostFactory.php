@@ -9,7 +9,7 @@ use WP_Post;
 
 /**
  * @template T of ModelInterface
- * @extends Factory<Post>
+ * @extends Factory<T>
  */
 class PostFactory extends Factory
 {

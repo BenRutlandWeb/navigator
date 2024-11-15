@@ -8,7 +8,7 @@ use WP_Comment;
 
 /**
  * @template T of ModelInterface
- * @extends Factory<Comment>
+ * @extends Factory<T>
  */
 class CommentFactory extends Factory
 {

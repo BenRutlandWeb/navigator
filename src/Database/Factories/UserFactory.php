@@ -7,7 +7,7 @@ use WP_User;
 
 /**
  * @template T of ModelInterface
- * @extends Factory<User>
+ * @extends Factory<T>
  */
 class UserFactory extends Factory
 {
