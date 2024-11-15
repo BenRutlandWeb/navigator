@@ -10,7 +10,7 @@ class MakeModel extends GeneratorCommand
 {
     protected string $type = 'Model';
 
-    protected string $signature = 'make:model {name : The name of model}
+    protected string $signature = 'make:model {name : The name of the model}
                                        {--type=post : The type of model to extend: [post, term, comment, user]}
                                        {--force : Overwrite the model if it exists}';
 

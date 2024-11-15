@@ -2,7 +2,10 @@
 
 namespace Navigator\Database;
 
+use Faker\Generator as Faker;
+use Navigator\Database\Console\Commands\MakeFactory;
 use Navigator\Database\Console\Commands\MakeModel;
+use Navigator\Database\Factories\Factory;
 use Navigator\Foundation\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
@@ -18,7 +21,10 @@ class DatabaseServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->commands([
+            MakeFactory::class,
             MakeModel::class,
         ]);
+
+        Factory::setFakerResolver(fn() => $this->app->get(Faker::class));
     }
 }
