@@ -33,7 +33,7 @@ use Whoops\RunInterface;
 
 class Application extends Container
 {
-    readonly public Environment $environment;
+    public readonly Environment $environment;
 
     /**
      * @var ServiceProviderInterface[]
