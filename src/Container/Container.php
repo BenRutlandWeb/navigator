@@ -16,6 +16,8 @@ class Container implements ContainerInterface
 
     protected array $reboundCallbacks = [];
 
+    protected array $extenders = [];
+
     private static self $instance;
 
     /**
@@ -64,6 +66,10 @@ class Container implements ContainerInterface
 
         if ($binding instanceof Closure) {
             $instance = $binding($this, ...$args);
+
+            foreach ($this->extenders[$id] ?? [] as $extender) {
+                $instance = $extender($instance, $this);
+            }
 
             if ($shared) {
                 $this->instances[$id] = $instance;
@@ -122,6 +128,15 @@ class Container implements ContainerInterface
 
         if ($this->has($id)) {
             $this->resolve($id);
+        }
+    }
+
+    public function extend(string $id, Closure $callback): void
+    {
+        if (isset($this->instances[$id])) {
+            $this->instances[$id] = $callback($this->instances[$id], $this);
+        } else {
+            $this->extenders[$id][] = $callback;
         }
     }
 
