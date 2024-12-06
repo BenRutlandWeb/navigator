@@ -95,6 +95,10 @@ class Container implements ContainerInterface
      */
     public function instance(string $id, mixed $instance): mixed
     {
+        foreach ($this->extenders[$id] ?? [] as $extender) {
+            $instance = $extender($instance, $this);
+        }
+
         $this->instances[$id] = $instance;
 
         return $instance;
