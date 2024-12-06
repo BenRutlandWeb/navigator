@@ -83,14 +83,20 @@ class Container implements ContainerInterface
         throw new ContainerException($id);
     }
 
-    public function singleton(string $id, Closure $binding): void
+    /** @throws ContainerExceptionInterface */
+    public function singleton(string $id, ?Closure $binding = null): void
     {
         $this->bind($id, $binding, true);
     }
 
-    public function bind(string $id, Closure $binding, bool $shared = false): void
+    /** @throws ContainerExceptionInterface */
+    public function bind(string $id, ?Closure $binding = null, bool $shared = false): void
     {
-        $this->bindings[$id] = [$binding, $shared];
+        if (!$binding && !class_exists($id)) {
+            throw new ContainerException("Target class [$id] does not exist.");
+        }
+
+        $this->bindings[$id] = [$binding ?? fn() => new $id(), $shared];
 
         if ($this->resolved($id)) {
             $this->rebound($id);
