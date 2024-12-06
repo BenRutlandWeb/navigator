@@ -12,10 +12,6 @@ class Container implements ContainerInterface
 
     protected array $instances = [];
 
-    protected array $resolved = [];
-
-    protected array $reboundCallbacks = [];
-
     protected array $extenders = [];
 
     private static self $instance;
@@ -45,11 +41,6 @@ class Container implements ContainerInterface
         return isset($this->bindings[$id]) || isset($this->instances[$id]);
     }
 
-    public function resolved(string $id): bool
-    {
-        return isset($this->resolved[$id]) || isset($this->instances[$id]);
-    }
-
     /**
      * @template TInstance
      * @param class-string<TInstance>|string $id
@@ -75,8 +66,6 @@ class Container implements ContainerInterface
                 $this->instances[$id] = $instance;
             }
 
-            $this->resolved[$id] = true;
-
             return $instance;
         }
 
@@ -97,10 +86,6 @@ class Container implements ContainerInterface
         }
 
         $this->bindings[$id] = [$binding ?? fn() => new $id(), $shared];
-
-        if ($this->resolved($id)) {
-            $this->rebound($id);
-        }
     }
 
     /**
@@ -112,29 +97,7 @@ class Container implements ContainerInterface
     {
         $this->instances[$id] = $instance;
 
-        if ($this->has($id)) {
-            $this->rebound($id);
-        }
-
         return $instance;
-    }
-
-    protected function rebound(string $id): void
-    {
-        $instance = $this->resolve($id);
-
-        foreach ($this->reboundCallbacks[$id] ?? [] as $callback) {
-            $callback($this, $instance);
-        }
-    }
-
-    public function rebinding(string $id, Closure $callback): void
-    {
-        $this->reboundCallbacks[$id][] = $callback;
-
-        if ($this->has($id)) {
-            $this->resolve($id);
-        }
     }
 
     public function extend(string $id, Closure $callback): void

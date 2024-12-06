@@ -37,8 +37,10 @@ class ValidationServiceProvider extends ServiceProvider
             $app->get(Validator::class)
         ));
 
-        $this->app->rebinding(Request::class, function (Application $app, Request $request) {
+        $this->app->extend(Request::class, function (Request $request, Application $app) {
             $request->setValidatorResolver(fn() => $app->get(ValidationFactory::class));
+
+            return $request;
         });
     }
 

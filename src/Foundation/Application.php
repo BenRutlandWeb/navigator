@@ -52,8 +52,6 @@ class Application extends Container
 
         $this->registerExceptionHandler();
         $this->registerCoreProviders();
-
-        $this->instance(Request::class, Request::capture());
     }
 
     public function registerCoreProviders(): void

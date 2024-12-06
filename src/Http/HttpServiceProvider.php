@@ -12,6 +12,8 @@ class HttpServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->instance(Request::class, Request::capture());
+
         $this->app->singleton(Url::class, fn(Application $app) => new Url(
             $app->assetUrl(),
             $app->get(Request::class),
@@ -25,8 +27,10 @@ class HttpServiceProvider extends ServiceProvider
 
         $this->app->bind(Http::class, fn() => new Http());
 
-        $this->app->rebinding(Request::class, function (Application $app, Request $request) {
+        $this->app->extend(Request::class, function (Request $request, Application $app) {
             $request->setUrlResolver(fn() => $app->get(Url::class));
+
+            return $request;
         });
     }
 
