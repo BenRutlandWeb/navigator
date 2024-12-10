@@ -12,6 +12,35 @@ use Navigator\Database\Query\TaxQuery;
 
 trait HasRelationships
 {
+    /** @var array<string, ModelInterface> */
+    protected array $relations = [];
+
+    protected function setRelation(string $relation, ModelInterface $value): static
+    {
+        $this->relations[$relation] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @template T of ModelInterface
+     * @param class-string<T>|null $model
+     * @return T
+     */
+    protected function newBelongsTo(string $model, string $foreignKey, string $ownerKey): ?ModelInterface
+    {
+        if (isset($this->relations[$foreignKey])) {
+            return $this->relations[$foreignKey];
+        }
+
+        $this->setRelation(
+            $foreignKey,
+            $relation = $model::query()->where($foreignKey, $this->$ownerKey)->first()
+        );
+
+        return $relation;
+    }
+
     /**
      * @template T of ModelInterface
      * @param class-string<T>|null $model
@@ -21,30 +50,33 @@ trait HasRelationships
     {
         if (is_callable($fk)) {
             $fk($query = $model::query());
-            return $query->first();
+
+            $this->setRelation($model, $relation = $query->first());
+
+            return $relation;
         }
 
         if ($this instanceof Post) {
             if (is_a($model, Post::class, true)) {
-                return $model::find($this->post_parent);
+                return $this->newBelongsTo($model, 'post_parent', 'post_parent');
             } elseif (is_a($model, User::class, true)) {
-                return $model::find($this->post_author);
+                return $this->newBelongsTo($model, 'post_author', 'post_author');
             }
         } elseif ($this instanceof Term) {
             if (is_a($model, Term::class, true)) {
-                return $model::find($this->parent);
+                return $this->newBelongsTo($model, 'include', 'parent');
             }
         } elseif ($this instanceof Comment) {
             if (is_a($model, User::class, true)) {
-                return $model::find($this->user_id);
+                return $this->newBelongsTo($model, 'include', 'user_id');
             } elseif (is_a($model, Post::class, true)) {
-                return $model::find($this->comment_post_ID);
+                return $this->newBelongsTo($model, 'p', 'comment_post_ID');
             } elseif (is_a($model, Comment::class, true)) {
-                return $model::find($this->comment_parent);
+                return $this->newBelongsTo($model, 'comment__in', 'comment_parent');
             }
         }
 
-        return $model::query()->where($fk, $this->$pk)->first();
+        return $fk ? $this->newBelongsTo($model, $fk, $pk) : null;
     }
 
     /**
