@@ -206,13 +206,9 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     {
         unset($attributes['ID']);
 
-        $id = wp_insert_user($attributes);
+        $model = (new static)->fill($attributes);
 
-        if (!is_wp_error($id)) {
-            return static::find($id);
-        }
-
-        return null;
+        return $model->save() ? $model : null;
     }
 
     public function update(array $attributes): bool
@@ -224,9 +220,15 @@ class User implements Authenticatable, MailableInterface, ModelInterface
 
     public function save(): bool
     {
-        $return = wp_update_user($this->toArray());
+        $id = wp_insert_user($this->toArray());
 
-        return !is_wp_error($return);
+        if (!is_wp_error($id)) {
+            $this->fill(static::find($id)->toArray());
+
+            return true;
+        }
+
+        return false;
     }
 
     public function delete(): bool

@@ -130,13 +130,9 @@ class Post implements ModelInterface
 
         unset($attributes['ID']);
 
-        $id = wp_insert_post($attributes, true, true);
+        $model = (new static)->fill($attributes);
 
-        if (!is_wp_error($id)) {
-            return static::find($id);
-        }
-
-        return null;
+        return $model->save() ? $model : null;
     }
 
     public function update(array $attributes): bool
@@ -148,7 +144,15 @@ class Post implements ModelInterface
 
     public function save(): bool
     {
-        return wp_update_post($this->toArray(), false, true) ? true : false;
+        $id = wp_insert_post($this->toArray(), true, true);
+
+        if (!is_wp_error($id)) {
+            $this->fill(static::find($id)->toArray());
+
+            return true;
+        }
+
+        return false;
     }
 
     public function delete(): bool

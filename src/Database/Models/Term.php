@@ -96,38 +96,39 @@ class Term implements ModelInterface
         return $this->object->term_id;
     }
 
-    /** @return ?T */
     public static function create(array $attributes): ?static
     {
-        $taxonomy = Relation::getObjectType(static::class);
+        $attributes['taxonomy'] = Relation::getObjectType(static::class);
 
         unset($attributes['term_id']);
 
-        $term = wp_insert_term($attributes['name'], $taxonomy, $attributes);
+        $model = (new static)->fill($attributes);
 
-        if (!is_wp_error($term)) {
-            $term = static::find($term['term_id']);
-
-            if ($term && isset($attributes['object_ids'])) {
-                wp_add_object_terms($attributes['object_ids'], $term->id(), $term->taxonomy());
-            }
-
-            return $term;
-        }
-
-        return null;
+        return $model->save() ? $model : null;
     }
 
     public function update(array $attributes): bool
     {
+        $attributes['term_id'] = $this->id();
+
         return $this->fill($attributes)->save();
     }
 
     public function save(): bool
     {
-        $return = wp_update_term($this->id(), $this->taxonomy(), $this->toArray());
+        if ($this->object->term_id) {
+            return !is_wp_error(wp_update_term($this->id(), $this->taxonomy(), $this->toArray()));
+        } else {
+            $term = wp_insert_term($this->name, $this->taxonomy(), $this->toArray());
 
-        return !is_wp_error($return);
+            if (!is_wp_error($term)) {
+                $this->fill(static::find($term['term_id'])->toArray());
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function delete(): bool

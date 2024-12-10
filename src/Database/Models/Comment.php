@@ -107,11 +107,9 @@ class Comment implements ModelInterface
     {
         unset($attributes['comment_ID']);
 
-        if ($id = wp_insert_comment($attributes)) {
-            return static::find($id);
-        }
+        $model = (new static)->fill($attributes);
 
-        return null;
+        return $model->save() ? $model : null;
     }
 
     public function update(array $attributes): bool
@@ -123,7 +121,17 @@ class Comment implements ModelInterface
 
     public function save(): bool
     {
-        return wp_update_comment($this->toArray(), false) ? true : false;
+        if ($this->object->comment_ID) {
+            return !is_wp_error(wp_update_comment($this->toArray()));
+        } else {
+            if ($id = wp_insert_comment($this->toArray())) {
+                $this->fill(static::find($id)->toArray());
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function delete(): bool
