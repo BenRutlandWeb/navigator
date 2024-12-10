@@ -16,6 +16,16 @@ trait HasAttributes
         return $this->where($key, $values);
     }
 
+    /** @param array<string, mixed> $wheres */
+    public function whereMany(array $wheres): static
+    {
+        foreach ($wheres as $key => $value) {
+            $this->where($key, $value);
+        }
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return $this->attributes->toArray();

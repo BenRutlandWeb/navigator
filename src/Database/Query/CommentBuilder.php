@@ -7,6 +7,7 @@ use Navigator\Database\BuilderInterface;
 use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\Comment;
+use Navigator\Database\Query\Concerns\AggregatesQueries;
 use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
 use Navigator\Database\Query\Concerns\PaginatesQueries;
@@ -18,7 +19,9 @@ use WP_Comment_Query;
 /** @template T of ModelInterface */
 class CommentBuilder implements BuilderInterface
 {
+    use AggregatesQueries;
     use HasAttributes;
+    /** @use PaginatesQueries<T> */
     use PaginatesQueries;
     use QueriesDates;
     use QueriesMeta;

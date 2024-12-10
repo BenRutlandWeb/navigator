@@ -2,7 +2,6 @@
 
 namespace Navigator\Collections;
 
-use ArgumentCountError;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
@@ -35,6 +34,11 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
     public function all(): array
     {
         return $this->items;
+    }
+
+    public function avg(): mixed
+    {
+        return Arr::avg($this->items);
     }
 
     /** @return static<int, static> */
@@ -75,17 +79,13 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
 
     public function count(): int
     {
-        return count($this->items);
+        return Arr::count($this->items);
     }
 
     /** @param (callable(TValue, TKey): mixed) $callback */
     public function each(callable $callback): static
     {
-        foreach ($this->items as $key => $item) {
-            if ($callback($item, $key) === false) {
-                break;
-            }
-        }
+        Arr::each($this->items, $callback);
 
         return $this;
     }
@@ -105,15 +105,7 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
     public function first(?callable $callback = null, mixed $default = null): mixed
     {
         if (is_null($callback)) {
-            if ($this->isEmpty()) {
-                return $default;
-            }
-
-            foreach ($this->items as $item) {
-                return $item;
-            }
-
-            return $default;
+            return Arr::first($this->items) ?? $default;
         }
 
         foreach ($this->items as $key => $value) {
@@ -261,10 +253,25 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
         return $this->map(fn($item) => new $class($item));
     }
 
+    public function max(): mixed
+    {
+        return Arr::max($this->items);
+    }
+
     /** * @param array<TKey, TValue> $items */
     public function merge(array $items): static
     {
         return new static(Arr::merge($this->items, $items));
+    }
+
+    public function min(): mixed
+    {
+        return Arr::min($this->items);
+    }
+
+    public function isNotEmpty(): bool
+    {
+        return !$this->isEmpty();
     }
 
     /** @param TKey $key */
@@ -308,7 +315,7 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
      */
     public function pluck(string $value, ?string $key = null): static
     {
-        return new static(wp_list_pluck($this->items, $value, $key));
+        return new static(Arr::pluck($this->items, $value, $key));
     }
 
     /**
@@ -320,7 +327,7 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
         if (is_null($key)) {
             $this->items = Arr::prepend($this->items, $value);
         } else {
-            $this->items = [$key => $value] + $this->items;
+            $this->items = Arr::merge([$key => $value], $this->items);
         }
 
         return $this;
@@ -339,7 +346,18 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
     /** @return static<int, int> */
     public static function range(int $from, int $to): static
     {
-        return new static(range($from, $to));
+        return new static(Arr::range($from, $to));
+    }
+
+    /**
+     * @template TReduceCarry
+     * @param (callable(TReduceCarry, TValue): TReduceCarry) $callback
+     * @param TReduceCarry $initial
+     * @return TReduceCarry
+     */
+    public function reduce(callable $callback, mixed $initial = null): mixed
+    {
+        return Arr::reduce($this->items, $callback, $initial);
     }
 
     public function reverse(): static
@@ -366,6 +384,11 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
         $descending ? krsort($items, $options) : ksort($items, $options);
 
         return new static($items);
+    }
+
+    public function sum(): int|float
+    {
+        return Arr::sum($this->items);
     }
 
     /** @return array<TKey, mixed> */

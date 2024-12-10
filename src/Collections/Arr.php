@@ -15,6 +15,11 @@ class Arr
         return $items;
     }
 
+    public static function avg(array $items): mixed
+    {
+        return !empty($items) ? (static::sum($items) / static::count($items)) : null;
+    }
+
     public static function chunk(array $items, int $length, bool $preserveKeys = false): array
     {
         return array_chunk($items, $length, $preserveKeys);
@@ -38,6 +43,21 @@ class Arr
     public static function diff(mixed $items, array ...$arrays): array
     {
         return array_diff($items, ...$arrays);
+    }
+
+    /**
+     * @template TEachKey of array-key
+     * @template TEachValue
+     * @param array<TEachKey, TEachValue> $items
+     * @param (callable(TEachValue, TEachKey): mixed) $callback
+     */
+    public static function each(array $items, callable $callback): void
+    {
+        foreach ($items as $key => $item) {
+            if ($callback($item, $key) === false) {
+                break;
+            }
+        }
     }
 
     /** @param class-string<UnitEnum> $enum */
@@ -176,6 +196,11 @@ class Arr
         return $result;
     }
 
+    public static function max(array $items): mixed
+    {
+        return max($items);
+    }
+
     public static function merge(array ...$items): array
     {
         return array_merge(...$items);
@@ -184,6 +209,11 @@ class Arr
     public static function mergeRecursive(array ...$items): array
     {
         return array_merge_recursive(...$items);
+    }
+
+    public static function min(array $items): mixed
+    {
+        return min($items);
     }
 
     public static function pad(array $items, int $length, mixed $value = null): array
@@ -208,6 +238,11 @@ class Arr
         return array_product($items);
     }
 
+    public static function query(array $items): string
+    {
+        return http_build_query($items, '', '&', PHP_QUERY_RFC3986);
+    }
+
     public static function random(array $items, int $num = 1): array
     {
         $keys = array_rand($items, $num);
@@ -215,14 +250,22 @@ class Arr
         return static::map((array) $keys, fn($key) => $items[$key]);
     }
 
-    public static function query(array $items): string
-    {
-        return http_build_query($items, '', '&', PHP_QUERY_RFC3986);
-    }
-
     public static function range(string|int|float $start, string|int|float $end, int|float $step = 1): array
     {
         return range($start, $end, $step);
+    }
+
+    /**
+     * @template TReduceCarry
+     * @template TReduceItem
+     * @param array<array-key, TReduceItem> $items
+     * @param (callable(TReduceCarry, TReduceItem): TReduceCarry) $callback
+     * @param TReduceCarry $initial
+     * @return TReduceCarry
+     */
+    public static function reduce(array $items, callable $callback, mixed $initial = null): mixed
+    {
+        return array_reduce($items, $callback, $initial);
     }
 
     public static function replace(array $items, array ...$replacements): ?array

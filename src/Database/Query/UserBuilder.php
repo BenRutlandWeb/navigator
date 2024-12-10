@@ -7,6 +7,7 @@ use Navigator\Database\BuilderInterface;
 use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\ModelInterface;
 use Navigator\Database\Models\User;
+use Navigator\Database\Query\Concerns\AggregatesQueries;
 use Navigator\Database\Query\Concerns\HasAttributes;
 use Navigator\Database\Query\Concerns\Order;
 use Navigator\Database\Query\Concerns\PaginatesQueries;
@@ -17,6 +18,7 @@ use WP_User_Query;
 /** @template T of ModelInterface */
 class UserBuilder implements BuilderInterface
 {
+    use AggregatesQueries;
     use HasAttributes;
     /** @use PaginatesQueries<T> */
     use PaginatesQueries;
