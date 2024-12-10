@@ -17,6 +17,7 @@ use Navigator\Database\Query\PostBuilder;
 use Navigator\Database\Relation;
 use Navigator\Pagination\Paginator;
 use Navigator\WordPress\Concerns\Dashicon;
+use stdClass;
 use WP_Post;
 
 /**
@@ -51,7 +52,7 @@ class Post implements ModelInterface
     use HasRelationships;
     use InteractsWithAttributes;
 
-    public function __construct(readonly public WP_Post $object)
+    public function __construct(readonly public WP_Post $object = new WP_Post(new stdClass))
     {
         //
     }

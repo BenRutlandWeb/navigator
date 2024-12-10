@@ -37,7 +37,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
     use Notifiable;
     use InteractsWithAttributes;
 
-    public function __construct(readonly public WP_User $object)
+    public function __construct(readonly public WP_User $object = new WP_User())
     {
         //
     }

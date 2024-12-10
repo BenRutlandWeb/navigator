@@ -13,6 +13,7 @@ use Navigator\Database\Models\Concerns\InteractsWithAttributes;
 use Navigator\Database\Query\TermBuilder;
 use Navigator\Database\Relation;
 use Navigator\Pagination\Paginator;
+use stdClass;
 use WP_Term;
 
 /**
@@ -33,9 +34,9 @@ class Term implements ModelInterface
     use HasRelationships;
     use InteractsWithAttributes;
 
-    public function __construct(readonly public WP_Term $object)
+    public function __construct(readonly public WP_Term $object = new WP_Term(new stdClass))
     {
-        //
+        $this->object->taxonomy = Relation::getObjectType(static::class);
     }
 
     /** @return TermBuilder<static> */
@@ -124,7 +125,7 @@ class Term implements ModelInterface
 
     public function save(): bool
     {
-        $return = wp_update_term($this->id(), $this->taxonomy, $this->toArray());
+        $return = wp_update_term($this->id(), $this->taxonomy(), $this->toArray());
 
         return !is_wp_error($return);
     }
