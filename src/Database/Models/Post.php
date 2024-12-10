@@ -54,7 +54,7 @@ class Post implements ModelInterface
 
     public function __construct(readonly public WP_Post $object = new WP_Post(new stdClass))
     {
-        //
+        $this->object->post_type = Relation::getObjectType(static::class);
     }
 
     /** @return PostBuilder<static> */
