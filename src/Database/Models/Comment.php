@@ -60,11 +60,7 @@ class Comment implements ModelInterface
 
     public static function find(int $id): ?static
     {
-        if ($comment = WP_Comment::get_instance($id)) {
-            return new static($comment);
-        }
-
-        return null;
+        return static::query()->include([$id])->first();
     }
 
     public static function findOrFail(int $id): ?static

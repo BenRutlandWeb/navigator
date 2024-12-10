@@ -61,11 +61,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
 
     public static function find(int $id): ?static
     {
-        if ($user = get_user_by('ID', $id)) {
-            return new static($user);
-        }
-
-        return null;
+        return static::query()->include([$id])->first();
     }
 
     public static function findOrFail(int $id): ?static

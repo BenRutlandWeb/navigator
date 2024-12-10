@@ -44,4 +44,14 @@ class PostFactory extends Factory
             'post_type'         => Relation::getObjectType($this->model),
         ];
     }
+
+    public function published(): static
+    {
+        return $this->with(['post_status' => 'publish']);
+    }
+
+    public function draft(): static
+    {
+        return $this->with(['post_status' => 'draft']);
+    }
 }

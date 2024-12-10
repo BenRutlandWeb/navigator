@@ -58,13 +58,7 @@ class Term implements ModelInterface
 
     public static function find(int $id): ?static
     {
-        $taxonomy = Relation::getObjectType(static::class);
-
-        if ($term = WP_Term::get_instance($id, $taxonomy)) {
-            return new static($term);
-        }
-
-        return null;
+        return static::query()->include([$id])->first();
     }
 
     public static function findOrFail(int $id): ?static
