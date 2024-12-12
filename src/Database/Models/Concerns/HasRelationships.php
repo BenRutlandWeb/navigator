@@ -12,113 +12,90 @@ use Navigator\Database\Query\TaxQuery;
 
 trait HasRelationships
 {
-    /** @var array<string, ModelInterface> */
-    protected array $relations = [];
-
-    protected function setRelation(string $relation, ModelInterface $value): static
-    {
-        $this->relations[$relation] = $value;
-
-        return $this;
-    }
-
     /**
      * @template T of ModelInterface
      * @param class-string<T>|null $model
-     * @return T
+     * @param (callable(BuilderInstance<T>): void)|null $callback
+     * @return ?T
      */
-    protected function newBelongsTo(string $model, string $foreignKey, string $ownerKey): ?ModelInterface
+    public function belongsTo(string $model, ?callable $callback = null): ?ModelInterface
     {
-        if (isset($this->relations[$foreignKey])) {
-            return $this->relations[$foreignKey];
-        }
+        if (is_callable($callback)) {
+            $callback($query = $model::query());
 
-        $this->setRelation(
-            $foreignKey,
-            $relation = $model::query()->where($foreignKey, $this->$ownerKey)->first()
-        );
-
-        return $relation;
-    }
-
-    /**
-     * @template T of ModelInterface
-     * @param class-string<T>|null $model
-     * @return T
-     */
-    public function belongsTo(string $model, string|callable|null $fk = null, ?string $pk = null): ?ModelInterface
-    {
-        if (is_callable($fk)) {
-            $fk($query = $model::query());
-
-            $this->setRelation($model, $relation = $query->first());
-
-            return $relation;
+            return $query->first();
         }
 
         if ($this instanceof Post) {
             if (is_a($model, Post::class, true)) {
-                return $this->newBelongsTo($model, 'post_parent', 'post_parent');
+                $fk = 'post_parent';
             } elseif (is_a($model, User::class, true)) {
-                return $this->newBelongsTo($model, 'post_author', 'post_author');
+                $fk = 'post_author';
             }
         } elseif ($this instanceof Term) {
             if (is_a($model, Term::class, true)) {
-                return $this->newBelongsTo($model, 'include', 'parent');
+                $fk = 'parent';
             }
         } elseif ($this instanceof Comment) {
             if (is_a($model, User::class, true)) {
-                return $this->newBelongsTo($model, 'include', 'user_id');
+                $fk = 'user_id';
             } elseif (is_a($model, Post::class, true)) {
-                return $this->newBelongsTo($model, 'p', 'comment_post_ID');
+                $fk = 'comment_post_ID';
             } elseif (is_a($model, Comment::class, true)) {
-                return $this->newBelongsTo($model, 'comment__in', 'comment_parent');
+                $fk = 'comment_parent';
             }
         }
 
-        return $fk ? $this->newBelongsTo($model, $fk, $pk) : null;
+        return $fk ? $model::find($this->$fk) : null;
     }
 
     /**
      * @template T of ModelInterface
      * @param class-string<T> $model
+     * @param (callable(BuilderInstance<T>): void)|null $callback
      * @return BuilderInterface<T>
      */
-    public function hasMany(string $model, string|callable|null $fk = null, ?string $pk = null): BuilderInterface
+    public function hasMany(string $model, ?callable $callback = null): BuilderInterface
     {
-        if (is_callable($fk)) {
-            $fk($query = $model::query());
+        if (is_callable($callback)) {
+            $callback($query = $model::query());
+
             return $query;
         }
 
         if ($this instanceof User) {
             if (is_a($model, Post::class, true)) {
-                return $model::query()->where('post_author', $this->id());
+                $fk = 'post_author';
             } elseif (is_a($model, Comment::class, true)) {
-                return $model::query()->where('user_id', $this->id());
+                $fk = 'user_id';
             }
         } elseif ($this instanceof Post) {
             if (is_a($model, Post::class, true)) {
-                return $model::query()->where('post_parent', $this->id());
+                $fk = 'post_parent';
             } elseif (is_a($model, Term::class, true)) {
-                return $model::query()->where('object_ids', $this->id());
+                $fk = 'object_ids';
             } elseif (is_a($model, Comment::class, true)) {
-                return $model::query()->where('comment_post_ID', $this->id());
+                $fk = 'comment_post_ID';
             }
         } elseif ($this instanceof Term) {
             if (is_a($model, Post::class, true)) {
+                // this is a special case so we return early
                 return $model::query()->whereTax(function (TaxQuery $query) {
                     $query->where($this->taxonomy, 'IN', $this->id());
                 });
             } elseif (is_a($model, Term::class, true)) {
-                return $model::query()->where('parent', $this->id());
+                $fk = 'parent';
             }
         } elseif ($this instanceof Comment) {
             if (is_a($model, Comment::class, true)) {
-                return $model::query()->where('comment_parent', $this->id());
+                $fk = 'comment_parent';
             }
         }
 
-        return $model::query()->where($fk, $this->$pk);
+        if ($fk) {
+            return $model::query()->where($fk, $this->id());
+        }
+
+        return $model::query();
     }
 }
