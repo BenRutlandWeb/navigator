@@ -2,6 +2,7 @@
 
 namespace Navigator\Http;
 
+use Navigator\Http\Concerns\ContentDisposition;
 use Navigator\View\ViewFactory;
 
 class ResponseFactory
@@ -39,5 +40,21 @@ class ResponseFactory
     public function markdown(string $view, array $args = [], int $status = 200, array $headers = []): Response
     {
         return $this->make($this->view->markdown($view, $args), $status, $headers);
+    }
+
+    public function download(string $path, ?string $name = null, array $headers = [], ContentDisposition $disposition = ContentDisposition::ATTACHMENT): BinaryFileResponse
+    {
+        $response = new BinaryFileResponse($path, 200, $headers, $disposition);
+
+        if ($name) {
+            $response->setContentDisposition($disposition, $name);
+        }
+
+        return $response;
+    }
+
+    public function file(string $path, array $headers = []): BinaryFileResponse
+    {
+        return new BinaryFileResponse($path, 200, $headers);
     }
 }
