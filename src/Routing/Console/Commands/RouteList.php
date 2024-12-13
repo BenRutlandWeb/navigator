@@ -5,12 +5,14 @@ namespace Navigator\Routing\Console\Commands;
 use Navigator\Collections\Arr;
 use Navigator\Console\Command;
 use Navigator\Routing\AjaxRoute;
+use Navigator\Routing\RestRoute;
 use Navigator\Routing\RouteInterface;
 use Navigator\Routing\Router;
+use Navigator\Routing\StaticRoute;
 
-class RoutesList extends Command
+class RouteList extends Command
 {
-    protected string $signature = 'routes:list';
+    protected string $signature = 'route:list';
 
     protected string $description = 'List the registered routes.';
 
@@ -29,19 +31,27 @@ class RoutesList extends Command
     {
         return $this->app->get(Router::class)
             ->getRoutes()
-            ->map(function (RouteInterface $route) {
-                return $this->getRouteInformation($route);
-            })->filter()
+            ->map(fn(RouteInterface $route) => $this->getRouteInformation($route))
+            ->filter()
             ->all();
     }
 
     protected function getRouteInformation(RouteInterface $route): array
     {
         return [
-            'Type' => $route instanceof AjaxRoute ? 'AJAX' : 'REST',
+            'Type'   => $this->getRouteType($route),
             'Method' => Arr::join((array) $route->methods(), '|'),
             'URI'    => $route->uri(),
             'Action' => $route->getActionName(),
         ];
+    }
+
+    public function getRouteType(RouteInterface $route): string
+    {
+        return match (true) {
+            $route instanceof AjaxRoute   => 'AJAX',
+            $route instanceof RestRoute   => 'REST',
+            $route instanceof StaticRoute => 'Static',
+        };
     }
 }

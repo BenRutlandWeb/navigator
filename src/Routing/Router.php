@@ -63,6 +63,11 @@ class Router
         return $this->addRoute(new RestRoute($methods, $uri, $this->resolveCallback($callback)));
     }
 
+    public function addStaticRoute(string $path, callable|array $callback): StaticRoute
+    {
+        return $this->addRoute(new StaticRoute($path, $this->resolveCallback($callback)));
+    }
+
     public function addRoute(RouteInterface $route): RouteInterface
     {
         return $this->routes[] = $route;
