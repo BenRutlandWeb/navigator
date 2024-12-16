@@ -57,4 +57,9 @@ class ResponseFactory
     {
         return new BinaryFileResponse($path, 200, $headers);
     }
+
+    public function streamDownload(callable $callback, string $filename): StreamedResponse
+    {
+        return new StreamedResponse($callback, $filename);
+    }
 }
