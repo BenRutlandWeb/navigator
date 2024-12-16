@@ -58,8 +58,19 @@ class ResponseFactory
         return new BinaryFileResponse($path, 200, $headers);
     }
 
-    public function streamDownload(callable $callback, string $filename): StreamedResponse
+    public function stream(callable $callback, int $status = 200, array $headers = []): StreamedResponse
     {
-        return new StreamedResponse($callback, $filename);
+        return new StreamedResponse($callback, $status, $headers);
+    }
+
+    public function streamDownload(callable $callback, ?string $name = null, array $headers = [], ContentDisposition $disposition = ContentDisposition::ATTACHMENT): StreamedResponse
+    {
+        $response = new StreamedResponse($callback, 200, $headers);
+
+        if ($name) {
+            $response->setContentDisposition($disposition, $name);
+        }
+
+        return $response;
     }
 }
