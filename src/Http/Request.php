@@ -15,6 +15,8 @@ use Navigator\Http\Concerns\HasServer;
 use Navigator\Http\Concerns\Method;
 use Navigator\Str\Str;
 use Navigator\Validation\ValidationFactory;
+use Throwable;
+use UnitEnum;
 use WP_REST_Request;
 
 class Request extends WP_REST_Request implements Arrayable, JsonSerializable
@@ -226,6 +228,44 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
         return floatval($this->input($key, $default));
     }
 
+    /**
+     * @template TEnum of UnitEnum
+     * @param class-string<TEnum> $enum
+     * @return ?TEnum
+     */
+    public function enum(string $key, string $enum): ?UnitEnum
+    {
+        $input = $this->input($key);
+
+        if (!$input || !enum_exists($enum)) {
+            return null;
+        }
+
+        try {
+            if (method_exists($enum, 'tryFrom')) {
+                return call_user_func([$enum, 'tryFrom'], $input);
+            }
+
+            return $enum::{$input} ?? null;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @template TModelInterface
+     * @param class-string<TModelInterface> $model
+     * @return ?TModelInterface
+     */
+    public function model(string $key, string $model): ?ModelInterface
+    {
+        if ($value = $this->integer($key)) {
+            return $model::findOrFail($value);
+        }
+
+        return null;
+    }
+
     public function collect(?string $key = null): Collection
     {
         return Collection::make($key ? $this->input($key) : $this->all());
@@ -256,22 +296,6 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
         $validator = call_user_func(static::$validatorResolver);
 
         return $validator->make($this->all(), $rules, $messages)->validate();
-    }
-
-    /**
-     * @template TModelInterface
-     * @param class-string<TModelInterface> $model
-     * @return ?TModelInterface
-     */
-    public function model(string $model): ?ModelInterface
-    {
-        if ($key = Relation::getObjectType($model)) {
-            if ($value = $this->input($key)) {
-                return $model::findOrFail($value);
-            }
-        }
-
-        return null;
     }
 
     /** @param (callable(): Url) $callback */
