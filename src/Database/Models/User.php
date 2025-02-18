@@ -160,6 +160,11 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         return $this;
     }
 
+    public function capabilities(): array
+    {
+        return $this->object->allcaps;
+    }
+
     public function can(string $capability, mixed ...$args): bool
     {
         return $this->object->has_cap($capability, ...$args);
