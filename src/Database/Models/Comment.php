@@ -175,6 +175,7 @@ class Comment implements ModelInterface
         }
     }
 
+    /** @return CommentFactory<static> */
     public static function factory(): CommentFactory
     {
         return new CommentFactory(static::class);

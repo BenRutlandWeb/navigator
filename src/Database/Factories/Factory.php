@@ -3,14 +3,9 @@
 namespace Navigator\Database\Factories;
 
 use Faker\Generator;
-use InvalidArgumentException;
 use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Database\ModelInterface;
-use Navigator\Database\Models\Comment;
-use Navigator\Database\Models\Post;
-use Navigator\Database\Models\Term;
-use Navigator\Database\Models\User;
 
 /** @template T of ModelInterface */
 abstract class Factory
@@ -35,7 +30,7 @@ abstract class Factory
         return new static($model, $states, $count);
     }
 
-    /** @ return T */
+    /** @return T */
     abstract public function newModel(array $attributes = []): ModelInterface;
 
     abstract public function definition(): array;
@@ -80,20 +75,5 @@ abstract class Factory
     public function resolveFaker(): void
     {
         $this->faker = call_user_func(static::$fakerResolver);
-    }
-
-    public static function forModel(string $model): static
-    {
-        if (is_subclass_of($model, Post::class)) {
-            return new PostFactory($model);
-        } elseif (is_subclass_of($model, Comment::class)) {
-            return new CommentFactory($model);
-        } elseif (is_subclass_of($model, Term::class)) {
-            return new TermFactory($model);
-        } elseif (is_subclass_of($model, User::class)) {
-            return new UserFactory($model);
-        }
-
-        throw new InvalidArgumentException("{$model} does not have a corresponding factory.");
     }
 }

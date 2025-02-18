@@ -257,6 +257,7 @@ class User implements Authenticatable, MailableInterface, ModelInterface
         return $affectedRows;
     }
 
+    /** @return UserFactory<static> */
     public static function factory(): UserFactory
     {
         return new UserFactory(static::class);

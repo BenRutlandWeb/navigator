@@ -241,6 +241,7 @@ class Post implements ModelInterface
         return Relation::getObjectType(static::class);
     }
 
+    /** @return PostFactory<static> */
     public static function factory(): PostFactory
     {
         return new PostFactory(static::class);

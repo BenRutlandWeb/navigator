@@ -201,6 +201,7 @@ class Term implements ModelInterface
         return Relation::getObjectType(static::class);
     }
 
+    /** @return TermFactory<static> */
     public static function factory(): TermFactory
     {
         return new TermFactory(static::class);
