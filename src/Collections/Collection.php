@@ -72,6 +72,16 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
         return Arr::has($key, $this->items);
     }
 
+    public function containsAll(array $values): bool
+    {
+        return Arr::hasAll($values, $this->items);
+    }
+
+    public function containsAny(array $values): bool
+    {
+        return Arr::hasAny($values, $this->items);
+    }
+
     public function containsOneItem(): bool
     {
         return $this->count() === 1;

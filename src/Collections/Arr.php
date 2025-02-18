@@ -128,6 +128,28 @@ class Arr
         return in_array($needle, $haystack, $strict);
     }
 
+    public static function hasAll(array $needles, array $haystack): bool
+    {
+        foreach ($needles as $needle) {
+            if (!static::has($needle, $haystack)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function hasAny(array $needles, array $haystack): bool
+    {
+        foreach ($needles as $needle) {
+            if (static::has($needle, $haystack)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static function implode(array $items, array|string $separator = ""): string
     {
         return static::join($items, $separator);
