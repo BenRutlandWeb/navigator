@@ -7,8 +7,10 @@ use Navigator\Database\Models\Concerns\HasAuthor;
 use Navigator\Database\Models\Concerns\HasChildren;
 use Navigator\Database\Models\Concerns\HasComments;
 use Navigator\Database\Models\Concerns\HasContent;
+use Navigator\Database\Models\Concerns\HasCustomFields;
 use Navigator\Database\Models\Concerns\HasExcerpt;
 use Navigator\Database\Models\Concerns\HasFeaturedImage;
+use Navigator\Database\Models\Concerns\HasFootnotes;
 use Navigator\Database\Models\Concerns\HasPostFormat;
 use Navigator\Database\Models\Concerns\HasRevisions;
 use Navigator\Database\Models\Concerns\HasTitle;
@@ -42,7 +44,7 @@ class RegisterPostType
             'hierarchical' => $hierarchical,
             'has_archive'  => !$hierarchical,
             'supports'     => $this->supports($model) ?: false,
-            'show_in_rest' => !$private,
+            'show_in_rest' => !$private || $this->uses(HasFootnotes::class),
             'rewrite'      => ['slug' => $model::slug()],
         ]);
 
@@ -72,15 +74,15 @@ class RegisterPostType
 
         return Arr::filter([
             in_array(HasTitle::class, $uses) ? 'title' : null,
-            in_array(HasContent::class, $uses) ? 'editor' : null,
+            Arr::hasAny([HasContent::class, HasFootnotes::class], $uses) ? 'editor' : null,
             in_array(HasComments::class, $uses) ? 'comments' : null,
-            in_array(HasRevisions::class, $uses) ? 'revisions' : null,
+            Arr::hasAny([HasRevisions::class, HasFootnotes::class], $uses) ? 'revisions' : null,
             // 'trackbacks',
             in_array(HasAuthor::class, $uses) ? 'author' : null,
             in_array(HasExcerpt::class, $uses) ? 'excerpt' : null,
             in_array(HasChildren::class, $uses) ? 'page-attributes' : null,
             in_array(HasFeaturedImage::class, $uses) ? 'thumbnail' : null,
-            // 'custom-fields',
+            Arr::hasAny([HasCustomFields::class, HasFootnotes::class], $uses) ? 'custom-fields' : null,
             in_array(HasPostFormat::class, $uses) ? 'post-formats' : null,
         ]);
     }
