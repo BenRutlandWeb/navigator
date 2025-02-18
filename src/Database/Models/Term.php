@@ -153,18 +153,22 @@ class Term implements ModelInterface
         return $affectedRows;
     }
 
-    public function associate(ModelInterface $model): void
+    public function associate(ModelInterface $model): static
     {
         if ($model instanceof static) {
             $this->update(['parent' => $model->id()]);
         }
+
+        return $this;
     }
 
-    public function disassociate(ModelInterface $model): void
+    public function disassociate(ModelInterface $model): static
     {
         if ($model instanceof static) {
             $this->update(['parent' => 0]);
         }
+
+        return $this;
     }
 
     /** @param Collection<int, Post>|array<int, Post>|Post $posts */

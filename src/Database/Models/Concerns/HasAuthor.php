@@ -10,6 +10,6 @@ trait HasAuthor
 
     public function setAuthor(User $user): bool
     {
-        return $this->associate($user->id());
+        return $this->update(['post_author' => $user->id()]);
     }
 }

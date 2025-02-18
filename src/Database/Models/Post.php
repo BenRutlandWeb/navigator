@@ -175,22 +175,26 @@ class Post implements ModelInterface
         return $affectedRows;
     }
 
-    public function associate(ModelInterface $model): void
+    public function associate(ModelInterface $model): static
     {
         if ($model instanceof User) {
             $this->update(['post_author' => $model->id()]);
         } elseif ($model instanceof static) {
             $this->update(['post_parent' => $model->id()]);
         }
+
+        return $this;
     }
 
-    public function disassociate(ModelInterface $model): void
+    public function disassociate(ModelInterface $model): static
     {
         if ($model instanceof User) {
             $this->update(['post_author' => 0]);
         } elseif ($model instanceof static) {
             $this->update(['post_parent' => 0]);
         }
+
+        return $this;
     }
 
     /** @param Collection<int, Term>|array<int, Term>|Term $terms */
