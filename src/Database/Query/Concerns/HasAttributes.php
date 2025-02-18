@@ -13,7 +13,11 @@ trait HasAttributes
 
     public function whereIn(string $key, array $values): static
     {
-        return $this->where($key, $values);
+        if (count($values)) {
+            return $this->where($key, $values);
+        }
+
+        return $this;
     }
 
     /** @param array<string, mixed> $wheres */

@@ -37,12 +37,12 @@ class PostBuilder implements BuilderInterface
 
     public function include(array $ids): static
     {
-        return $this->where('post__in', $ids);
+        return $this->whereIn('post__in', $ids);
     }
 
     public function exclude(array $ids): static
     {
-        return $this->where('post__not_in', $ids);
+        return $this->whereIn('post__not_in', $ids);
     }
 
     public function search(string $query): static
@@ -83,13 +83,13 @@ class PostBuilder implements BuilderInterface
     /** @param int[] $ids */
     public function authorIn(array $ids): static
     {
-        return $this->where('author__in', $ids);
+        return $this->whereIn('author__in', $ids);
     }
 
     /** @param int[] $ids */
     public function authorNotIn(array $ids): static
     {
-        return $this->where('author__not_in', $ids);
+        return $this->whereIn('author__not_in', $ids);
     }
 
     public function parent(int $id): static
@@ -100,18 +100,18 @@ class PostBuilder implements BuilderInterface
     /** @param int[] $ids */
     public function parentIn(array $ids): static
     {
-        return $this->where('post_parent__in', $ids);
+        return $this->whereIn('post_parent__in', $ids);
     }
 
     /** @param int[] $ids */
     public function parentNotIn(array $ids): static
     {
-        return $this->where('post_parent__not_in', $ids);
+        return $this->whereIn('post_parent__not_in', $ids);
     }
 
     public function status(string|array $status): static
     {
-        return $this->where('post_status', $status);
+        return $this->whereIn('post_status', (array) $status);
     }
 
     public function postFormat(string|array $format): static

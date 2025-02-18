@@ -33,12 +33,12 @@ class TermBuilder implements BuilderInterface
 
     public function include(array $ids): static
     {
-        return $this->where('include', $ids);
+        return $this->whereIn('include', $ids);
     }
 
     public function exclude(array $ids): static
     {
-        return $this->where('exclude', $ids);
+        return $this->whereIn('exclude', $ids);
     }
 
     public function search(string $query): static

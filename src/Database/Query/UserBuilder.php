@@ -32,12 +32,12 @@ class UserBuilder implements BuilderInterface
 
     public function include(array $ids): static
     {
-        return $this->where('include', $ids);
+        return $this->whereIn('include', $ids);
     }
 
     public function exclude(array $ids): static
     {
-        return $this->where('exclude', $ids);
+        return $this->whereIn('exclude', $ids);
     }
 
     public function search(string $query): static
@@ -91,13 +91,13 @@ class UserBuilder implements BuilderInterface
     /** @param string[] $roles */
     public function roleIn(array $roles): static
     {
-        return $this->where('role__in', $roles);
+        return $this->whereIn('role__in', $roles);
     }
 
     /** @param string[] $roles */
     public function roleNotIn(array $roles): static
     {
-        return $this->where('role__not_in', $roles);
+        return $this->whereIn('role__not_in', $roles);
     }
 
     /** @return Collection<int, T> */
