@@ -404,4 +404,86 @@ class Collection implements Arrayable, ArrayAccess, Countable, IteratorAggregate
     {
         return new static(Arr::values($this->items));
     }
+
+    /**
+     * @template TWhenCondition
+     * @template TWhenReturn
+     * @param TWhenCondition $condition
+     * @param (callable(static, TWhenCondition): TWhenReturn) $callback
+     * @param (callable(static, TWhenCondition): TWhenReturn)|null $default
+     * @return static|TWhenReturn
+     */
+    public function when(mixed $condition, callable $callback, ?callable $default = null): mixed
+    {
+        if ($condition) {
+            return $callback($this, $condition) ?? $this;
+        } elseif ($default) {
+            return $default($this, $condition) ?? $this;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @template TWhenEmptyReturn
+     * @param (callable(static, bool): TWhenEmptyReturn) $callback
+     * @param (callable(static, bool): TWhenEmptyReturn)|null $default
+     * @return static|TWhenEmptyReturn
+     */
+    public function whenEmpty(callable $callback, ?callable $default = null): mixed
+    {
+        return $this->when($this->isEmpty(), $callback, $default);
+    }
+
+    /**
+     * @template TWhenNotEmptyReturn
+     * @param (callable(static, bool): TWhenNotEmptyReturn) $callback
+     * @param (callable(static, bool): TWhenNotEmptyReturn)|null $default
+     * @return static|TWhenNotEmptyReturn
+     */
+    public function whenNotEmpty(callable $callback, ?callable $default = null): mixed
+    {
+        return $this->when($this->isNotEmpty(), $callback, $default);
+    }
+
+    /**
+     * @template TUnlessCondition
+     * @template TUnlessReturn
+     * @param TWhenCondition $condition
+     * @param (callable(static, TUnlessCondition): TUnlessReturn) $callback
+     * @param (callable(static, TUnlessCondition): TUnlessReturn)|null $default
+     * @return static|TUnlessReturn
+     */
+    public function unless(mixed $condition, callable $callback, ?callable $default = null): mixed
+    {
+        if (!$condition) {
+            return $callback($this, $condition) ?? $this;
+        } elseif ($default) {
+            return $default($this, $condition) ?? $this;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @template TUnlessEmptyReturn
+     * @param (callable(static, bool): TUnlessEmptyReturn) $callback
+     * @param (callable(static, bool): TUnlessEmptyReturn)|null $default
+     * @return static|TUnlessEmptyReturn
+     */
+    public function unlessEmpty(callable $callback, ?callable $default = null): mixed
+    {
+        return $this->unless($this->isEmpty(), $callback, $default);
+    }
+
+    /**
+     * @template TUnlessNotEmptyReturn
+     * @param (callable(static, bool): TUnlessNotEmptyReturn) $callback
+     * @param (callable(static, bool): TUnlessNotEmptyReturn)|null $default
+     * @return static|TUnlessNotEmptyReturn
+     */
+    public function unlessNotEmpty(callable $callback, ?callable $default = null): mixed
+    {
+        return $this->unless($this->isNotEmpty(), $callback, $default);
+    }
 }
