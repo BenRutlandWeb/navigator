@@ -13,6 +13,7 @@ use Navigator\Http\Concerns\HasCookies;
 use Navigator\Http\Concerns\HasHeaders;
 use Navigator\Http\Concerns\HasServer;
 use Navigator\Http\Concerns\Method;
+use Navigator\Session\Session;
 use Navigator\Str\Str;
 use Navigator\Validation\ValidationFactory;
 use Throwable;
@@ -24,6 +25,9 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     use HasCookies;
     use HasHeaders;
     use HasServer;
+
+    /** @var (callable(): Session) */
+    protected static $sessionResolver;
 
     /** @var (callable(): User) */
     protected static $userResolver;
@@ -269,6 +273,19 @@ class Request extends WP_REST_Request implements Arrayable, JsonSerializable
     public function collect(?string $key = null): Collection
     {
         return Collection::make($key ? $this->input($key) : $this->all());
+    }
+
+    public function session(): ?Session
+    {
+        return call_user_func(static::$sessionResolver ?? function () {
+            //
+        });
+    }
+
+    /** @param (callable(): ?Session) $callback */
+    public function setSessionResolver(callable $callback): void
+    {
+        static::$sessionResolver = $callback;
     }
 
     public function user(): ?User

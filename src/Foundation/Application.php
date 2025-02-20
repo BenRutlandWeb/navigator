@@ -25,6 +25,7 @@ use Navigator\Notifications\NotificationsServiceProvider;
 use Navigator\Pagination\PaginationServiceProvider;
 use Navigator\Queue\QueueServiceProvider;
 use Navigator\Routing\Router;
+use Navigator\Session\SessionServiceProvider;
 use Navigator\Str\Str;
 use Navigator\Validation\ValidationServiceProvider;
 use Navigator\View\ViewServiceProvider;
@@ -80,6 +81,7 @@ class Application extends Container
         $this->register(NotificationsServiceProvider::class);
         $this->register(PaginationServiceProvider::class);
         $this->register(QueueServiceProvider::class);
+        $this->register(SessionServiceProvider::class);
         $this->register(ValidationServiceProvider::class);
         $this->register(ViewServiceProvider::class);
     }

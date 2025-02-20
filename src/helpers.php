@@ -21,6 +21,7 @@ use Navigator\Http\Response;
 use Navigator\Http\ResponseFactory;
 use Navigator\Http\Url;
 use Navigator\Mail\MailFactory;
+use Navigator\Session\Session;
 use Navigator\Str\Str;
 use Navigator\Str\Stringable;
 use Navigator\Validation\ValidationFactory;
@@ -157,6 +158,14 @@ function response(mixed $content = null, int $status = 200, array $headers = [])
     $factory = app(ResponseFactory::class);
 
     return $content ? $factory->make($content, $status, $headers) : $factory;
+}
+
+/** @return Session|mixed */
+function session(string $key = '', mixed $default = null): mixed
+{
+    $session = app(Session::class);
+
+    return $key ? $session->get($key, $default) : $session;
 }
 
 function str(string $string): Stringable

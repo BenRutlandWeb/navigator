@@ -6,6 +6,7 @@ Navigator is a fluent interface to WordPress
 ## Todo
 
 - [x] Auth
+  - [ ] Policies/gates
 - [ ] Broadcasting
 - [ ] Bus
 - [x] Cache
