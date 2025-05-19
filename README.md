@@ -40,7 +40,7 @@ Navigator is a fluent interface to WordPress
 - [ ] Redis
 - [x] Routing
 - [x] Schedule
-- [ ] Session
+- [x] Session
 - [ ] Support
 - [ ] Testing
 - [ ] Translation
@@ -51,3 +51,5 @@ Additional todo
 - [ ] Move helpers.php into theme
 - [ ] Create theme repo
 - [ ] Navigator as composer package
+- [ ] use reflection in container
+- [ ] use attributes e.g. listeners priority

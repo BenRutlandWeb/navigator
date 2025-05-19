@@ -2,7 +2,6 @@
 
 namespace Navigator\Events;
 
-use Exception;
 use Navigator\Contracts\SubscriberInterface;
 use Navigator\Foundation\Application;
 use ReflectionFunction;
@@ -15,20 +14,22 @@ class Dispatcher
         //
     }
 
-    public function listen(string|array $action, callable|string $listener, int $priority = 10): void
+    public function listen(string|array $action, callable|string $listener): void
     {
         $listener = $this->resolveListener($listener);
-        $parameterCount = $this->getParameterCount($listener);
+
+        [$priority, $parameterCount] = $this->reflect($listener);
 
         foreach ((array) $action as $a) {
             add_action($a, $listener, $priority, $parameterCount);
         }
     }
 
-    public function forget(string|array $action, callable|string $listener, int $priority = 10): void
+    public function forget(string|array $action, callable|string $listener): void
     {
         $listener = $this->resolveListener($listener);
-        $parameterCount = $this->getParameterCount($listener);
+
+        [$priority, $parameterCount] = $this->reflect($listener);
 
         foreach ((array) $action as $a) {
             remove_action($a, $listener, $priority, $parameterCount);
@@ -62,12 +63,17 @@ class Dispatcher
         return $callback;
     }
 
-    protected function getParameterCount(callable $listener): int
+    protected function reflect(callable $listener): array
     {
         $reflect = is_array($listener)
             ? new ReflectionMethod($listener[0], $listener[1])
             : new ReflectionFunction($listener);
 
-        return $reflect->getNumberOfParameters();
+        $attribute = $reflect->getAttributes(Priority::class)[0] ?? null;
+
+        return [
+            $attribute ? $attribute->newInstance()->priority : 10,
+            $reflect->getNumberOfParameters(),
+        ];
     }
 }

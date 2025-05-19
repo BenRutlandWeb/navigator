@@ -30,11 +30,7 @@ class EventServiceProvider extends ServiceProvider
 
         foreach ($this->actions as $action => $listeners) {
             foreach ($listeners as $listener) {
-                if (property_exists($listener, 'priority')) {
-                    $dispatcher->listen($action, $listener, $listener::$priority ?? 10);
-                } else {
-                    $dispatcher->listen($action, $listener);
-                }
+                $dispatcher->listen($action, $listener);
             }
         }
 
