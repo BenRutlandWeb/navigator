@@ -4,6 +4,12 @@ namespace Navigator\Container;
 
 use Closure;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionFunction;
+use ReflectionFunctionAbstract;
+use ReflectionMethod;
+use ReflectionParameter;
 use Throwable;
 
 class Container implements ContainerInterface
@@ -70,6 +76,82 @@ class Container implements ContainerInterface
         }
 
         throw new ContainerException($id);
+    }
+
+    public function make(string $id, array $args = []): mixed
+    {
+        if ($this->has($id)) {
+            return $this->get($id);
+        }
+
+        try {
+            $reflection = new ReflectionClass($id);
+        } catch (ReflectionException $e) {
+            throw new BindingResolutionException("Target class [$id] does not exist.", 0, $e);
+        }
+
+        if (!$reflection->isInstantiable()) {
+            throw new BindingResolutionException("Target [$id] is not instantiable.");
+        }
+
+        if ($constructor = $reflection->getConstructor()) {
+            return $reflection->newInstanceArgs(
+                $this->resolveDependencies($constructor, $args)
+            );
+        }
+
+        return $reflection->newInstanceWithoutConstructor();
+    }
+
+    /**
+     * @template TCallReturn
+     * @param (callable(...): TCallReturn) $callable
+     * @return TCallReturn
+     */
+    public function call(callable $callable, array $args = []): mixed
+    {
+        if (is_array($callable)) {
+            $reflection = new ReflectionMethod(...$callable);
+
+            return $reflection->invokeArgs(
+                $callable[0],
+                $this->resolveDependencies($reflection, $args)
+            );
+        }
+
+        $reflection = new ReflectionFunction($callable);
+
+        return $reflection->invokeArgs(
+            $this->resolveDependencies($reflection, $args)
+        );
+    }
+
+    protected function resolveDependencies(ReflectionFunctionAbstract $reflection, array $args = []): array
+    {
+        return array_map(function (ReflectionParameter $parameter) use ($args) {
+            $name = $parameter->getName();
+
+            if ($args[$name] ?? null) {
+                return $args[$name];
+            }
+
+            return $this->resolveDependency($parameter, $args);
+        }, $reflection->getParameters());
+    }
+
+    protected function resolveDependency(ReflectionParameter $parameter, array $args = []): mixed
+    {
+        if (($type = $parameter->getType()) && !$type->isBuiltin()) {
+            if ($instance = $this->make($type->getName(), $args)) {
+                return $instance;
+            }
+        }
+
+        $declaringClass = $parameter->getDeclaringClass()->getName();
+
+        return $parameter->isDefaultValueAvailable()
+            ? $parameter->getDefaultValue()
+            : throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$declaringClass}");
     }
 
     /** @throws ContainerExceptionInterface */
