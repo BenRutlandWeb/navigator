@@ -46,7 +46,7 @@ Navigator is a fluent interface to WordPress
 -   [x] Validation
 -   [x] View
 
-Additional todo
+## Additional todo
 
 -   [ ] Move helpers.php into theme
 -   [ ] Create theme repo
@@ -54,3 +54,13 @@ Additional todo
 -   [ ] use reflection in container
 -   [ ] use attributes e.g. listeners priority
 -   [ ] set relevent classes to readonly and final
+
+
+## Container todo
+
+The container has been expanded to include a make method (that injects dependencies in constructors) and a call method (that injects dependencies in methods and functions). The next task is to update all services where useful to use make or call instead of how they are currently resolving dependencies (usually passed directly). This will be most useful in controllers and listeners so the user can specify the dependencies on controller constructors or in route methods.
+
+- [ ] Router: route class constructor
+- [ ] Router: route method
+- [ ] Events: Listener constructor
+- [ ] Validator
