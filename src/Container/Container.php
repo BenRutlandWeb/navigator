@@ -23,11 +23,11 @@ class Container implements ContainerInterface
     private static self $instance;
 
     /**
-     * @template TInstance
-     * @param class-string<TInstance>|string $id
+     * @template TGet
+     * @param class-string<TGet>|string $id
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
-     * @return TInstance
+     * @return ($id is class-string<TGet> ? TGet : mixed)
      */
     public function get(string $id): mixed
     {
@@ -48,10 +48,10 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @template TInstance
-     * @param class-string<TInstance>|string $id
+     * @template TResolve
+     * @param class-string<TResolve>|string $id
      * @throws ContainerExceptionInterface
-     * @return TInstance|mixed
+     * @return ($id is class-string<TResolve> ? TResolve : mixed)
      */
     public function resolve(string $id, mixed ...$args): mixed
     {
@@ -78,6 +78,11 @@ class Container implements ContainerInterface
         throw new ContainerException($id);
     }
 
+    /**
+     * @template TMake
+     * @param class-string<TMake>|string $id
+     * @return ($id is class-string<TMake> ? TMake : mixed)
+     */
     public function make(string $id, array $args = []): mixed
     {
         if ($this->has($id)) {
@@ -104,9 +109,9 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @template TCallReturn
-     * @param (callable(...): TCallReturn) $callable
-     * @return TCallReturn
+     * @template TCall
+     * @param (callable(...): TCall) $callable
+     * @return TCall
      */
     public function call(callable $callable, array $args = []): mixed
     {
