@@ -85,10 +85,17 @@ class Container implements ContainerInterface
      */
     public function make(string $id, array $args = []): mixed
     {
-        if ($this->has($id)) {
-            return $this->get($id);
-        }
+        return $this->has($id) ? $this->get($id) : $this->build($id, $args);
+    }
 
+    /**
+     * @template TBuild
+     * @param class-string<TBuild> $id
+     * @throws BindingResolutionException
+     * @return TBuild
+     */
+    public function build(string $id, array $args = []): mixed
+    {
         try {
             $reflection = new ReflectionClass($id);
         } catch (ReflectionException $e) {
@@ -168,11 +175,7 @@ class Container implements ContainerInterface
     /** @throws ContainerExceptionInterface */
     public function bind(string $id, ?Closure $binding = null, bool $shared = false): void
     {
-        if (!$binding && !class_exists($id)) {
-            throw new ContainerException("Target class [$id] does not exist.");
-        }
-
-        $this->bindings[$id] = [$binding ?? fn() => new $id(), $shared];
+        $this->bindings[$id] = [$binding ?? fn($app, ...$args) => $this->build($id, $args), $shared];
     }
 
     /**

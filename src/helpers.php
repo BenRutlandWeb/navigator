@@ -6,7 +6,8 @@ use Carbon\CarbonImmutable;
 use DateTimeZone;
 use Faker\Generator as Faker;
 use Navigator\Auth\Auth;
-use Navigator\Cache\Repository;
+use Navigator\Cache\Repository as CacheRepository;
+use Navigator\Config\Repository as ConfigRepository;
 use Navigator\Collections\Collection;
 use Navigator\Encryption\Encrypter;
 use Navigator\Foundation\Application;
@@ -36,10 +37,10 @@ function abort(int $code, string $message = '', array $headers = []): void
 }
 
 /**
- * @template T
- * @param class-string<T>|null $id
+ * @template TApp
+ * @param class-string<TApp>|null $id
  * @param mixed ...$args
- * @return ($id is null ? Application : T)
+ * @return ($id is null ? Application : TApp)
  */
 function app(?string $id = null, mixed ...$args): mixed
 {
@@ -53,10 +54,10 @@ function auth(): Auth
     return app(Auth::class);
 }
 
-/** @return Repository|mixed */
+/** @return ($key is null ? CacheRepository : mixed)) */
 function cache(?string $key = null, mixed $default = null): mixed
 {
-    $cache = app(Repository::class);
+    $cache = app(CacheRepository::class);
 
     return $key ? $cache->get($key, $default) : $cache;
 }
@@ -66,7 +67,7 @@ function collect(array $items = []): Collection
     return Collection::make($items);
 }
 
-/** @return Repository|mixed */
+/** @return ($key is null ? ConfigRepository : mixed)) */
 function config(?string $key = null, mixed $default = null): mixed
 {
     return app()->config($key, $default);
@@ -102,6 +103,7 @@ function fake(?string $locale = null): Faker
     return app(Faker::class, $locale);
 }
 
+/** @return ($driver is null ? HashManager : HasherInterface)) */
 function hasher(?Hash $driver = null): HashManager|HasherInterface
 {
     $manager = app(HashManager::class);
@@ -153,6 +155,7 @@ function request(): Request
     return app(Request::class);
 }
 
+/** @return ($content is null ? ResponseFactory : Response)) */
 function response(mixed $content = null, int $status = 200, array $headers = []): ResponseFactory|Response
 {
     $factory = app(ResponseFactory::class);
@@ -160,8 +163,8 @@ function response(mixed $content = null, int $status = 200, array $headers = [])
     return $content ? $factory->make($content, $status, $headers) : $factory;
 }
 
-/** @return Session|mixed */
-function session(string $key = '', mixed $default = null): mixed
+/** @return ($key is null ? Session : mixed)) */
+function session(?string $key =  null, mixed $default = null): mixed
 {
     $session = app(Session::class);
 
@@ -187,20 +190,23 @@ function today(DateTimeZone|string|null $tz = null): CarbonImmutable
     return CarbonImmutable::today($tz);
 }
 
-function url(string $path = ''): Url|string
+/** @return ($path is null ? Url : string)) */
+function url(?string $path = null): Url|string
 {
     $url = app(Url::class);
 
     return $path ? $url->home($path) : $url;
 }
 
+/** @return ($input is null ? ValidationFactory : Validator)) */
 function validator(?array $input = null, array $rules = [], array $messages = []): ValidationFactory|Validator
 {
     $factory = app(ValidationFactory::class);
 
-    return !is_null($input) ? $factory->make($input, $rules, $messages) : $factory;
+    return $input ? $factory->make($input, $rules, $messages) : $factory;
 }
 
+/** @return ($path is null ? ViewFactory : View)) */
 function view(?string $path = null, array $data = []): ViewFactory|View
 {
     $factory = app(ViewFactory::class);
