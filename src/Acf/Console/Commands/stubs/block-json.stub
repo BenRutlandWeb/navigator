@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "$schema": "https://advancedcustomfields.com/schemas/json/main/block.json",
     "apiVersion": 3,
     "name": "acf/{{ name }}",
     "title": "{{ title }}",
@@ -10,9 +10,11 @@
         "example"
     ],
     "acf": {
-        "mode": "preview",
         "renderTemplate": "template.php"
     },
+    "style": [
+        "file:./style.css"
+    ],
     "supports": {
           "align": [
             "wide",

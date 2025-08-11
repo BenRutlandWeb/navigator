@@ -23,6 +23,7 @@ class MakeBlock extends GeneratorCommand
         $stubs = [
             'block.json'   => __DIR__ . '/stubs/block-json.stub',
             'template.php' => __DIR__ . '/stubs/block-template.stub',
+            'style.css'    => __DIR__ . '/stubs/block-style.stub',
         ];
 
         $dir = $this->app->path('resources/blocks/' . $dirName);
