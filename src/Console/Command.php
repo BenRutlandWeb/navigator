@@ -186,6 +186,10 @@ abstract class Command
                     return $options[$selected];
                 }
 
+                if ($search = array_search($selected, $options)) {
+                    return $options[$search];
+                }
+
                 $this->line("<error>Value \"{$selected}\" is invalid.</error>")->newLine();
             }
         }
