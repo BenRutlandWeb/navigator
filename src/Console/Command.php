@@ -166,11 +166,42 @@ abstract class Command
         return true;
     }
 
-    protected function ask(string $question): string
+    protected function ask(string $question, array $options = [])
     {
-        fwrite(STDOUT, $question . ' ');
+        while (true) {
+            if (empty($options)) {
+                fwrite(STDOUT, $this->colorize("<question>{$question}</question> "));
 
-        return trim(fgets(STDIN));
+                if ($answer = trim(fgets(STDIN))) {
+                    return $answer;
+                }
+
+                $this->line("<error>Value \"{$answer}\" is invalid.</error>")->newLine();
+            } else {
+                $this->line("<question>{$question}</question> ")->optionList($options);
+
+                $selected = trim(fgets(STDIN));
+
+                if (isset($options[$selected])) {
+                    return $options[$selected];
+                }
+
+                $this->line("<error>Value \"{$selected}\" is invalid.</error>")->newLine();
+            }
+        }
+    }
+
+    public function optionList(array $options)
+    {
+        $totalLen = max(array_map('strlen', $options)) + 50 + strlen((string) count($options));
+
+        foreach ($options as $i => $label) {
+            $num  = (string) $i;
+            $dots = str_repeat('.', $totalLen - strlen($label) - strlen($num));
+            $this->line(sprintf('%s %s %s', $label, $dots, $num));
+        }
+
+        return $this;
     }
 
     protected function terminate(?string $message = null): void
