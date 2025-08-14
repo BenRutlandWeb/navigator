@@ -15,16 +15,74 @@ abstract class GeneratorCommand extends Command
     protected string $type;
 
     protected array $reservedNames = [
-        '__halt_compiler', 'abstract', 'and', 'array', 'as', 'break',
-        'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue',
-        'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty',
-        'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile',
-        'eval', 'exit', 'extends', 'final', 'finally', 'fn', 'for', 'foreach',
-        'function', 'global', 'goto', 'if', 'implements', 'include',
-        'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list',
-        'namespace', 'new', 'or', 'print', 'private', 'protected', 'public',
-        'require', 'require_once', 'return', 'static', 'switch', 'throw',
-        'trait', 'try', 'unset', 'use', 'var', 'while', 'xor', 'yield',
+        '__halt_compiler',
+        'abstract',
+        'and',
+        'array',
+        'as',
+        'break',
+        'callable',
+        'case',
+        'catch',
+        'class',
+        'clone',
+        'const',
+        'continue',
+        'declare',
+        'default',
+        'die',
+        'do',
+        'echo',
+        'else',
+        'elseif',
+        'empty',
+        'enddeclare',
+        'endfor',
+        'endforeach',
+        'endif',
+        'endswitch',
+        'endwhile',
+        'eval',
+        'exit',
+        'extends',
+        'final',
+        'finally',
+        'fn',
+        'for',
+        'foreach',
+        'function',
+        'global',
+        'goto',
+        'if',
+        'implements',
+        'include',
+        'include_once',
+        'instanceof',
+        'insteadof',
+        'interface',
+        'isset',
+        'list',
+        'namespace',
+        'new',
+        'or',
+        'print',
+        'private',
+        'protected',
+        'public',
+        'require',
+        'require_once',
+        'return',
+        'static',
+        'switch',
+        'throw',
+        'trait',
+        'try',
+        'unset',
+        'use',
+        'var',
+        'while',
+        'xor',
+        'yield',
     ];
 
     public function __construct(protected Application $app)
@@ -67,8 +125,10 @@ abstract class GeneratorCommand extends Command
 
         $this->files->put($path, $this->sortImports($this->buildClass($name)));
 
-        $this->success($this->type . ' created successfully.');
-        $this->line($path);
+        $this->success($this->type . ' created successfully.')
+            ->newLine()
+            ->info('The file can be found here:')
+            ->line("<light-grey>{$path}</light-grey>");
     }
 
     protected function qualifyClass(string $name): string
@@ -106,7 +166,7 @@ abstract class GeneratorCommand extends Command
             $name = substr_replace($name, '', $position, strlen($this->rootNamespace()));
         }
 
-        return $this->app->path('/app/' . Str::replace('\\', '/', $name) . '.php');
+        return $this->app->path('app' . DIRECTORY_SEPARATOR . Str::replace('\\', DIRECTORY_SEPARATOR, $name) . '.php');
     }
 
     protected function makeDirectory(string $path): string

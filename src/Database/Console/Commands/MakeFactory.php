@@ -18,23 +18,15 @@ class MakeFactory extends GeneratorCommand
 
     protected function getStub(): string
     {
-        $type = $this->option('type');
+        $type = $this->ask('What type of factory do you want to create?', Arr::enumValues(ModelType::class), ModelType::POST->value);
 
-        if (!ModelType::tryFrom($type)) {
-            $types = join(', ', Arr::enumValues(ModelType::class));
-
-            $this->error("--type={$type} is invalid. Valid options are [{$types}].");
-        }
-
-        if ($type == 'post') {
-            return __DIR__ . '/stubs/factory.post.stub';
-        } elseif ($type == 'term') {
-            return __DIR__ . '/stubs/factory.term.stub';
-        } elseif ($type == 'comment') {
-            return __DIR__ . '/stubs/factory.comment.stub';
-        } elseif ($type == 'user') {
-            return __DIR__ . '/stubs/factory.user.stub';
-        }
+        return match ($type) {
+            ModelType::POST->value => __DIR__ . '/stubs/factory.post.stub',
+            ModelType::TERM->value => __DIR__ . '/stubs/factory.term.stub',
+            ModelType::COMMENT->value => __DIR__ . '/stubs/factory.comment.stub',
+            ModelType::USER->value => __DIR__ . '/stubs/factory.user.stub',
+            default => __DIR__ . '/stubs/factory.post.stub',
+        };
     }
 
     protected function getDefaultNamespace(string $rootNamespace): string
