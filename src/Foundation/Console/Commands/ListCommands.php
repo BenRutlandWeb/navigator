@@ -11,11 +11,11 @@ class ListCommands extends Command
 {
     protected string $signature = 'list';
 
-    protected string $description = 'List commands.';
+    protected string $description = 'List the registered commands.';
 
     protected function handle(): void
     {
-        $this->header('Navigator', 'List the navigator commands available');
+        $this->header('Navigator', 'List the registered commands');
 
         Collection::make($this->getSubcommands())
             ->map(function ($subcommand) {

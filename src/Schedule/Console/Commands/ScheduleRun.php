@@ -12,6 +12,12 @@ class ScheduleRun extends Command
 
     protected function handle(): void
     {
-        $this->call('cron event run --all');
+        $this->header('Navigator', 'Run the scheduled commands');
+
+        $this->warning('The schedule:run process can take some time')->newLine();
+
+        if ($this->call('cron event run --all', launch: false)) {
+            $this->replacePreviousLine('')->success('Executed the scheduled tasks');
+        }
     }
 }

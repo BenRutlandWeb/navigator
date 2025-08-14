@@ -12,8 +12,10 @@ class QueueTables extends Command
 
     protected function handle(): void
     {
+        $this->header('Navigator', 'Create the queue database tables');
+
         wp_queue_install_tables();
 
-        $this->success('Database tables created.');
+        $this->success('Database tables created');
     }
 }

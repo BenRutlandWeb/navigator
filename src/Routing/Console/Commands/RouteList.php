@@ -20,8 +20,10 @@ class RouteList extends Command
 
     protected function handle(): void
     {
+        $this->header('Navigator', 'List the registered routes');
+
         if (empty($this->getRoutes())) {
-            $this->error('Your application doesn\'t have any routes.');
+            $this->warning('Your application doesn\'t have any routes.');
         } else {
             $this->table($this->headers, $this->getRoutes());
         }

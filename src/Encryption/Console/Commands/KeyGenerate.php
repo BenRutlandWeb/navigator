@@ -14,15 +14,17 @@ class KeyGenerate extends Command
 
     protected function handle(): void
     {
+        $this->header('Navigator', 'Generate an encryption key');
+
         $key = Str::of(
             Encrypter::generateKey($this->app->config('app.cipher', 'aes-256-cbc'))
         )->toBase64()->prepend('base64:');
 
         if ($this->callSilently('config set APP_KEY ' . $key)) {
-            $this->success('Generated key.');
+            $this->success('Generated key');
             return;
         };
 
-        $this->error('Failed to generate key.');
+        $this->error('Failed to generate key');
     }
 }

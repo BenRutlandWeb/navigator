@@ -336,11 +336,11 @@ abstract class Command
         die;
     }
 
-    protected function call(string $command, array $arguments = [], bool $silent = false): bool
+    protected function call(string $command, array $arguments = [], bool $silent = false, bool $launch = true): bool
     {
         $return = WP_CLI::runcommand($command, [
             'return'       => true,
-            'launch'       => true,
+            'launch'       => $launch,
             'exit_error'   => false,
             'command_args' => $this->formatCommandArgs($arguments),
         ]);

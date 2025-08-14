@@ -12,6 +12,8 @@ class RouteClear extends Command
 
     protected function handle(): void
     {
+        $this->header('Navigator', 'Flush the permalink cache');
+
         if ($this->callSilently('rewrite flush')) {
             $this->success('Permalink cache flushed.');
         }
