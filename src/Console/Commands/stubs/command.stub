@@ -1,0 +1,17 @@
+<?php
+
+namespace {{ namespace }};
+
+use Navigator\Console\Command;
+
+class {{ class }} extends Command
+{
+    protected string $signature = '{{ name }}';
+
+    protected string $description = '';
+
+    protected function handle(): void
+    {
+        $this->success("{{ name }}");
+    }
+}
