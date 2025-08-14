@@ -4,7 +4,7 @@
     "name": "acf/{{ name }}",
     "title": "{{ title }}",
     "description": "Block description",
-    "category": "custom",
+    "category": "navigator",
     "icon": "block-default",
     "keywords": [
         "example"
