@@ -12,6 +12,8 @@ class GetEnvironment extends Command
 
     protected function handle(): void
     {
-        $this->line("The current environment is: {$this->app->environment->value}");
+        $this->header('Navigator', 'Get the environment type');
+
+        $this->info("The current environment is: {$this->app->environment->value}");
     }
 }

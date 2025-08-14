@@ -213,7 +213,7 @@ abstract class Command
         $bar = new ProgressBar(count($data));
 
         if ($message) {
-            $bar->setMessage($this->colorize("<info>{$message}</info>"));
+            $bar->setMessage($this->colorize("<light-blue>{$message}</light-blue>"));
         }
 
         $bar->start();
@@ -240,7 +240,7 @@ abstract class Command
         }
 
         while (true) {
-            $this->info($question);
+            $this->line("<light-blue>{$question}</light-blue>");
 
             if ($answer = trim(fgets(STDIN))) {
                 $this->newLine();
@@ -258,7 +258,8 @@ abstract class Command
         }
 
         while (true) {
-            $this->info($question)->optionList($options, $default);
+            $this->line("<light-blue>{$question}</light-blue>")
+                ->optionList($options, $default);
 
             $input = trim(fgets(STDIN));
 
@@ -284,7 +285,7 @@ abstract class Command
     public function selectMultiple(string $question, array $options, mixed $defaults = null)
     {
         while (true) {
-            $this->info($question)
+            $this->line("<light-blue>{$question}</light-blue>")
                 ->comment('Select multiple items using commas.')
                 ->optionList($options, $defaults);
 
@@ -382,7 +383,7 @@ abstract class Command
 
         foreach ($options as $i => $label) {
             $num = str_repeat(' ', $max - strlen((string) $i));
-            $this->line(sprintf('- [%s] %s', in_array($label, $defaults) ? "<info>{$i}</info>" :  $i, $num . $label));
+            $this->line(sprintf('- [%s] %s', in_array($label, $defaults) ? "<light-blue>{$i}</light-blue>" :  $i, $num . $label));
         }
 
         return $this;
@@ -407,7 +408,7 @@ abstract class Command
 
     public function header(string $heading, string $subheading = ''): static
     {
-        $this->newLine()->info(strtoupper($heading));
+        $this->newLine()->line('<light-blue>' . strtoupper($heading) . '</light-blue>');
 
         if ($subheading) {
             $this->line("<light-grey>{$subheading}</light-grey>");
@@ -423,7 +424,7 @@ abstract class Command
 
     public function headedList(string $heading, array $options): static
     {
-        return $this->info(strtoupper($heading))
+        return $this->line('<light-blue>' . strtoupper($heading) . '</light-blue>')
             ->list($options, false, '.', '%key <dark-grey>%seps</dark-grey> <grey>%label</grey>', 20);
     }
 
