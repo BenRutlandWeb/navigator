@@ -6,6 +6,7 @@ use Navigator\Collections\Arr;
 use Navigator\Console\Command;
 use Navigator\Filesystem\Filesystem;
 use Navigator\Foundation\Application;
+use Navigator\Foundation\BootstrapManager;
 use Navigator\Str\Str;
 
 abstract class GeneratorCommand extends Command
@@ -124,6 +125,8 @@ abstract class GeneratorCommand extends Command
         $this->makeDirectory($path);
 
         $this->files->put($path, $this->sortImports($this->buildClass($name)));
+
+        $this->app->make(BootstrapManager::class)->add($name);
 
         $this->success($this->type . ' created successfully.')
             ->newLine()

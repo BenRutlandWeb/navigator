@@ -4,6 +4,7 @@ namespace Navigator\Console;
 
 use Navigator\Console\Commands\MakeCommand;
 use Navigator\Foundation\Application;
+use Navigator\Foundation\BootstrapManager;
 use Navigator\Foundation\ServiceProvider;
 
 class ConsoleServiceProvider extends ServiceProvider
@@ -15,8 +16,12 @@ class ConsoleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->commands([
+        $manifest = $this->app->make(BootstrapManager::class);
+
+        $commands = [
             MakeCommand::class,
-        ]);
+        ];
+
+        $this->commands(array_merge($commands, $manifest->get(Command::class)));
     }
 }

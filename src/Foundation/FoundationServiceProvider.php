@@ -4,6 +4,7 @@ namespace Navigator\Foundation;
 
 use Faker\Factory;
 use Faker\Generator as Faker;
+use Navigator\Filesystem\Filesystem;
 use Navigator\Foundation\Console\Commands\GetEnvironment;
 use Navigator\Foundation\Console\Commands\ListCommands;
 use Navigator\Foundation\Console\Commands\MakeProvider;
@@ -24,6 +25,16 @@ class FoundationServiceProvider extends ServiceProvider
 
             return $generator;
         });
+
+        $this->app->singleton(BootstrapManager::class, fn(Application $app) => new BootstrapManager(
+            $app->get(Filesystem::class),
+            $app->path('storage/app/bootstrap.php'),
+            [
+                'App\\Acf\\Blocks\\'      => $this->app->path('app/Acf/Blocks'),
+                'App\\Acf\\FieldGroups\\' => $this->app->path('app/Acf/FieldGroups'),
+                'App\\Commands\\'         => $this->app->path('app/Commands'),
+            ]
+        ));
     }
 
     public function boot(): void
