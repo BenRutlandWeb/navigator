@@ -15,8 +15,6 @@ class ListCommands extends Command
 
     protected function handle(): void
     {
-        $this->header('Navigator', 'List the registered commands');
-
         Collection::make($this->getSubcommands())
             ->map(function ($subcommand) {
                 return $this->parseSubcommand($subcommand);

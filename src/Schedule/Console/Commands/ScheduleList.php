@@ -12,8 +12,6 @@ class ScheduleList extends Command
 
     protected function handle(): void
     {
-        $this->header('Navigator', 'List all scheduled tasks');
-
         $this->call('cron event list', launch: false);
     }
 }

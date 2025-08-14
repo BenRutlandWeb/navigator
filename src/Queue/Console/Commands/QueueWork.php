@@ -16,8 +16,6 @@ class QueueWork extends Command
 
     protected function handle(): void
     {
-        $this->header('Navigator', 'Start the queue worker');
-
         $this->info('Starting queue worker.');
 
         $queue = $this->app->get(Queue::class);

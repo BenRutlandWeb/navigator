@@ -14,8 +14,6 @@ class SetEnvironment extends Command
 
     protected function handle(): void
     {
-        $this->header('Navigator', 'Set the environment type');
-
         $env = $this->ask('Select the environment type', Arr::enumValues(Environment::class), $this->app->environment->value);
 
         if ($this->callSilently('config set WP_ENVIRONMENT_TYPE ' . $env)) {

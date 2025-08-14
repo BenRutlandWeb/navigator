@@ -13,8 +13,6 @@ class SessionTables extends Command
 
     protected function handle(): void
     {
-        $this->header('Navigator', 'Create the session database tables');
-
         $db = $this->app->get(Connection::class);
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

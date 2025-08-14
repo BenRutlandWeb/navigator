@@ -58,6 +58,8 @@ abstract class Command
 
         $this->options = $options;
 
+        $this->header('Navigator', $this->description);
+
         $this->handle();
     }
 
