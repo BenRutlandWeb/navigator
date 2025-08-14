@@ -4,7 +4,6 @@ namespace Navigator\Foundation\Console\Commands;
 
 use Navigator\Collections\Collection;
 use Navigator\Console\Command;
-use Navigator\Str\Str;
 use WP_CLI;
 use WP_CLI\Dispatcher\CompositeCommand;
 
@@ -16,27 +15,18 @@ class ListCommands extends Command
 
     protected function handle(): void
     {
-        $this->line('Navigator');
-        $this->newLine();
-
-        $longest = 0;
+        $this->header('Navigator', 'List the navigator commands available');
 
         Collection::make($this->getSubcommands())
-            ->map(function ($subcommand) use (&$longest) {
-                if (($length = Str::length($subcommand->get_name())) > $longest) {
-                    $longest = $length;
-                }
-
+            ->map(function ($subcommand) {
                 return $this->parseSubcommand($subcommand);
             })
             ->groupBy('group')
             ->sortKeys()
-            ->each(function ($subcommands, $key) use ($longest) {
-                $this->line("<comment>{$key}</comment>");
-                $subcommands->each(function ($subcommand) use ($longest) {
-                    $padded = Str::padRight($subcommand['name'], $longest + 2);
-                    $this->line(" <info>{$padded}</info>{$subcommand['description']}");
-                });
+            ->each(function (Collection $subcommands, $key) {
+                $this->headedList($key, $subcommands->mapWithKeys(function ($value) {
+                    return [$value['name'] => $value['description']];
+                })->toArray());
             });
     }
 

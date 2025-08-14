@@ -2,6 +2,7 @@
 
 namespace Navigator\Console;
 
+use Closure;
 use Navigator\Collections\Arr;
 use Navigator\Console\Parser;
 use Navigator\Console\ProgressBar;
@@ -95,47 +96,103 @@ abstract class Command
     protected function colorize(string $message): string
     {
         $map = [
-            'error'    => "\033[41m",
-            'info'     => "\033[32m",
-            'warn'     => "\033[33m",
-            'comment'  => "\033[33m",
-            'question' => "\033[30m\033[106m",
+            // colors
+            'info'      => "\033[96m",
+            'error'     => "\033[91m",
+            'warning'   => "\033[33m",
+            'success'   => "\033[92m",
+            'comment'   => "\033[38;5;232m",
+
+            'red'            => "\033[38;5;196m",
+            'bg-red'         => "\033[48;5;196m",
+            'pink'           => "\033[38;5;200m",
+            'bg-pink'        => "\033[48;5;200m",
+            'purple'         => "\033[38;5;93m",
+            'bg-purple'      => "\033[48;5;93m",
+            'indigo'         => "\033[38;5;62m",
+            'bg-indigo'      => "\033[48;5;62m",
+            'blue'           => "\033[38;5;39m",
+            'bg-blue'        => "\033[48;5;39m",
+            'light-blue'     => "\033[38;5;117m",
+            'bg-light-blue'  => "\033[48;5;117m",
+            'cyan'           => "\033[38;5;51m",
+            'bg-cyan'        => "\033[48;5;51m",
+            'teal'           => "\033[38;5;37m",
+            'bg-teal'        => "\033[48;5;37m",
+            'green'          => "\033[38;5;40m",
+            'bg-green'       => "\033[48;5;40m",
+            'light-green'    => "\033[38;5;113m",
+            'bg-light-green' => "\033[48;5;113m",
+            'lime'           => "\033[38;5;154m",
+            'bg-lime'        => "\033[48;5;154m",
+            'yellow'         => "\033[38;5;226m",
+            'bg-yellow'      => "\033[48;5;226m",
+            'amber'          => "\033[38;5;214m",
+            'bg-amber'       => "\033[48;5;214m",
+            'orange'         => "\033[38;5;208m",
+            'bg-orange'      => "\033[48;5;208m",
+            'deep-orange'    => "\033[38;5;202m",
+            'bg-deep-orange' => "\033[48;5;202m",
+            'brown'          => "\033[38;5;94m",
+            'bg-brown'       => "\033[48;5;94m",
+            'white'          => "\033[38;5;15m",
+            'bg-white'       => "\033[48;5;15m",
+            'light-grey'     => "\033[38;5;249m",
+            'bg-light-grey'  => "\033[48;5;249m",
+            'grey'           => "\033[38;5;232m",
+            'bg-grey'        => "\033[48;5;232m",
+            'dark-grey'      => "\033[38;5;232m\033[2m",
+            'bg-dark-grey'   => "\033[48;5;232m\033[2m",
+
+            // format
+            'i' => "\033[3m",
+            'b' => "\033[1m",
+            'u' => "\033[4m",
         ];
 
-        $message = preg_replace_callback('#<(.+?)>#', function ($match) use ($map) {
-            return $map[$match[1]] ?? $match[0];
+        $message = preg_replace_callback('#<(.+?)>#i', function ($match) use ($map) {
+            return $map[strtolower($match[1])] ?? $match[0];
         }, $message);
-
-        return preg_replace('#</(.+?)>#', "\033[0m", $message);
+        return preg_replace('#</(.+?)>#i', "\033[0m", $message);
     }
 
-    protected function success(string $message): Command
+    protected function success(string $message): static
     {
-        WP_CLI::success($this->colorize("<info>{$message}</info>"));
-
-        return $this;
+        return $this->line("✅ <success>{$message}</success>");
     }
 
-    protected function warning(string $message): Command
+    protected function warning(string $message): static
     {
-        WP_CLI::warning($this->colorize("<warn>{$message}</warn>"));
-
-        return $this;
+        return $this->line("⚠️  <warning>{$message}</warning>");
     }
 
-    protected function error(string $message): void
+    protected function error(string $message, bool $exit = true): void
     {
-        WP_CLI::error($this->colorize("<error>{$message}</error>"));
+        if ($exit) {
+            $this->terminate("⛔ <error>{$message}</error>");
+        }
+
+        $this->line("⛔ <error>{$message}</error>");
     }
 
-    protected function line(string $message): Command
+    protected function info(string $message): static
+    {
+        return $this->line("ℹ️  <info>{$message}</info>");
+    }
+
+    protected function comment(string $message): static
+    {
+        return $this->line("<comment>{$message}</comment>");
+    }
+
+    protected function line(string $message): static
     {
         WP_CLI::log($this->colorize($message));
 
         return $this;
     }
 
-    protected function newLine(int $lines = 1): Command
+    protected function newLine(int $lines = 1): static
     {
         while ($lines > 0) {
             $this->line('');
@@ -144,68 +201,129 @@ abstract class Command
         return $this;
     }
 
-    protected function table(array $headers, array $data): Command
+    protected function table(array $headers, array $data): static
     {
         wpcli_format_items('table', $data, $headers);
 
         return $this;
     }
 
-    public function createProgressBar(int $count): ProgressBar
+    public function progressBar(array $data, Closure $handler, ?string $message = null): static
     {
-        return new ProgressBar($count);
-    }
+        $bar = new ProgressBar(count($data));
 
-    protected function confirm(string $question, bool $skip = false): bool
-    {
-        if (!$skip) {
-            $answer = $this->ask($question . ' [y/n]');
-
-            return $answer  == 'y' || $answer === 'yes';
+        if ($message) {
+            $bar->setMessage($this->colorize("<info>{$message}</info>"));
         }
-        return true;
+
+        $bar->start();
+
+        foreach ($data as $value) {
+            $handler($value);
+            $bar->advance();
+        }
+
+        $bar->finish();
+
+        return $this->newLine();
     }
 
-    protected function ask(string $question, array $options = [])
+    protected function confirm(string $question, bool $default = true, string $yes = 'Yes', string $no = 'No'): bool
+    {
+        return $this->ask($question, [$yes, $no], $default ? $yes : $no) === $yes;
+    }
+
+    protected function ask(string $question, array $options = [], mixed $default = null, bool $multiple = false)
+    {
+        if (!empty($options)) {
+            return $this->select($question, $options, $default, $multiple);
+        }
+
+        while (true) {
+            $this->info($question);
+
+            if ($answer = trim(fgets(STDIN))) {
+                $this->newLine();
+                return $answer;
+            }
+
+            $this->replacePreviousLine("<warning>Input is required.</warning>")->newLine();
+        }
+    }
+
+    public function select(string $question, array $options, mixed $default = null, bool $multiple = false)
+    {
+        if ($multiple) {
+            return $this->selectMultiple($question, $options, $default);
+        }
+
+        while (true) {
+            $this->info($question)->optionList($options, $default);
+
+            $input = trim(fgets(STDIN));
+
+            if ($input === '') {
+                if ($default) {
+                    $this->replacePreviousLine($default)->newLine();
+                    return $default;
+                }
+                $this->replacePreviousLine("<warning>Input is required.</warning>")->newLine();
+                continue;
+            }
+
+            if (isset($options[$input])) {
+                $this->replacePreviousLine($options[$input])->newLine();
+                return $options[$input];
+            }
+
+            $this->replacePreviousLine("<warning>Input {$input} is invalid.</warning>")->newLine();
+            continue;
+        }
+    }
+
+    public function selectMultiple(string $question, array $options, mixed $defaults = null)
     {
         while (true) {
-            if (empty($options)) {
-                fwrite(STDOUT, $this->colorize("<question>{$question}</question> "));
+            $this->info($question)
+                ->comment('Select multiple items using commas.')
+                ->optionList($options, $defaults);
 
-                if ($answer = trim(fgets(STDIN))) {
-                    return $answer;
+            $input = trim(fgets(STDIN));
+
+            $defaults = $defaults ? (is_array($defaults) ? $defaults : [$defaults]) : null;
+
+            if ($input === '') {
+                if ($defaults) {
+                    $this->replacePreviousLine(implode(', ', $defaults))->newLine();
+                    return $defaults;
                 }
 
-                $this->line("<error>Value \"{$answer}\" is invalid.</error>")->newLine();
-            } else {
-                $this->line("<question>{$question}</question> ")->optionList($options);
-
-                $selected = trim(fgets(STDIN));
-
-                if (isset($options[$selected])) {
-                    return $options[$selected];
-                }
-
-                if ($search = array_search($selected, $options)) {
-                    return $options[$search];
-                }
-
-                $this->line("<error>Value \"{$selected}\" is invalid.</error>")->newLine();
+                $this->replacePreviousLine("<warning>Input is required.</warning>")->newLine();
+                continue;
             }
+
+            $selected = explode(',', $input);
+
+            $validSelections = [];
+            $invalidSelections = [];
+
+            foreach ($selected as $s) {
+                if (isset($options[trim($s)])) {
+                    $validSelections[] = $options[$s];
+                } else {
+                    $invalidSelections[] = $s;
+                }
+            }
+
+            if (empty($invalidSelections)) {
+                $this->replacePreviousLine(implode(', ', $validSelections))->newLine();
+                return $validSelections;
+            }
+
+            $err = implode(', ', $invalidSelections);
+            $this->replacePreviousLine("<warning>Input {$err} is invalid.</warning>")->newLine();
+            continue;
         }
-    }
-
-    public function optionList(array $options)
-    {
-        $totalLen = max(array_map('strlen', $options)) + 50 + strlen((string) count($options));
-
-        foreach ($options as $i => $label) {
-            $num  = (string) $i;
-            $dots = str_repeat('.', $totalLen - strlen($label) - strlen($num));
-            $this->line(sprintf('%s %s %s', $label, $dots, $num));
-        }
-
-        return $this;
     }
 
     protected function terminate(?string $message = null): void
@@ -213,33 +331,30 @@ abstract class Command
         if ($message) {
             $this->line($message);
         }
+
         die;
     }
 
-    protected function call(string $command, array $arguments = []): bool
+    protected function call(string $command, array $arguments = [], bool $silent = false): bool
     {
         $return = WP_CLI::runcommand($command, [
             'return'       => true,
-            'launch'       => false,
+            'launch'       => true,
             'exit_error'   => false,
             'command_args' => $this->formatCommandArgs($arguments),
         ]);
 
-        echo $return;
+        if (!$silent) {
+            echo $return;
+            $this->newLine();
+        }
 
         return $return ? true : false;
     }
 
     protected function callSilently(string $command, array $arguments = []): bool
     {
-        $return = WP_CLI::runcommand($command, [
-            'return'       => true,
-            'launch'       => false,
-            'exit_error'   => false,
-            'command_args' => $this->formatCommandArgs($arguments),
-        ]);
-
-        return $return ? true : false;
+        return $this->call($command, $arguments, true);
     }
 
     protected function formatCommandArgs(array $arguments = []): array
@@ -257,5 +372,83 @@ abstract class Command
         }
 
         return $return;
+    }
+
+    public function optionList(array $options, mixed $default = null): static
+    {
+        $defaults = is_array($default) ? $default : [$default];
+
+        $max = strlen((string) count($options));
+
+        foreach ($options as $i => $label) {
+            $num = str_repeat(' ', $max - strlen((string) $i));
+            $this->line(sprintf('- [%s] %s', in_array($label, $defaults) ? "<info>{$i}</info>" :  $i, $num . $label));
+        }
+
+        return $this;
+    }
+
+    public function list(array $options, bool $full = false, string $sep = '.', ?string $template = null, ?int $maxWidth = null): static
+    {
+        $max = $full ? ($maxWidth ?? $this->getTerminalWidth() - 4) : ($maxWidth ?? max(array_map('strlen', array_keys($options))));
+
+        foreach ($options as $key => $label) {
+            $seps = str_repeat($sep, $max - strlen($key . ($full ? $label : '')));
+
+            $args = compact('key', 'seps', 'label');
+
+            $this->line(preg_replace_callback('/%([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) use ($args) {
+                return array_key_exists($m[1], $args) ? $args[$m[1]] : $m[0];
+            }, $template ?? '%key %seps %label'));
+        }
+
+        return $this->newLine();
+    }
+
+    public function header(string $heading, string $subheading = ''): static
+    {
+        $this->newLine()->info(strtoupper($heading));
+
+        if ($subheading) {
+            $this->line("<light-grey>{$subheading}</light-grey>");
+        }
+
+        return $this->divider()->newLine();
+    }
+
+    public function divider(?int $length = null): static
+    {
+        return $this->comment(str_repeat('-', $length ?? $this->getTerminalWidth()));
+    }
+
+    public function headedList(string $heading, array $options): static
+    {
+        return $this->info(strtoupper($heading))
+            ->list($options, false, '.', '%key <dark-grey>%seps</dark-grey> <grey>%label</grey>', 20);
+    }
+
+    public function replacePreviousLine(string $string, int $previous = 1): static
+    {
+        return $this->line("\033[{$previous}F\033[0K{$string}");
+    }
+
+    public function getTerminalWidth(): int
+    {
+        $width = (int) @exec('tput cols 2>/dev/null 2>&1');
+        if ($width > 0) {
+            return $width;
+        }
+
+        $output = [];
+        @exec('mode con >nul 2>&1', $output);
+        if ($output) {
+            foreach ($output as $line) {
+                if (preg_match('/Columns:\s+(\d+)/i', $line, $m)) {
+                    return (int) $m[1];
+                }
+            }
+        }
+
+        return 80;
     }
 }
