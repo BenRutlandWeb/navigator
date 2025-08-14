@@ -10,6 +10,7 @@ use Navigator\Foundation\Console\Commands\ListCommands;
 use Navigator\Foundation\Console\Commands\MakeProvider;
 use Navigator\Foundation\Console\Commands\Publish;
 use Navigator\Foundation\Console\Commands\SetEnvironment;
+use Navigator\Foundation\Console\Commands\StorageClear;
 use Navigator\Foundation\ServiceProvider;
 
 class FoundationServiceProvider extends ServiceProvider
@@ -45,6 +46,7 @@ class FoundationServiceProvider extends ServiceProvider
             ListCommands::class,
             Publish::class,
             SetEnvironment::class,
+            StorageClear::class,
         ]);
     }
 }
