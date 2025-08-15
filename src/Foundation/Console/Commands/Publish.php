@@ -18,19 +18,32 @@ class Publish extends Command
 
         $file = $this->app->get(Filesystem::class);
 
+        $copied = [];
+
         foreach ($this->files($tag) as $from => $to) {
             if (!$file->exists($to) || $this->option('force')) {
                 $file->ensureDirectoryExists(dirname($to));
 
-                $file->copy($from, $to);
-
-                $this->line(sprintf(
-                    '<info>Copied %s</info> <comment>[%s]</comment> <info>To</info> <comment>[%s]</comment>',
-                    $tag,
-                    str_replace($this->app->basePath, '', realpath($from)),
-                    str_replace($this->app->basePath, '', realpath($to))
-                ));
+                if ($file->isDirectory($from)) {
+                    $file->copyDirectory($from, $to);
+                } else {
+                    $file->copy($from, $to);
+                }
+                $copied[] = $to;
+            } else {
+                break;
             }
+        }
+
+        if (!empty($copied)) {
+            $this->success("Copied {$tag}")->newLine();
+            foreach ($copied as $path) {
+                $this->line($path);
+            }
+
+            $this->callSilently('navigator clear-compiled');
+        } else {
+            $this->error("Files already exist. Use --force to overwrite the files.");
         }
     }
 
