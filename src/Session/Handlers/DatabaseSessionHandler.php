@@ -51,7 +51,7 @@ class DatabaseSessionHandler implements SessionHandlerInterface
     public function gc(int $lifetime): int|false
     {
         return $this->db->query(
-            $this->db->prepare("DELETE FROM {$this->table} WHERE last_activity < %i", time() - $lifetime)
+            $this->db->prepare("DELETE FROM {$this->table} WHERE last_activity < %d", time() - $lifetime)
         );
     }
 }
