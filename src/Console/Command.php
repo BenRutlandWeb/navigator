@@ -427,7 +427,7 @@ abstract class Command
     public function headedList(string $heading, array $options): static
     {
         return $this->line('<light-blue>' . strtoupper($heading) . '</light-blue>')
-            ->list($options, false, '.', '%key <dark-grey>%seps</dark-grey> <grey>%label</grey>', 20);
+            ->list($options, false, '.', '%key <dark-grey>%seps</dark-grey> <grey>%label</grey>', 24);
     }
 
     public function replacePreviousLine(string $string, int $previous = 1): static

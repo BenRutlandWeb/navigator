@@ -3,6 +3,8 @@
 namespace Navigator\WordPress;
 
 use Navigator\Foundation\ServiceProvider;
+use Navigator\WordPress\Console\Commands\MediaLibraryClean;
+use Navigator\WordPress\Console\Commands\MediaLibraryRegenerate;
 
 class WordPressServiceProvider extends ServiceProvider
 {
@@ -13,6 +15,9 @@ class WordPressServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        $this->commands([
+            MediaLibraryClean::class,
+            MediaLibraryRegenerate::class,
+        ]);
     }
 }

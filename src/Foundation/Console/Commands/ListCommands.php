@@ -4,6 +4,7 @@ namespace Navigator\Foundation\Console\Commands;
 
 use Navigator\Collections\Collection;
 use Navigator\Console\Command;
+use Navigator\Str\Str;
 use WP_CLI;
 use WP_CLI\Dispatcher\CompositeCommand;
 
@@ -22,7 +23,7 @@ class ListCommands extends Command
             ->groupBy('group')
             ->sortKeys()
             ->each(function (Collection $subcommands, $key) {
-                $this->headedList($key, $subcommands->mapWithKeys(function ($value) {
+                $this->headedList(Str::replace('-', ' ', $key), $subcommands->mapWithKeys(function ($value) {
                     return [$value['name'] => $value['description']];
                 })->toArray());
             });
