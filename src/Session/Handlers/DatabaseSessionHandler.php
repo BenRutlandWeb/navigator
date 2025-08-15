@@ -36,10 +36,6 @@ class DatabaseSessionHandler implements SessionHandlerInterface
 
     public function write(string $id, string $data): bool
     {
-        if (!$data) {
-            return true;
-        }
-
         return $this->db->replace($this->table, [
             'id'            => $id,
             'payload'       => base64_encode($data),
