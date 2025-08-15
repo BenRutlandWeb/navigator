@@ -10,7 +10,7 @@ class Repository implements ArrayAccess
 {
     protected int $default = 3600;
 
-    public function __construct(protected Connection $connection, public readonly string $prefix = '')
+    public function __construct(protected Connection $connection, public readonly string $prefix = 'navigator_')
     {
         //
     }

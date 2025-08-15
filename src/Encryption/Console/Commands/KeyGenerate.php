@@ -14,9 +14,7 @@ class KeyGenerate extends Command
 
     protected function handle(): void
     {
-        $key = Str::of(
-            Encrypter::generateKey($this->app->config('app.cipher', 'aes-256-cbc'))
-        )->toBase64()->prepend('base64:');
+        $key = Str::of(Encrypter::generateKey())->toBase64()->prepend('base64:');
 
         if ($this->callSilently('config set APP_KEY ' . $key)) {
             $this->success('Generated key');

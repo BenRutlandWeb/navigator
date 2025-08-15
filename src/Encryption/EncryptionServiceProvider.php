@@ -13,10 +13,7 @@ class EncryptionServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(Encrypter::class, function (Application $app) {
-            return new Encrypter(
-                $this->parseKey($app->env('APP_KEY')),
-                $app->env('APP_CIPHER', 'aes-256-cbc')
-            );
+            return new Encrypter($this->parseKey($app->env('APP_KEY')));
         });
     }
 

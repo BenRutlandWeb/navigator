@@ -6,9 +6,9 @@ use Navigator\Console\Command;
 
 class {{ class }} extends Command
 {
-    protected string $signature = '{{ name }}';
+    protected string $signature = 'app:{{ name }}';
 
-    protected string $description = '';
+    protected string $description = 'Command description.';
 
     protected function handle(): void
     {
