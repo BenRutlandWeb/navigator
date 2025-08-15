@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Cache\Console\Commands;
+namespace Navigator\Cache\Console\Commands;
 
 use Navigator\Cache\Repository;
 use Navigator\Console\Command;

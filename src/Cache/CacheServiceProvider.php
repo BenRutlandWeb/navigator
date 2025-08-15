@@ -2,8 +2,8 @@
 
 namespace Navigator\Cache;
 
-use App\Cache\Console\Commands\CacheClear;
-use App\Cache\Console\Commands\CacheForget;
+use Navigator\Cache\Console\Commands\CacheClear;
+use Navigator\Cache\Console\Commands\CacheForget;
 use Navigator\Database\Connection;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
