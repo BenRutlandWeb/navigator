@@ -4,11 +4,16 @@ namespace Navigator\Foundation;
 
 use Navigator\Filesystem\Filesystem;
 
-class BootstrapManager
+class ServicesRepository
 {
     public function __construct(protected Filesystem $files, protected string $path, protected array $scanDirs = [])
     {
         //
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 
     protected function makeDirectory(string $path): string

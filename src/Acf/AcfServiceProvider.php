@@ -5,8 +5,8 @@ namespace Navigator\Acf;
 use Navigator\Acf\Console\Commands\MakeBlock;
 use Navigator\Acf\Console\Commands\MakeFieldGroup;
 use Navigator\Foundation\Application;
-use Navigator\Foundation\BootstrapManager;
 use Navigator\Foundation\ServiceProvider;
+use Navigator\Foundation\ServicesRepository;
 use Navigator\View\ViewFactory;
 
 class AcfServiceProvider extends ServiceProvider
@@ -24,7 +24,7 @@ class AcfServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $factory = $this->app->get(AcfFactory::class);
-        $manifest = $this->app->get(BootstrapManager::class);
+        $manifest = $this->app->get(ServicesRepository::class);
 
         foreach ($manifest->get(Block::class) as $block) {
             $factory->registerBlock($block);

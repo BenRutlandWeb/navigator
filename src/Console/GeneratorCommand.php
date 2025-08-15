@@ -6,7 +6,7 @@ use Navigator\Collections\Arr;
 use Navigator\Console\Command;
 use Navigator\Filesystem\Filesystem;
 use Navigator\Foundation\Application;
-use Navigator\Foundation\BootstrapManager;
+use Navigator\Foundation\ServicesRepository;
 use Navigator\Str\Str;
 
 abstract class GeneratorCommand extends Command
@@ -126,7 +126,7 @@ abstract class GeneratorCommand extends Command
 
         $this->files->put($path, $this->sortImports($this->buildClass($name)));
 
-        $this->app->make(BootstrapManager::class)->add($name);
+        $this->app->make(ServicesRepository::class)->add($name);
 
         $this->success($this->type . ' created successfully.')
             ->newLine()
