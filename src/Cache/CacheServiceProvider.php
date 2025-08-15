@@ -2,6 +2,8 @@
 
 namespace Navigator\Cache;
 
+use App\Cache\Console\Commands\CacheClear;
+use App\Cache\Console\Commands\CacheForget;
 use Navigator\Database\Connection;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
@@ -17,6 +19,9 @@ class CacheServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        $this->commands([
+            CacheClear::class,
+            CacheForget::class,
+        ]);
     }
 }
