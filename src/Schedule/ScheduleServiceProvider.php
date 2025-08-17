@@ -2,6 +2,7 @@
 
 namespace Navigator\Schedule;
 
+use App\Commands\ScheduleTest;
 use Navigator\Events\Dispatcher;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
@@ -26,6 +27,7 @@ class ScheduleServiceProvider extends ServiceProvider
         $this->commands([
             ScheduleList::class,
             ScheduleRun::class,
+            ScheduleTest::class,
         ]);
     }
 
