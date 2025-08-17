@@ -54,13 +54,9 @@ class Schedule
         }
 
         if (is_array($callback)) {
-            return sprintf(
-                '%s::%s()',
-                is_string($callback[0]) ? $callback[0] : get_class($callback[0]),
-                $callback[1]
-            );
+            return basename(is_string($callback[0]) ? $callback[0] : get_class($callback[0]));
         }
 
-        return get_class($callback);
+        return basename(get_class($callback));
     }
 }
