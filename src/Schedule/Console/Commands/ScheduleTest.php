@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commands;
+namespace Navigator\Schedule\Console\Commands;
 
 use Navigator\Console\Command;
 

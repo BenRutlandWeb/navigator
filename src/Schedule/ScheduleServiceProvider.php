@@ -2,12 +2,12 @@
 
 namespace Navigator\Schedule;
 
-use App\Commands\ScheduleTest;
 use Navigator\Events\Dispatcher;
 use Navigator\Foundation\Application;
 use Navigator\Foundation\ServiceProvider;
 use Navigator\Schedule\Console\Commands\ScheduleList;
 use Navigator\Schedule\Console\Commands\ScheduleRun;
+use Navigator\Schedule\Console\Commands\ScheduleTest;
 
 class ScheduleServiceProvider extends ServiceProvider
 {
