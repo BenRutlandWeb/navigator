@@ -5,7 +5,6 @@ namespace Navigator\Database\Models;
 use Carbon\Carbon;
 use Closure;
 use Generator;
-use Navigator\Collections\Arr;
 use Navigator\Collections\Collection;
 use Navigator\Database\Exceptions\ModelNotFoundException;
 use Navigator\Database\Factories\PostFactory;
