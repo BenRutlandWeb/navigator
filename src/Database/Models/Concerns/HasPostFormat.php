@@ -14,22 +14,18 @@ trait HasPostFormat
 
     public function postFormat(): ?PostFormat
     {
-        $format = get_post_format($this->object) ?: null;
-
-        return $format ? PostFormat::tryFrom($format) : null;
+        return PostFormat::tryFrom(get_post_format($this->object));
     }
 
-    public function setPostFormat(PostFormat $format): bool
+    public function setPostFormat(?PostFormat $format): bool
     {
-        $format = set_post_format($this->object, $format->value);
+        $format = set_post_format($this->object, $format?->value ?? '');
 
         return $format && !is_wp_error($format);
     }
 
     public function removePostFormat(): bool
     {
-        $format = set_post_format($this->object, '');
-
-        return $format && !is_wp_error($format);
+        return $this->setPostFormat(null);
     }
 }
