@@ -57,7 +57,7 @@ class Dispatcher
     protected function resolveListener(callable|string $callback): callable
     {
         if (is_string($callback) && class_exists($callback)) {
-            return [new $callback($this->app), '__invoke'];
+            return [$this->app->build($callback), '__invoke'];
         }
 
         return $callback;
