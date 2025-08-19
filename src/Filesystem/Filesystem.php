@@ -5,9 +5,15 @@ namespace Navigator\Filesystem;
 use ErrorException;
 use FilesystemIterator;
 use Navigator\Filesystem\Exceptions\FileNotFoundException;
+use WP_Filesystem_Base;
 
 class Filesystem
 {
+    public function __construct(protected WP_Filesystem_Base $filesystem)
+    {
+        //
+    }
+
     /**
      * Determine if a file or directory exists.
      *
@@ -16,7 +22,7 @@ class Filesystem
      */
     public function exists(string $path): bool
     {
-        return file_exists($path);
+        return $this->filesystem->exists($path);
     }
 
     /**
@@ -42,7 +48,7 @@ class Filesystem
     public function get(string $path, bool $lock = false): string
     {
         if ($this->isFile($path)) {
-            return $lock ? $this->sharedGet($path) : file_get_contents($path);
+            return $this->filesystem->get_contents($path);
         }
 
         throw new FileNotFoundException("File does not exist at path {$path}.");
@@ -144,11 +150,11 @@ class Filesystem
      * @param  string  $path
      * @param  string  $contents
      * @param  bool  $lock
-     * @return int|bool
+     * @return bool
      */
     public function put(string $path, string $contents, bool $lock = false)
     {
-        return file_put_contents($path, $contents, $lock ? LOCK_EX : 0);
+        return $this->filesystem->put_contents($path, $contents);
     }
 
     /**
@@ -233,7 +239,7 @@ class Filesystem
 
         foreach ($paths as $path) {
             try {
-                if (!@unlink($path)) {
+                if (!$this->filesystem->delete($path, false, 'f')) {
                     $success = false;
                 }
             } catch (ErrorException $e) {
@@ -253,7 +259,7 @@ class Filesystem
      */
     public function move(string $path, string $target): bool
     {
-        return rename($path, $target);
+        return $this->filesystem->move($path, $target);
     }
 
     /**
@@ -265,7 +271,7 @@ class Filesystem
      */
     public function copy(string $path, string $target): bool
     {
-        return copy($path, $target);
+        return $this->filesystem->copy($path, $target);
     }
 
     /**
@@ -382,7 +388,7 @@ class Filesystem
      */
     public function isDirectory(string $directory): bool
     {
-        return is_dir($directory);
+        return $this->filesystem->is_dir($directory);
     }
 
     /**
@@ -393,7 +399,7 @@ class Filesystem
      */
     public function isReadable(string $path): bool
     {
-        return is_readable($path);
+        return $this->filesystem->is_readable($path);
     }
 
     /**
@@ -404,7 +410,7 @@ class Filesystem
      */
     public function isWritable(string $path): bool
     {
-        return is_writable($path);
+        return $this->filesystem->is_writable($path);
     }
 
     /**
@@ -415,7 +421,7 @@ class Filesystem
      */
     public function isFile(string $file): bool
     {
-        return is_file($file);
+        return $this->filesystem->is_file($file);
     }
 
     /**
@@ -457,10 +463,10 @@ class Filesystem
     public function makeDirectory(string $path, int $mode = 0755, bool $recursive = false, bool $force = false): bool
     {
         if ($force) {
-            return @mkdir($path, $mode, $recursive);
+            return $this->filesystem->mkdir($path);
         }
 
-        return mkdir($path, $mode, $recursive);
+        return $this->filesystem->mkdir($path);
     }
 
     /**
@@ -473,11 +479,7 @@ class Filesystem
      */
     public function moveDirectory(string $from, string $to, bool $overwrite = false): bool
     {
-        if ($overwrite && $this->isDirectory($to) && !$this->deleteDirectory($to)) {
-            return false;
-        }
-
-        return @rename($from, $to) === true;
+        return $this->filesystem->move($from, $to, $overwrite);
     }
 
     /**
@@ -562,7 +564,7 @@ class Filesystem
         }
 
         if (!$preserve) {
-            @rmdir($directory);
+            $this->filesystem->rmdir($directory, true);
         }
 
         return true;
