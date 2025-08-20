@@ -42,9 +42,11 @@ class MakeBlock extends GeneratorCommand
             $this->files->put($dir . '/' . $fileName, $stub);
         }
 
-        $this->call('navigator make:field-group ' . $this->argument('name'), [
-            '--force' => $this->option('force'),
-        ]);
+        if ($this->newLine()->confirm('Create ACF FieldGroup with same classname?')) {
+            $this->call('navigator make:field-group ' . $this->argument('name'), [
+                '--force' => $this->option('force'),
+            ]);
+        }
     }
 
     protected function resolveBlockName(): string

@@ -462,6 +462,10 @@ class Filesystem
      */
     public function makeDirectory(string $path, int $mode = 0755, bool $recursive = false, bool $force = false): bool
     {
+        if ($recursive && !$this->exists(dirname($path))) {
+            $this->makeDirectory(dirname($path), $mode, $recursive, $force);
+        }
+
         if ($force) {
             return $this->filesystem->mkdir($path);
         }
