@@ -48,6 +48,8 @@ class Application extends Container
     {
         static::setInstance($this);
 
+        $this->instance(static::class, $this);
+
         $this->instance(
             Environment::class,
             $environment = Environment::from(wp_get_environment_type())
