@@ -9,7 +9,6 @@ class FilesystemServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(Filesystem::class, function () {
-
             if (!function_exists('WP_Filesystem')) {
                 require_once ABSPATH . 'wp-admin/includes/file.php';
             }
