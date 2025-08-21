@@ -2,8 +2,12 @@
 
 namespace Navigator\Acf;
 
+use Navigator\Acf\Models\Concerns\HasAcfFields;
+
 abstract class Block implements BlockInterface
 {
+    use HasAcfFields;
+
     public string $name = '';
 
     protected array $settings = [];
