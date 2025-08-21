@@ -6,6 +6,7 @@ use Closure;
 use Navigator\Foundation\Application;
 use Navigator\View\ViewFactory;
 use Throwable;
+use WP_Block;
 
 class AcfFactory
 {
@@ -26,7 +27,7 @@ class AcfFactory
 
     protected function renderCallback(Block $block): Closure
     {
-        return function (array $settings, string $content = '', bool $preview = false, int $postId = 0, WP_Block $wpBlock, array $context = []) use ($block): void {
+        return function (array $settings, string $content = '', bool $preview = false, int $postId = 0, ?WP_Block $wpBlock = null, array $context = []) use ($block): void {
             $block->setSettings($settings)
                 ->setPreview($preview)
                 ->setPostId($postId)
