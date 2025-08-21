@@ -1,5 +1,5 @@
-<?php /** @var Navigator\Acf\BlockHelper $block */ ?>
+<?php /** @var {{ namespace }}\{{ class }} $block */ ?>
 
-<div <?php echo $block->attributes(['class' => 'is-layout-constrained has-global-padding wp-block-block']); ?>>
+<div class="is-layout-constrained has-global-padding wp-block-block">
     <!-- {{ name }} content go here -->
 </div>

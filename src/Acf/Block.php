@@ -2,34 +2,39 @@
 
 namespace Navigator\Acf;
 
-use Navigator\View\ViewFactory;
-
 abstract class Block
 {
-    protected string $name = '';
+    public readonly string $name;
 
-    protected string $blockPath = '';
+    protected array $settings = [];
 
-    public function __construct(protected ViewFactory $view, protected string $path)
+    protected bool $preview = false;
+
+    protected int $postid = 0;
+
+    public function setSettings(array $settings): static
     {
-        $this->blockPath = $this->path . '/' . $this->name;
+        $this->settings = $settings;
+
+        return $this;
     }
 
-    public function register(): void
+    public function setPreview(bool $preview): static
     {
-        register_block_type($this->blockPath, ['render_callback' => [$this, 'render']]);
+        $this->preview = $preview;
+
+        return $this;
     }
 
-    public function render(array $block, string $content = '', bool $preview = false, int $postId = 0): void
+    public function setPostId(int $postid): static
     {
-        $block = new BlockHelper($block, $postId, $preview);
+        $this->postid = $postid;
 
-        $content = $this->view->file("{$this->blockPath}/template.php", compact('block'));
+        return $this;
+    }
 
-        if ($preview) {
-            echo $content;
-        } else {
-            echo sprintf('<div %s>%s</div>', get_block_wrapper_attributes(), $content);
-        }
+    public function id(): string
+    {
+        return $this->settings['id'];
     }
 }

@@ -15,6 +15,7 @@ class AcfServiceProvider extends ServiceProvider
     {
         $this->app->singleton(AcfFactory::class, function (Application $app) {
             return new AcfFactory(
+                $app,
                 $app->get(ViewFactory::class),
                 $app->path('resources/blocks')
             );
@@ -29,6 +30,7 @@ class AcfServiceProvider extends ServiceProvider
         foreach ($manifest->get(Block::class) as $block) {
             $factory->registerBlock($block);
         }
+
         foreach ($manifest->get(FieldGroup::class) as $fieldGroup) {
             $factory->registerFieldGroup($fieldGroup);
         }

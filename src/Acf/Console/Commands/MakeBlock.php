@@ -18,6 +18,8 @@ class MakeBlock extends GeneratorCommand
     {
         parent::handle();
 
+        $name = $this->qualifyClass($this->getNameInput());
+
         $dirName = $this->resolveBlockName();
 
         $stubs = [
@@ -39,13 +41,9 @@ class MakeBlock extends GeneratorCommand
                 $stub
             );
 
-            $this->files->put($dir . '/' . $fileName, $stub);
-        }
+            $stub = $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
 
-        if ($this->newLine()->confirm('Create ACF FieldGroup with same classname?')) {
-            $this->call('navigator make:field-group ' . $this->argument('name'), [
-                '--force' => $this->option('force'),
-            ]);
+            $this->files->put($dir . '/' . $fileName, $stub);
         }
     }
 
