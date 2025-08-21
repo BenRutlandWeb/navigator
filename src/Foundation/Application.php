@@ -18,17 +18,18 @@ use Navigator\Filesystem\FilesystemServiceProvider;
 use Navigator\Hashing\HashServiceProvider;
 use Navigator\Http\Exceptions\HttpException;
 use Navigator\Http\HttpServiceProvider;
-use Navigator\Http\Request;
 use Navigator\Http\ResponseFactory;
 use Navigator\Mail\MailServiceProvider;
 use Navigator\Notifications\NotificationsServiceProvider;
 use Navigator\Pagination\PaginationServiceProvider;
 use Navigator\Queue\QueueServiceProvider;
 use Navigator\Routing\Router;
+use Navigator\Schedule\ScheduleServiceProvider;
 use Navigator\Session\SessionServiceProvider;
 use Navigator\Str\Str;
 use Navigator\Validation\ValidationServiceProvider;
 use Navigator\View\ViewServiceProvider;
+use Navigator\WordPress\WordPressServiceProvider;
 use Throwable;
 use Whoops\RunInterface;
 
@@ -47,7 +48,14 @@ class Application extends Container
     {
         static::setInstance($this);
 
-        $this->environment = Environment::from(wp_get_environment_type());
+        $this->instance(static::class, $this);
+
+        $this->instance(
+            Environment::class,
+            $environment = Environment::from(wp_get_environment_type())
+        );
+
+        $this->environment = $environment;
 
         $this->baseUrl = $this->resolveBaseUrl();
 
@@ -82,8 +90,10 @@ class Application extends Container
         $this->register(PaginationServiceProvider::class);
         $this->register(QueueServiceProvider::class);
         $this->register(SessionServiceProvider::class);
+        $this->register(ScheduleServiceProvider::class);
         $this->register(ValidationServiceProvider::class);
         $this->register(ViewServiceProvider::class);
+        $this->register(WordPressServiceProvider::class);
     }
 
     public function registerExceptionHandler(): void
