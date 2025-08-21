@@ -20,11 +20,11 @@ class MakeModel extends GeneratorCommand
         $type = $this->ask('What type of model do you want to extend?', Arr::enumValues(ModelType::class), ModelType::POST->value);
 
         return match ($type) {
-            ModelType::POST->value => __DIR__ . '/stubs/model.post.stub',
-            ModelType::TERM->value => __DIR__ . '/stubs/model.term.stub',
+            ModelType::POST->value    => __DIR__ . '/stubs/model.post.stub',
+            ModelType::TERM->value    => __DIR__ . '/stubs/model.term.stub',
             ModelType::COMMENT->value => __DIR__ . '/stubs/model.comment.stub',
-            ModelType::USER->value => __DIR__ . '/stubs/model.user.stub',
-            default => __DIR__ . '/stubs/model.post.stub',
+            ModelType::USER->value    => __DIR__ . '/stubs/model.user.stub',
+            default                   => __DIR__ . '/stubs/model.post.stub',
         };
     }
 

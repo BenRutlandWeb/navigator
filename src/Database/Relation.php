@@ -3,6 +3,7 @@
 namespace Navigator\Database;
 
 use Navigator\Collections\Arr;
+use Navigator\Str\Str;
 
 class Relation
 {
@@ -30,12 +31,12 @@ class Relation
     /** @return class-string<ModelInterface>|null */
     public static function getMorphedModel(string $alias): ?string
     {
-        return static::$morphMap[$alias] ?? null;
+        return static::$morphMap[$alias] ?? '\\App\\Models\\' . Str::studly($alias);
     }
 
     /** @param class-string<ModelInterface> $model */
     public static function getObjectType(string $model): ?string
     {
-        return Arr::flip(static::$morphMap)[$model] ?? null;
+        return Arr::flip(static::$morphMap)[$model] ?? Str::snake(basename($model));
     }
 }
