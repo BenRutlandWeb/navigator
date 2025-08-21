@@ -6,5 +6,5 @@ use Navigator\Acf\Block;
 
 class {{ class }} extends Block
 {
-    public readonly string $name = '{{ name }}';
+    public string $name = '{{ name }}';
 }
