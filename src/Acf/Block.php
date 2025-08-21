@@ -2,7 +2,7 @@
 
 namespace Navigator\Acf;
 
-abstract class Block
+abstract class Block implements BlockInterface
 {
     public string $name = '';
 
