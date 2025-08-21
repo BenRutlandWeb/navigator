@@ -26,10 +26,11 @@ class AcfFactory
 
     protected function renderCallback(Block $block): Closure
     {
-        return function (array $settings, string $content = '', bool $preview = false, int $postId = 0) use ($block): void {
+        return function (array $settings, string $content = '', bool $preview = false, int $postId = 0, WP_Block $wpBlock, array $context = []) use ($block): void {
             $block->setSettings($settings)
                 ->setPreview($preview)
-                ->setPostId($postId);
+                ->setPostId($postId)
+                ->setContext($context);
 
             try {
                 $content = $this->view->file($settings['path'] . '/template.php', compact('block'));
