@@ -4,7 +4,7 @@ namespace Navigator\Acf;
 
 abstract class Block
 {
-    public readonly string $name;
+    public string $name = '';
 
     protected array $settings = [];
 
