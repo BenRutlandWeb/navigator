@@ -6,10 +6,5 @@ use Navigator\Acf\Block;
 
 class {{ class }} extends Block
 {
-    protected string $name = '{{ name }}';
-
-    public function extraAttributes(): array
-    {
-        return [];
-    }
+    public string $name = '{{ name }}';
 }

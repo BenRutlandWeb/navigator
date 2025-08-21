@@ -6,7 +6,7 @@ use Navigator\Acf\Models\Concerns\HasAcfFields;
 use Navigator\Database\Models\Post;
 use Navigator\Database\Relation;
 
-class BlockHelper implements BlockInterface
+class BlockHelper
 {
     use HasAcfFields;
 
@@ -17,15 +17,5 @@ class BlockHelper implements BlockInterface
         $model = Relation::getMorphedModel(get_post_type($post_id));
 
         $this->object = $model ? $model::find($post_id) : null;
-    }
-
-    public function attributes(array $attributes = []): string
-    {
-        return $this->preview ? '' : get_block_wrapper_attributes($attributes);
-    }
-
-    public function id(): string
-    {
-        return $this->block['id'];
     }
 }

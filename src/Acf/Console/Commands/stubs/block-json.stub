@@ -9,17 +9,10 @@
     "keywords": [
         "example"
     ],
-    "acf": {
-        "renderTemplate": "template.php"
-    },
-    "style": [
-        "file:./style.css"
-    ],
+    "acf": { "blockVersion": 2 },
+    "style": ["file:./style.css"],
     "supports": {
-          "align": [
-            "wide",
-            "full"
-        ]
+        "align": ["wide", "full"]
     },
     "example": {
         "attributes": {

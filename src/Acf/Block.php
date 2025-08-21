@@ -2,41 +2,43 @@
 
 namespace Navigator\Acf;
 
-use Navigator\View\ViewFactory;
+use Navigator\Acf\Models\Concerns\HasAcfFields;
 
-abstract class Block
+abstract class Block implements BlockInterface
 {
-    protected string $name = '';
+    use HasAcfFields;
 
-    protected string $blockPath = '';
+    public string $name = '';
 
-    public function __construct(protected ViewFactory $view, protected string $path)
+    protected array $settings = [];
+
+    protected bool $preview = false;
+
+    protected int $postid = 0;
+
+    public function setSettings(array $settings): static
     {
-        $this->blockPath = $this->path . '/' . $this->name;
+        $this->settings = $settings;
+
+        return $this;
     }
 
-    public function register(): void
+    public function setPreview(bool $preview): static
     {
-        register_block_type($this->blockPath, ['render_callback' => [$this, 'render']]);
+        $this->preview = $preview;
+
+        return $this;
     }
 
-    public function render(array $block, string $content = '', bool $preview = false, int $postId = 0): void
+    public function setPostId(int $postid): static
     {
-        $block = new BlockHelper($block, $postId, $preview);
+        $this->postid = $postid;
 
-        if (!$preview) {
-            echo '<div ' . $block->attributes($this->extraAttributes()) . '>';
-        }
-
-        echo $this->view->file("{$this->blockPath}/template.php", compact('block'));
-
-        if (!$preview) {
-            echo '</div>';
-        }
+        return $this;
     }
 
-    public function extraAttributes(): array
+    public function id(): string
     {
-        return [];
+        return $this->settings['id'];
     }
 }
