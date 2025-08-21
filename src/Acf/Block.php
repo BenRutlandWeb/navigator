@@ -24,19 +24,12 @@ abstract class Block
     {
         $block = new BlockHelper($block, $postId, $preview);
 
-        if (!$preview) {
-            echo '<div ' . $block->attributes($this->extraAttributes()) . '>';
+        $content = $this->view->file("{$this->blockPath}/template.php", compact('block'));
+
+        if ($preview) {
+            echo $content;
+        } else {
+            echo sprintf('<div %s>%s</div>', get_block_wrapper_attributes(), $content);
         }
-
-        echo $this->view->file("{$this->blockPath}/template.php", compact('block'));
-
-        if (!$preview) {
-            echo '</div>';
-        }
-    }
-
-    public function extraAttributes(): array
-    {
-        return [];
     }
 }

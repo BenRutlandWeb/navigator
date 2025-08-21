@@ -19,9 +19,17 @@ class BlockHelper implements BlockInterface
         $this->object = $model ? $model::find($post_id) : null;
     }
 
-    public function attributes(array $attributes = []): string
+    public function attributes(array $attributes): string
     {
-        return $this->preview ? '' : get_block_wrapper_attributes($attributes);
+        $string = '';
+
+        foreach ($attributes as $attr => $value) {
+            if (trim($value)) {
+                $string .= sprintf('%s="%s" ', $attr, $value);
+            }
+        }
+
+        return trim($string);
     }
 
     public function id(): string
