@@ -5,6 +5,7 @@ namespace Navigator\Acf;
 use Closure;
 use Navigator\Foundation\Application;
 use Navigator\View\ViewFactory;
+use Throwable;
 
 class AcfFactory
 {
@@ -30,12 +31,16 @@ class AcfFactory
                 ->setPreview($preview)
                 ->setPostId($postId);
 
-            $content = $this->view->file($settings['path'] . '/template.php', compact('block'));
+            try {
+                $content = $this->view->file($settings['path'] . '/template.php', compact('block'));
 
-            if ($preview) {
-                echo $content;
-            } else {
-                echo sprintf('<div %s>%s</div>', get_block_wrapper_attributes(), $content);
+                if ($preview) {
+                    echo $content;
+                } else {
+                    echo sprintf('<div %s>%s</div>', get_block_wrapper_attributes(), $content);
+                }
+            } catch (Throwable $e) {
+                printf('<p>%s</p>', $e->getMessage());
             }
         };
     }
