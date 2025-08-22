@@ -68,4 +68,15 @@ abstract class Block implements BlockInterface
     {
         return $this->settings['id'];
     }
+
+    public function innerBlocks(array $attributes): string
+    {
+        $attr = '';
+
+        foreach ($attributes as $property => $value) {
+            $attr .= sprintf('%s="%s" ', $property, esc_attr(wp_json_encode($value)));
+        }
+
+        return sprintf('<InnerBlocks %s />', trim($attr));
+    }
 }
